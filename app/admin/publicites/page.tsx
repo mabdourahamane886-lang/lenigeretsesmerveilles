@@ -1,7 +1,19 @@
 import Link from 'next/link'
+import { createClient } from '../../../lib/supabase/server'
+import AdForm from './ad-form'
 
-export default function AdminPublicites() {
-  return <main className="section"><div className="container"><Link className="textlink" href="/admin">← Administration</Link><div className="adminHero"><div><span className="kicker">Publicités</span><h1>Créer une campagne</h1><p className="muted">Prépare les campagnes qui seront ensuite enregistrées dans Supabase.</p></div></div>
-    <form className="adminForm"><label>Nom de la campagne<input name="name" placeholder="Ex. Promotion tourisme Niger" /></label><label>Titre<input name="title" placeholder="Découvrez le Niger autrement 🇳🇪" /></label><label>Texte<textarea name="body" rows={4} placeholder="Message publicitaire" /></label><label>Image URL<input name="image_url" placeholder="https://..." /></label><label>Lien de destination<input name="target_url" placeholder="https://..." /></label><div className="formRow"><label>Date de début<input type="datetime-local" name="starts_at" /></label><label>Date de fin<input type="datetime-local" name="ends_at" /></label></div><label>Position<select name="placement" defaultValue="home"><option value="home">Accueil</option><option value="article">Articles</option><option value="wonder">Merveilles</option><option value="regional">Pages régions</option></select></label><button className="btn primary" type="button">Enregistrer la campagne</button></form>
+export default async function AdminPublicites() {
+  const supabase = await createClient()
+  const { data: ads } = supabase
+    ? await supabase.from('niger_advertisements').select('id,name,title,placement,active,starts_at,ends_at,impressions,clicks').order('created_at', { ascending: false })
+    : { data: [] }
+
+  return <main className="section"><div className="container">
+    <Link className="textlink" href="/admin">← Administration</Link>
+    <div className="adminHero"><div><span className="kicker">Publicités</span><h1>Gestion des campagnes</h1><p className="muted">Crée, active et programme les campagnes affichées sur la plateforme.</p></div></div>
+    <AdForm />
+    <section className="adminList"><div className="sectionHead"><div><div className="kicker">Campagnes</div><h2>Campagnes enregistrées</h2></div></div>
+      {!ads?.length ? <p className="muted">Aucune campagne pour le moment.</p> : <div className="adminRows">{ads.map(ad => <div className="adminRow" key={ad.id}><div><b>{ad.name}</b><span className="muted">{ad.title} · {ad.placement} · {ad.active ? 'Active' : 'Inactive'}</span></div><span>{ad.impressions ?? 0} vues · {ad.clicks ?? 0} clics</span></div>)}</div>}
+    </section>
   </div></main>
 }
