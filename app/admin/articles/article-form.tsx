@@ -1,6 +1,7 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import { createArticle } from '../actions'
 
 function SubmitButton() {
@@ -9,7 +10,7 @@ function SubmitButton() {
 }
 
 export default function ArticleForm() {
-  const [error, action] = useFormState(async (_state: string | null, formData: FormData) => {
+  const [error, action] = useActionState(async (_state: string | null, formData: FormData) => {
     try { await createArticle(formData); return null } catch (e) { return e instanceof Error ? e.message : 'Une erreur est survenue.' }
   }, null)
 
