@@ -1,0 +1,7 @@
+import Link from 'next/link'
+
+export default function AdminPublicites() {
+  return <main className="section"><div className="container"><Link className="textlink" href="/admin">← Administration</Link><div className="adminHero"><div><span className="kicker">Publicités</span><h1>Créer une campagne</h1><p className="muted">Prépare les campagnes qui seront ensuite enregistrées dans Supabase.</p></div></div>
+    <form className="adminForm"><label>Nom de la campagne<input name="name" placeholder="Ex. Promotion tourisme Niger" /></label><label>Titre<input name="title" placeholder="Découvrez le Niger autrement 🇳🇪" /></label><label>Texte<textarea name="body" rows={4} placeholder="Message publicitaire" /></label><label>Image URL<input name="image_url" placeholder="https://..." /></label><label>Lien de destination<input name="target_url" placeholder="https://..." /></label><div className="formRow"><label>Date de début<input type="datetime-local" name="starts_at" /></label><label>Date de fin<input type="datetime-local" name="ends_at" /></label></div><label>Position<select name="placement" defaultValue="home"><option value="home">Accueil</option><option value="article">Articles</option><option value="wonder">Merveilles</option><option value="regional">Pages régions</option></select></label><button className="btn primary" type="button">Enregistrer la campagne</button></form>
+  </div></main>
+}
