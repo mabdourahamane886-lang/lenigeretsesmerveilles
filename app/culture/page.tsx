@@ -1,0 +1,5 @@
+import Header from '../../components/site/header'
+import Footer from '../../components/site/footer'
+
+const items=[['👥','Peuples & traditions','Histoires, langues, vêtements, pratiques et savoir-faire.'],['🍲','Gastronomie','Plats, produits locaux et traditions culinaires.'],['🎭','Événements','Festivals, rencontres et rendez-vous culturels.'],['🧵','Artisanat','Créations, métiers d’art et savoir-faire transmis.']]
+export default function CulturePage(){return <><Header/><main className="page"><div className="container"><div className="kicker">Identité & patrimoine</div><h1>Culture du Niger</h1><p className="lead">Une porte d’entrée vers la diversité culturelle, les traditions et les savoir-faire du Niger.</p><div className="detailGrid">{items.map(([icon,title,text])=><section className="detailCard" key={title}><span>{icon}</span><h2>{title}</h2><p>{text}</p></section>)}</div><div className="notice"><strong>Construisons cette mémoire ensemble.</strong><p>Les contenus culturels pourront être proposés par des contributeurs puis vérifiés avant publication.</p></div></div></main><Footer/></>}
