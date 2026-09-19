@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
@@ -48,7 +49,7 @@ export default function LoginForm({ next, errorCode }: { next: string; errorCode
       <label>Mot de passe<input required type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Votre mot de passe" /></label>
       {error && <p className="formError" role="alert">{error}</p>}
       <button className="btn primary" type="submit" disabled={pending}>{pending ? 'Connexion…' : 'Se connecter'}</button>
-      <a className="loginBack" href="/">← Retour au site public</a>
+      <Link className="loginBack" href="/">← Retour au site public</Link>
     </form>
   )
 }
