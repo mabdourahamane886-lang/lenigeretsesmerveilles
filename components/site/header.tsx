@@ -3,6 +3,7 @@ import Link from 'next/link'
 const navItems = [
   ['Régions', '/regions'],
   ['Merveilles', '/merveilles'],
+  ['Événements', '/evenements'],
   ['Culture', '/culture'],
   ['Carte', '/carte'],
 ]
@@ -12,11 +13,10 @@ export default function Header() {
     <>
       <div className="topbar">
         <div className="container topbarInner">
-          <span>🇳🇪 Le patrimoine, les cultures et les paysages du Niger.</span>
-          <span className="topbarAccent">Explorer · Comprendre · Préserver</span>
+          <span>🇳🇪 Le patrimoine, les cultures, les événements et les paysages du Niger.</span>
+          <span className="topbarAccent">Explorer · Comprendre · Participer</span>
         </div>
       </div>
-
       <header className="nav">
         <div className="container navin">
           <Link className="brand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
