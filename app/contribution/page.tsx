@@ -11,9 +11,12 @@ export default async function ContributionPage({ searchParams }: { searchParams:
       <Header />
       <main className="page contributionPage">
         <div className="container narrow">
-          <div className="kicker">Participation</div>
-          <h1>Partager une découverte</h1>
-          <p className="lead">Un lieu, une tradition, une histoire, un événement ou une information culturelle : proposez-la à notre équipe. Chaque proposition est vérifiée avant publication.</p>
+          <header className="contributionIntro">
+            <div className="kicker">Participation</div>
+            <h1>Partager une découverte</h1>
+            <p className="lead">Un lieu, une tradition, une histoire, un événement ou une information culturelle : proposez-la à notre équipe.</p>
+            <p className="contributionHint">Chaque proposition est vérifiée par notre équipe avant publication.</p>
+          </header>
           {params.sent && <div className="successBanner" role="status"><strong>Merci pour votre contribution.</strong><span>Votre proposition a été enregistrée et sera examinée par l’équipe.</span></div>}
           {params.error && <div className="formError" role="alert">{params.error === 'config' ? 'Le service de données est momentanément indisponible.' : params.error === 'missing' ? 'Veuillez compléter votre nom, le titre et la description.' : 'Impossible d’enregistrer la proposition. Réessayez.'}</div>}
           <form className="contributionForm" action={submitContribution}>
