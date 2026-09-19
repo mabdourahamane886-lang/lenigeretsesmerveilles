@@ -1,6 +1,27 @@
+import { nigerMedia } from './media'
+
 const wonders = [
-  {name:'Agadez', type:'Patrimoine', text:'Une ville historique au cœur de l’Aïr.', image:'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1000&q=80'},
-  {name:'Désert du Ténéré', type:'Paysages', text:'Un territoire saharien emblématique et spectaculaire.', image:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1000&q=80'},
-  {name:'Fleuve Niger', type:'Nature', text:'Un axe majeur de vie, de culture et de paysages.', image:'https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=1000&q=80'}
+  {
+    name: 'Agadez',
+    type: 'Patrimoine',
+    text: 'Une ville historique au cœur de l’Aïr, avec une architecture et des savoir-faire emblématiques.',
+    image: nigerMedia.agadez.image,
+    credit: nigerMedia.agadez,
+  },
+  {
+    name: 'Désert du Ténéré',
+    type: 'Paysages',
+    text: 'Les paysages de dunes du Ténéré, au nord du Niger, au cœur du Sahara.',
+    image: nigerMedia.tenere.image,
+    credit: nigerMedia.tenere,
+  },
+  {
+    name: 'Fleuve Niger',
+    type: 'Nature',
+    text: 'Le fleuve Niger et ses paysages autour de Niamey, au cœur de la vie et des activités du pays.',
+    image: nigerMedia.niamey.image,
+    credit: nigerMedia.niamey,
+  },
 ]
+
 export default wonders
