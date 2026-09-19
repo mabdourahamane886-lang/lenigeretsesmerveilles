@@ -9,7 +9,7 @@ export default async function ContributionPage({ searchParams }: { searchParams:
   return (
     <>
       <Header />
-      <main className="page">
+      <main className="page contributionPage">
         <div className="container narrow">
           <div className="kicker">Participation</div>
           <h1>Partager une découverte</h1>
