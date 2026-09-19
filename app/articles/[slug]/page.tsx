@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, BookOpenText, CalendarDays, UserRound } from 'lucide-react'
 import Header from '../../../components/site/header'
 import Footer from '../../../components/site/footer'
+import ShareButton from '../../../components/site/share-button'
 import { createClient } from '../../../lib/supabase/server'
 
 export const dynamic='force-dynamic'
@@ -30,7 +31,7 @@ export default async function ArticleDetailPage({params}:{params:Promise<{slug:s
             <div className="plainArticleHeader"><span className="kicker">{article.category || 'Édition'}</span><h1>{article.title}</h1><div className="articleMeta">{article.author_name || 'Rédaction'}</div></div>
           )}
           {article.excerpt && <aside className="articleStandfirst"><BookOpenText size={19}/><div><span>En bref</span><p>{article.excerpt}</p></div></aside>}
-          <article className="proseCard articleProse"><div className="prose">{article.content}</div></article>
+          <article className="proseCard articleProse"><div className="prose">{article.content}</div><div className="articleShare"><ShareButton title={article.title}/></div></article>
         </div>
       </main>
       <Footer />
