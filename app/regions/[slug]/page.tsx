@@ -4,23 +4,61 @@ import { ArrowRight, CalendarDays, Camera, MapPin, Sparkles, UsersRound } from '
 import Header from '../../../components/site/header'
 import Footer from '../../../components/site/footer'
 import { createClient } from '../../../lib/supabase/server'
+import { regions as fallbackRegions } from '../../../data/regions'
 
 export const dynamic = 'force-dynamic'
 
-export default async function RegionPage({ params }: { params: Promise<{ slug: string }> }) {
+type Params = { slug: string }
+
+export default async function RegionPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params
+  const fallback = fallbackRegions.find((item) => item.slug === slug)
+  if (!fallback) notFound()
+
+  let region = {
+    id: null as string | null,
+    name: fallback.name,
+    slug: fallback.slug,
+    description: fallback.description,
+    cover_url: null as string | null,
+  }
+
+  let wonders: Array<{ id: string; name: string; short_description: string | null; cover_url: string | null }> = []
+  let cultures: Array<{ id: string; title: string; cover_url: string | null; history: string | null }> = []
+  let gastronomy: Array<{ id: string; name: string; image_url: string | null; description: string | null }> = []
+  let events: Array<{ id: string; name: string; city: string | null; starts_at: string | null; image_url: string | null; description: string | null }> = []
+
   const supabase = await createClient()
-  if (!supabase) notFound()
 
-  const { data: region } = await supabase.from('niger_regions').select('id,name,slug,description,cover_url').eq('slug', slug).maybeSingle()
-  if (!region) notFound()
+  if (supabase) {
+    const { data: dbRegion } = await supabase
+      .from('niger_regions')
+      .select('id,name,slug,description,cover_url')
+      .eq('slug', slug)
+      .maybeSingle()
 
-  const [{ data: wonders }, { data: cultures }, { data: gastronomy }, { data: events }] = await Promise.all([
-    supabase.from('niger_wonders').select('id,name,short_description,cover_url').eq('region_id', region.id).eq('published', true).order('name'),
-    supabase.from('niger_cultures').select('id,title,cover_url,history').eq('region_id', region.id).eq('published', true).order('title'),
-    supabase.from('niger_gastronomy').select('id,name,image_url,description').eq('region_id', region.id).eq('published', true).order('name'),
-    supabase.from('niger_events').select('id,name,city,starts_at,image_url,description').eq('region_id', region.id).eq('published', true).order('starts_at'),
-  ])
+    if (dbRegion) {
+      region = {
+        id: String(dbRegion.id),
+        name: dbRegion.name || fallback.name,
+        slug: dbRegion.slug || fallback.slug,
+        description: dbRegion.description || fallback.description,
+        cover_url: dbRegion.cover_url || null,
+      }
+
+      const [{ data: dbWonders }, { data: dbCultures }, { data: dbGastronomy }, { data: dbEvents }] = await Promise.all([
+        supabase.from('niger_wonders').select('id,name,short_description,cover_url').eq('region_id', dbRegion.id).eq('published', true).order('name'),
+        supabase.from('niger_cultures').select('id,title,cover_url,history').eq('region_id', dbRegion.id).eq('published', true).order('title'),
+        supabase.from('niger_gastronomy').select('id,name,image_url,description').eq('region_id', dbRegion.id).eq('published', true).order('name'),
+        supabase.from('niger_events').select('id,name,city,starts_at,image_url,description').eq('region_id', dbRegion.id).eq('published', true).order('starts_at'),
+      ])
+
+      wonders = dbWonders || []
+      cultures = dbCultures || []
+      gastronomy = dbGastronomy || []
+      events = dbEvents || []
+    }
+  }
 
   return (
     <>
@@ -30,7 +68,7 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
           <Link className="proBack" href="/regions">← Toutes les régions</Link>
 
           <section className="detailHero">
-            <div className="detailHeroImage" style={region.cover_url ? { backgroundImage: 'url(' + region.cover_url + ')' } : undefined}>
+            <div className="detailHeroImage" style={region.cover_url ? { backgroundImage: `url(${region.cover_url})` } : undefined}>
               <div className="detailHeroOverlay" />
               <div className="detailHeroContent">
                 <span className="detailEyebrow">Région du Niger · {region.name}</span>
@@ -41,10 +79,10 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
           </section>
 
           <section className="detailStats">
-            <div><Sparkles size={17}/><strong>{wonders?.length || 0}</strong><span>merveilles</span></div>
-            <div><UsersRound size={17}/><strong>{cultures?.length || 0}</strong><span>cultures</span></div>
-            <div><CalendarDays size={17}/><strong>{events?.length || 0}</strong><span>événements</span></div>
-            <div><Camera size={17}/><strong>{gastronomy?.length || 0}</strong><span>saveurs</span></div>
+            <div><Sparkles size={17}/><strong>{wonders.length}</strong><span>merveilles</span></div>
+            <div><UsersRound size={17}/><strong>{cultures.length}</strong><span>cultures</span></div>
+            <div><CalendarDays size={17}/><strong>{events.length}</strong><span>événements</span></div>
+            <div><Camera size={17}/><strong>{gastronomy.length}</strong><span>saveurs</span></div>
           </section>
 
           <section className="catalogSection">
@@ -52,13 +90,11 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
               <div><span className="kicker">Patrimoine</span><h2>À découvrir</h2><p>Les lieux et patrimoines publiés pour cette région.</p></div>
               <Link className="proInlineLink" href="/merveilles">Toutes les merveilles <ArrowRight size={15}/></Link>
             </div>
-            {wonders?.length ? (
+            {wonders.length ? (
               <div className="catalogGrid">
-                {wonders.map(item => (
+                {wonders.map((item) => (
                   <article className="catalogCard" key={item.id}>
-                    <div className="catalogImage" style={item.cover_url ? { backgroundImage: 'url(' + item.cover_url + ')' } : undefined}>
-                      <span className="catalogPill">Merveille</span>
-                    </div>
+                    <div className="catalogImage" style={item.cover_url ? { backgroundImage: `url(${item.cover_url})` } : undefined}><span className="catalogPill">Merveille</span></div>
                     <div className="catalogBody"><h3>{item.name}</h3><p>{item.short_description || 'Découvrez ce lieu et son histoire.'}</p></div>
                   </article>
                 ))}
@@ -73,13 +109,11 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
               <div><span className="kicker">Culture</span><h2>Histoires & savoir-faire</h2><p>Traditions, langues, pratiques et mémoires locales.</p></div>
               <Link className="proInlineLink" href="/culture">Explorer la culture <ArrowRight size={15}/></Link>
             </div>
-            {cultures?.length ? (
+            {cultures.length ? (
               <div className="catalogGrid">
-                {cultures.map(item => (
+                {cultures.map((item) => (
                   <article className="catalogCard" key={item.id}>
-                    <div className="catalogImage" style={item.cover_url ? { backgroundImage: 'url(' + item.cover_url + ')' } : undefined}>
-                      <span className="catalogPill">Culture</span>
-                    </div>
+                    <div className="catalogImage" style={item.cover_url ? { backgroundImage: `url(${item.cover_url})` } : undefined}><span className="catalogPill">Culture</span></div>
                     <div className="catalogBody"><h3>{item.title}</h3><p>{item.history || 'Une fiche culturelle consacrée à cette région.'}</p></div>
                   </article>
                 ))}
@@ -94,9 +128,9 @@ export default async function RegionPage({ params }: { params: Promise<{ slug: s
               <div><span className="kicker">Agenda local</span><h2>Les prochains rendez-vous</h2><p>Événements publiés et informations pratiques.</p></div>
               <Link className="proInlineLink" href="/evenements">Tout l’agenda <ArrowRight size={15}/></Link>
             </div>
-            {events?.length ? (
+            {events.length ? (
               <div className="eventCompactGrid">
-                {events.map(event => (
+                {events.map((event) => (
                   <article className="eventCompact" key={event.id}>
                     <div className="eventCompactDate"><strong>{event.starts_at ? new Intl.DateTimeFormat('fr-FR',{day:'2-digit'}).format(new Date(event.starts_at)) : '—'}</strong><span>{event.starts_at ? new Intl.DateTimeFormat('fr-FR',{month:'short'}).format(new Date(event.starts_at)) : ''}</span></div>
                     <div><span className="kicker">{event.city || region.name}</span><h3>{event.name}</h3><p>{event.description || 'Informations sur cet événement.'}</p></div>
