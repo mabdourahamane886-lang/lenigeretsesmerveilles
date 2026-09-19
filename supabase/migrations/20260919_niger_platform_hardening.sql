@@ -45,3 +45,5 @@ select * from (
   ('Dunes du Ténéré','Dunes de sable du désert du Ténéré.','photo','https://commons.wikimedia.org/wiki/Special:FilePath/Zibar_sand_dunes.jpg?width=1200','NASA — Wikimedia Commons — Domaine public',(select id from public.niger_regions where slug='agadez' limit 1),(select id from public.niger_wonders where slug='desert-du-tenere' limit 1),true)
 ) as m(title,description,media_type,url,credit,region_id,wonder_id,published)
 where not exists (select 1 from public.niger_media x where x.url=m.url);
+
+alter function public.niger_is_admin() set search_path = public;
