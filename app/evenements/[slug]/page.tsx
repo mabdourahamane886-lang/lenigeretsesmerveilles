@@ -5,6 +5,7 @@ import Header from '../../../components/site/header'
 import Footer from '../../../components/site/footer'
 import { createClient } from '../../../lib/supabase/server'
 import { nigerMedia } from '../../../data/media'
+import ShareButton from '../../../components/site/share-button'
 
 export const dynamic='force-dynamic'
 
@@ -34,7 +35,7 @@ export default async function EventDetailPage({params}:{params:Promise<{slug:str
           <div className="eventInfoGrid">
             <section className="eventInfoCard"><Clock3 size={18}/><div><span>Date & heure</span><strong>{formatDate(event.starts_at)}</strong>{event.ends_at && <small>Fin : {formatDate(event.ends_at)}</small>}</div></section>
             <section className="eventInfoCard"><MapPin size={18}/><div><span>Lieu</span><strong>{event.location || event.city || 'À confirmer'}</strong><small>Informations fournies par l’organisation.</small></div></section>
-            <section className="eventInfoCard"><Share2 size={18}/><div><span>Événement</span><strong>À partager</strong><small>Transmettez cette page à votre communauté.</small></div></section>
+            <section className="eventInfoCard"><Share2 size={18}/><div><span>Événement</span><strong>À partager</strong><small>Cette page possède un lien public unique.</small><ShareButton title={event.name}/></div></section>
           </div>
           <section className="proseCard"><span className="kicker">Présentation</span><h2>À propos de l’événement</h2><p>{event.description || 'Aucune présentation détaillée disponible.'}</p></section>
           {event.program && <section className="proseCard"><span className="kicker">Programme</span><h2>Le programme</h2><div className="prose">{event.program}</div></section>}
