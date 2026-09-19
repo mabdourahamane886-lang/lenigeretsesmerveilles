@@ -1,26 +1,91 @@
 import Link from 'next/link'
+import {
+  BookOpenText,
+  Camera,
+  CalendarDays,
+  Compass,
+  Menu,
+  Search,
+  Send,
+  Sparkles,
+  Utensils,
+} from 'lucide-react'
 
 const navItems = [
-  ['Régions', '/regions'],
-  ['Merveilles', '/merveilles'],
-  ['Agenda', '/evenements'],
-  ['Culture', '/culture'],
-  ['Articles', '/articles'],
-  ['Carte', '/carte'],
+  { label: 'Régions', href: '/regions', icon: Compass },
+  { label: 'Merveilles', href: '/merveilles', icon: Sparkles },
+  { label: 'Agenda', href: '/evenements', icon: CalendarDays },
+  { label: 'Culture', href: '/culture', icon: BookOpenText },
+]
+
+const mobileItems = [
+  ...navItems,
+  { label: 'Gastronomie', href: '/gastronomie', icon: Utensils },
+  { label: 'Photothèque', href: '/media', icon: Camera },
 ]
 
 export default function Header() {
   return (
     <>
-      <div className="topbar"><div className="container topbarInner"><span>🇳🇪 Le patrimoine, les cultures, les événements et les paysages du Niger.</span><span className="topbarAccent">Explorer · Comprendre · Participer</span></div></div>
-      <header className="nav">
-        <div className="container navin">
-          <Link className="brand" href="/" aria-label="Le Niger et ses Merveilles — Accueil"><span className="brandmark" aria-hidden="true">🇳🇪</span><span className="brandText"><strong>Le Niger et ses Merveilles</strong><small>Explorer • Comprendre • Préserver</small></span></Link>
-          <nav className="links" aria-label="Navigation principale">{navItems.map(([label, href]) => <Link href={href} key={href}>{label}</Link>)}</nav>
-          <div className="navActions">
-            <Link className="navSearch" href="/recherche" aria-label="Rechercher">⌕</Link>
-            <Link className="navbtn" href="/contribution">Contribuer</Link>
-            <details className="mobileMenu"><summary aria-label="Ouvrir le menu">☰</summary><nav aria-label="Navigation mobile">{navItems.map(([label, href]) => <Link href={href} key={href}>{label}</Link>)}<Link href="/gastronomie">Gastronomie</Link><Link href="/media">Photothèque</Link><Link href="/recherche">Rechercher</Link><Link href="/contribution">Contribuer au projet</Link></nav></details>
+      <div className="siteNotice">
+        <div className="container siteNoticeInner">
+          <span><strong>🇳🇪 Le Niger et ses Merveilles</strong><span className="siteNoticeSep">·</span> Culture · patrimoine · territoires</span>
+          <span className="siteNoticeRight">Une plateforme éditoriale ouverte aux contributions</span>
+        </div>
+      </div>
+
+      <header className="siteHeader">
+        <div className="container siteHeaderInner">
+          <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles, accueil">
+            <span className="siteBrandMark" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className="siteBrandCopy">
+              <strong>Le Niger et ses Merveilles</strong>
+              <small>Explorer · Comprendre · Préserver</small>
+            </span>
+          </Link>
+
+          <nav className="siteNav" aria-label="Navigation principale">
+            {navItems.map(({ label, href, icon: Icon }) => (
+              <Link href={href} key={href}>
+                <Icon size={15} />
+                {label}
+              </Link>
+            ))}
+            <Link href="/articles"><BookOpenText size={15} />Articles</Link>
+            <Link href="/carte"><Compass size={15} />Carte</Link>
+          </nav>
+
+          <div className="siteHeaderActions">
+            <Link className="siteSearchButton" href="/recherche" aria-label="Rechercher sur le site">
+              <Search size={18} />
+            </Link>
+            <Link className="siteContributeButton" href="/contribution">
+              <Send size={14} />
+              Contribuer
+            </Link>
+
+            <details className="siteMobileMenu">
+              <summary aria-label="Ouvrir le menu mobile"><Menu size={20} /></summary>
+              <div className="siteMobilePanel">
+                <div className="siteMobileHead">
+                  <span>Navigation</span>
+                  <span className="siteMiniFlag">🇳🇪</span>
+                </div>
+                <nav aria-label="Navigation mobile">
+                  {mobileItems.map(({ label, href, icon: Icon }) => (
+                    <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
+                  ))}
+                  <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
+                  <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
+                  <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
+                  <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
+                </nav>
+              </div>
+            </details>
           </div>
         </div>
       </header>
