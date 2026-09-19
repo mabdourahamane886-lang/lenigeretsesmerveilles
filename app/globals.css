@@ -2149,3 +2149,18 @@ body{
   .adminWelcomeFlag{font-size:47px}
   .adminModuleGrid{grid-template-columns:1fr}
 }
+
+
+/* Mobile header: search left, hamburger right */
+.siteHeaderMobileLeft{display:none}
+@media(max-width:950px){
+  .siteHeaderInner{display:flex;align-items:center;gap:10px}
+  .siteHeaderMobileLeft{display:flex;align-items:center;flex:0 0 auto}
+  .siteHeaderMobileLeft .siteSearchButton{display:grid}
+  .siteBrand{flex:1;min-width:0}
+  .siteHeaderActions{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .siteDesktopSearch{display:none!important}
+  .siteContributeButton{display:none}
+  .siteMobileMenu{display:block;position:relative;flex:0 0 auto;margin-left:0;order:0}
+  .siteMobileMenu summary{display:grid;place-items:center}
+}
