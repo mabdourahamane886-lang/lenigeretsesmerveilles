@@ -40,7 +40,7 @@ button{cursor:pointer}
 .mobileMenu nav{position:absolute;right:0;top:51px;width:220px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:9px;box-shadow:var(--shadow)}
 .mobileMenu nav a{display:block;padding:12px 13px;border-radius:11px;font-weight:800;font-size:13px}
 .mobileMenu nav a:hover{background:#f2f5f0;color:var(--green)}
-.hero{min-height:650px;display:grid;place-items:center;position:relative;overflow:hidden;background:linear-gradient(96deg,rgba(4,38,27,.94),rgba(5,45,32,.5)),url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2200&q=88') center/cover}
+.hero{min-height:650px;display:grid;place-items:center;position:relative;overflow:hidden;background:linear-gradient(96deg,rgba(4,38,27,.94),rgba(5,45,32,.45)),url('https://commons.wikimedia.org/wiki/Special:FilePath/Grand_Mosque_Agadez.jpg?width=2200') center/cover}
 .hero:after{content:'';position:absolute;left:0;right:0;bottom:0;height:180px;background:linear-gradient(transparent,var(--cream));pointer-events:none}
 .heroGlow{position:absolute;border-radius:999px;filter:blur(40px);opacity:.28;pointer-events:none}
 .heroGlowOne{width:320px;height:320px;background:#d8ab52;right:11%;top:18%}
@@ -97,7 +97,7 @@ button{cursor:pointer}
 .region:hover{transform:translateY(-4px);background:#ffffff0d;border-color:#ffffff2f}
 .regionLight:hover{background:#fff;border-color:#cedbd2;box-shadow:0 17px 36px rgba(16,35,28,.09)}
 .featureFeature{display:grid;grid-template-columns:1.16fr .84fr;gap:20px}
-.featureVisual{min-height:520px;border-radius:28px;overflow:hidden;position:relative;background:url('https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=1500&q=88') center/cover;display:flex;align-items:end}
+.featureVisual{min-height:520px;border-radius:28px;overflow:hidden;position:relative;background:url('https://commons.wikimedia.org/wiki/Special:FilePath/Niger%20river%20in%20Niamey.jpg?width=1800') center/cover;display:flex;align-items:end}
 .featureOverlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,45,32,.12),rgba(5,45,32,.94))}
 .featureCopy{position:relative;z-index:1;padding:38px;color:#fff;max-width:650px}
 .featureCopy h2{font-size:42px;margin:13px 0 10px;color:#fff}
@@ -173,3 +173,44 @@ button{cursor:pointer}
   .page{padding:54px 0}.lead{font-size:17px}.copy{flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.wonderCard,.region{transition:none}}
+
+.imageCredit{display:block;margin-top:10px;color:#8a948e;font-size:9px;line-height:1.4}
+.eventGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.eventCard{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 13px 36px rgba(16,35,28,.055);transition:transform .18s ease,box-shadow .18s ease}
+.eventCard:hover{transform:translateY(-5px);box-shadow:0 22px 48px rgba(16,35,28,.1)}
+.eventImage{height:230px;background:linear-gradient(135deg,#dfe8e1,#cbd8cf) center/cover;position:relative}
+.homeEventImage{background-image:linear-gradient(145deg,#14583e,#327359),url('https://commons.wikimedia.org/wiki/Special:FilePath/Niger%20river%20in%20Niamey.jpg?width=1500');background-blend-mode:multiply}
+.eventBadge{position:absolute;top:14px;left:14px;background:#ffffffdf;color:var(--ink);font-weight:900;font-size:11px;padding:7px 9px;border-radius:999px}
+.eventDate{position:absolute;right:14px;bottom:14px;background:var(--green);color:#fff;font-size:11px;font-weight:900;padding:8px 10px;border-radius:10px}
+.eventBody{padding:21px}
+.eventMeta{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:900}
+.eventBody h2{font-family:Georgia,"Times New Roman",serif;font-size:24px;line-height:1.15;margin:9px 0}
+.eventBody p{color:var(--muted);line-height:1.65;font-size:14px;margin:0}
+.emptyState{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;background:linear-gradient(135deg,#f2ecdf,#e5efe8);border:1px solid var(--line);border-radius:28px;padding:38px;margin-top:34px}
+.emptyIcon{width:62px;height:62px;border-radius:18px;background:var(--green);color:#f0c674;display:grid;place-items:center;font-size:28px;font-weight:900}
+.emptyState h2{margin:0 0 8px;font-family:Georgia,"Times New Roman",serif;font-size:34px}
+.emptyState .btn{margin-top:18px}
+.narrowEvent{max-width:950px}
+.eventHero{min-height:470px;border-radius:30px;background-position:center;background-size:cover;display:flex;flex-direction:column;justify-content:end;padding:40px;color:#fff;overflow:hidden}
+.eventHero h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,6vw,72px);line-height:.98;margin:12px 0}
+.eventHero p{margin:0;color:#e3efe9;font-size:14px}
+.eventDetailGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}
+.contentCard{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;margin-top:18px}
+.contentCard h2{font-family:Georgia,"Times New Roman",serif;font-size:30px;margin:9px 0 10px}
+.contentCard p{color:#596960;line-height:1.8}
+.prose{white-space:pre-wrap;color:#596960;line-height:1.8}
+.loginPage{background:linear-gradient(180deg,#eff4ef,#f8f6ef)}
+.loginWrap{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;min-height:70vh}
+.loginIntro{padding:35px 0}
+.loginIntro h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(42px,5vw,68px);line-height:1;margin:13px 0}
+.loginEyebrow{background:var(--green);border-color:var(--green);color:#fff}
+.loginFacts{display:flex;gap:9px;flex-wrap:wrap;font-size:11px;font-weight:800;color:#607068}
+.loginCard{background:#fff;border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:0 20px 50px rgba(16,35,28,.09);display:grid;gap:17px}
+.loginCardHead{display:flex;gap:13px;align-items:center;border-bottom:1px solid #ece8df;padding-bottom:17px}
+.loginCardHead>div{display:grid;gap:3px}.loginCardHead span:not(.brandmark){font-size:12px;color:var(--muted)}
+.loginCard label{display:grid;gap:7px;font-weight:850;font-size:13px}
+.loginCard input{width:100%;border:1px solid #dcd8ce;border-radius:12px;padding:13px;background:#fff;outline:none}
+.loginCard input:focus{border-color:var(--green);box-shadow:0 0 0 3px #0b5d3b15}
+.loginBack{font-size:12px;color:var(--green);font-weight:900;text-align:center}
+@media(max-width:950px){.eventGrid{grid-template-columns:1fr 1fr}.loginWrap{grid-template-columns:1fr;max-width:700px}.loginIntro{padding-top:20px}}
+@media(max-width:640px){.eventGrid,.eventDetailGrid{grid-template-columns:1fr}.emptyState{grid-template-columns:1fr}.eventHero{min-height:420px;padding:26px}.loginWrap{min-height:auto}.loginIntro h1{font-size:44px}}
