@@ -24,7 +24,7 @@ export async function createArticle(formData: FormData) {
   const title = String(formData.get('title') || '').trim(), content = String(formData.get('content') || '').trim()
   if (!title || !content) throw new Error('Le titre et le contenu sont obligatoires.')
   const published = formData.get('published') === 'on'
-  const { error } = await supabase.from('niger_articles').insert({ title, slug: `${slugify(title)}-${Date.now()}`, category: text(formData,'category') || 'culture', excerpt: text(formData,'excerpt'), content, cover_url: text(formData,'cover_url'), author_name: text(formData,'author_name') || 'Abdourahamane Mohamed', published, published_at: published ? new Date().toISOString() : null })
+  const { error } = await supabase.from('niger_articles').insert({ title, slug: `${slugify(title)}-${Date.now()}`, category: text(formData,'category') || 'culture', excerpt: text(formData,'excerpt') || '', content, cover_url: text(formData,'cover_url'), author_name: text(formData,'author_name') || 'Abdourahamane Mohamed', published, published_at: published ? new Date().toISOString() : null })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/articles'); revalidatePath('/')
 }
@@ -40,7 +40,7 @@ export async function createAdvertisement(formData: FormData) {
 export async function createRegion(formData: FormData) {
   const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
   if (!name) throw new Error('Le nom de la région est obligatoire.')
-  const { error } = await supabase.from('niger_regions').insert({ name, slug: slugify(name), description: text(formData,'description'), cover_url: text(formData,'cover_url') })
+  const { error } = await supabase.from('niger_regions').insert({ name, slug: slugify(name), description: text(formData,'description') || '', cover_url: text(formData,'cover_url') })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/regions'); revalidatePath('/regions')
 }
@@ -48,7 +48,7 @@ export async function createRegion(formData: FormData) {
 export async function createWonder(formData: FormData) {
   const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
   if (!name) throw new Error('Le nom de la merveille est obligatoire.')
-  const { error } = await supabase.from('niger_wonders').insert({ name, slug: `${slugify(name)}-${Date.now()}`, category_id: text(formData,'category_id'), region_id: text(formData,'region_id'), short_description: text(formData,'short_description'), description: text(formData,'description'), history: text(formData,'history'), why_visit: text(formData,'why_visit'), latitude: formData.get('latitude') ? Number(formData.get('latitude')) : null, longitude: formData.get('longitude') ? Number(formData.get('longitude')) : null, cover_url: text(formData,'cover_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on', featured: formData.get('featured') === 'on' })
+  const { error } = await supabase.from('niger_wonders').insert({ name, slug: `${slugify(name)}-${Date.now()}`, category_id: text(formData,'category_id'), region_id: text(formData,'region_id'), short_description: text(formData,'short_description') || '', description: text(formData,'description') || '', history: text(formData,'history') || '', why_visit: text(formData,'why_visit') || '', latitude: formData.get('latitude') ? Number(formData.get('latitude')) : null, longitude: formData.get('longitude') ? Number(formData.get('longitude')) : null, cover_url: text(formData,'cover_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on', featured: formData.get('featured') === 'on' })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/merveilles'); revalidatePath('/merveilles'); revalidatePath('/')
 }
@@ -56,7 +56,7 @@ export async function createWonder(formData: FormData) {
 export async function createCulture(formData: FormData) {
   const supabase = await getAdminClient(), title = String(formData.get('title') || '').trim()
   if (!title) throw new Error('Le titre est obligatoire.')
-  const { error } = await supabase.from('niger_cultures').insert({ title, slug: `${slugify(title)}-${Date.now()}`, region_id: text(formData,'region_id'), language: text(formData,'language'), traditions: text(formData,'traditions'), clothing: text(formData,'clothing'), gastronomy: text(formData,'gastronomy'), music_dance: text(formData,'music_dance'), crafts: text(formData,'crafts'), festivals: text(formData,'festivals'), history: text(formData,'history'), cover_url: text(formData,'cover_url'), published: formData.get('published') === 'on' })
+  const { error } = await supabase.from('niger_cultures').insert({ title, slug: `${slugify(title)}-${Date.now()}`, region_id: text(formData,'region_id'), language: text(formData,'language'), traditions: text(formData,'traditions') || '', clothing: text(formData,'clothing') || '', gastronomy: text(formData,'gastronomy') || '', music_dance: text(formData,'music_dance') || '', crafts: text(formData,'crafts') || '', festivals: text(formData,'festivals') || '', history: text(formData,'history') || '', cover_url: text(formData,'cover_url'), published: formData.get('published') === 'on' })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/cultures'); revalidatePath('/culture')
 }
@@ -64,7 +64,7 @@ export async function createCulture(formData: FormData) {
 export async function createGastronomy(formData: FormData) {
   const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
   if (!name) throw new Error('Le nom du plat est obligatoire.')
-  const { error } = await supabase.from('niger_gastronomy').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), description: text(formData,'description'), ingredients: text(formData,'ingredients'), preparation: text(formData,'preparation'), history: text(formData,'history'), image_url: text(formData,'image_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on' })
+  const { error } = await supabase.from('niger_gastronomy').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), description: text(formData,'description') || '', ingredients: text(formData,'ingredients') || '', preparation: text(formData,'preparation') || '', history: text(formData,'history') || '', image_url: text(formData,'image_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on' })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/gastronomie')
 }
