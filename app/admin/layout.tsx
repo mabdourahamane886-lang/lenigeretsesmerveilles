@@ -3,6 +3,7 @@ import { createClient } from '../../lib/supabase/server'
 
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const supabase = await createClient()
+
   if (!supabase) redirect('/admin-login?error=config')
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -12,9 +13,13 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
     .from('niger_admins')
     .select('user_id,role')
     .eq('user_id', user.id)
+    .eq('role', 'admin')
     .maybeSingle()
 
-  if (!admin) redirect('/admin-login?error=unauthorized')
+  if (!admin) {
+    await supabase.auth.signOut()
+    redirect('/admin-login?error=unauthorized')
+  }
 
   return children
 }
