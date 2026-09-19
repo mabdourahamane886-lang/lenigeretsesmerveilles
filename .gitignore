@@ -1,5 +1,7 @@
 node_modules
 .next
+.open-next
+.wrangler
 out
 .env
 .env.local
@@ -7,3 +9,4 @@ out
 .vercel
 .DS_Store
 npm-debug.log*
+cloudflare-env.d.ts
