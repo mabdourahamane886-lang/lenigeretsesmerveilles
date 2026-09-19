@@ -18,7 +18,7 @@ export default async function EvenementsPage() {
     ? await supabase.from('niger_events').select('id,name,slug,city,starts_at,ends_at,description,location,image_url,published').eq('published',true).order('starts_at',{ascending:true})
     : {data:null}
 
-  const featured=events?.[0]
+  const featured = events && events.length > 0 ? events[0] : null
 
   return (
     <>
@@ -30,7 +30,7 @@ export default async function EvenementsPage() {
             <div className="contentHeaderMark"><CalendarDays size={24}/><span>Agenda culturel</span></div>
           </div>
 
-          {!events?.length ? (
+          {!featured ? (
             <div className="catalogEmpty large"><CalendarDays size={25}/><div><strong>L’agenda se prépare.</strong><span>Les prochains événements publiés apparaîtront ici.</span></div><Link className="proButton proButtonDark" href="/contribution">Proposer un événement <Send size={15}/></Link></div>
           ) : (
             <>
