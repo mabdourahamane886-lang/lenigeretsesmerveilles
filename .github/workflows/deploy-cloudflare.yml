@@ -5,6 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Rebuild marker: Bickri Service Agency / Supabase backend
+
 concurrency:
   group: cloudflare-production
   cancel-in-progress: true
