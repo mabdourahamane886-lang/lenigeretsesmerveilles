@@ -2164,3 +2164,39 @@ body{
   .siteMobileMenu{display:block;position:relative;flex:0 0 auto;margin-left:0;order:0}
   .siteMobileMenu summary{display:grid;place-items:center}
 }
+
+
+/* Contribution page — clear editorial hierarchy */
+.contributionPage .contributionIntro{
+  margin-bottom:32px;
+}
+.contributionPage .contributionIntro .kicker{
+  margin:0 0 9px;
+}
+.contributionPage .contributionIntro h1{
+  margin:0;
+  max-width:760px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(42px,6vw,68px);
+  line-height:.98;
+  letter-spacing:-2.5px;
+}
+.contributionPage .contributionIntro .lead{
+  margin:17px 0 0;
+  max-width:760px;
+  font-size:17px;
+  line-height:1.7;
+}
+.contributionHint{
+  margin:8px 0 0;
+  color:#7a8780;
+  font-size:12px;
+  line-height:1.6;
+}
+.contributionPage .contributionForm{
+  margin-top:0;
+}
+@media(max-width:640px){
+  .contributionPage .contributionIntro h1{font-size:43px;letter-spacing:-1.8px}
+  .contributionPage .contributionIntro .lead{font-size:16px}
+}
