@@ -9,7 +9,10 @@ import {
   Send,
   Sparkles,
   Utensils,
+  ShieldCheck,
+  PlusCircle,
 } from 'lucide-react'
+import { createClient } from '../../lib/supabase/server'
 
 const navItems = [
   { label: 'Régions', href: '/regions', icon: Compass },
@@ -24,7 +27,24 @@ const mobileItems = [
   { label: 'Photothèque', href: '/media', icon: Camera },
 ]
 
-export default function Header() {
+export default async function Header() {
+  const supabase = await createClient()
+  let isAdmin = false
+
+  if (supabase) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: admin } = await supabase
+        .from('niger_admins')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle()
+
+      isAdmin = Boolean(admin)
+    }
+  }
+
   return (
     <>
       <div className="siteNotice">
@@ -69,7 +89,9 @@ export default function Header() {
             </Link>
 
             <details className="siteMobileMenu">
-              <summary aria-label="Ouvrir le menu mobile"><Menu size={20} /></summary>
+              <summary aria-label="Ouvrir le menu principal">
+                <Menu size={20} />
+              </summary>
               <div className="siteMobilePanel">
                 <div className="siteMobileHead">
                   <span>Navigation</span>
@@ -83,6 +105,24 @@ export default function Header() {
                   <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
                   <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
                   <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
+
+                  {isAdmin && (
+                    <>
+                      <div className="siteMobileAdminDivider" aria-hidden="true" />
+                      <Link className="siteMobileAdminLink" href="/admin">
+                        <ShieldCheck size={17} />
+                        <span>Administration</span>
+                      </Link>
+                      <Link className="siteMobileAdminPublish" href="/admin/evenements">
+                        <PlusCircle size={17} />
+                        <span>Publier un événement</span>
+                      </Link>
+                      <Link className="siteMobileAdminPublish" href="/admin/articles">
+                        <PlusCircle size={17} />
+                        <span>Publier un article</span>
+                      </Link>
+                    </>
+                  )}
                 </nav>
               </div>
             </details>
