@@ -11,6 +11,16 @@ type HomeWonder = {
   type: string
   text: string
   image?: string | null
+  source?: string | null
+}
+
+type HomeEvent = {
+  id: string
+  slug: string
+  name: string
+  city?: string | null
+  starts_at?: string | null
+  description?: string | null
 }
 
 const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
@@ -19,15 +29,17 @@ const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
   type: wonder.type,
   text: wonder.text,
   image: wonder.image,
+  source: wonder.credit ? `${wonder.credit.source} · ${wonder.credit.author} · ${wonder.credit.license}` : null,
 }))
 
 async function getHomeData() {
   const supabase = await createClient()
-  if (!supabase) return { wonders: staticWonders, regions: fallbackRegions }
+  if (!supabase) return { wonders: staticWonders, regions: fallbackRegions, events: [] as HomeEvent[] }
 
-  const [{ data: publishedWonders }, { data: regions }] = await Promise.all([
+  const [{ data: publishedWonders }, { data: regions }, { data: events }] = await Promise.all([
     supabase.from('niger_wonders').select('id,name,short_description,description,cover_url,published,featured').eq('published', true).order('featured', { ascending: false }).order('name').limit(6),
     supabase.from('niger_regions').select('id,name,slug,description').order('name'),
+    supabase.from('niger_events').select('id,name,slug,city,starts_at,description,published').eq('published', true).gte('starts_at', new Date().toISOString()).order('starts_at').limit(3),
   ])
 
   const homeWonders: HomeWonder[] = publishedWonders?.length
@@ -40,11 +52,11 @@ async function getHomeData() {
       }))
     : staticWonders
 
-  return { wonders: homeWonders, regions: regions?.length ? regions : fallbackRegions }
+  return { wonders: homeWonders, regions: regions?.length ? regions : fallbackRegions, events: events || [] }
 }
 
 export default async function Home() {
-  const { wonders: homeWonders, regions } = await getHomeData()
+  const { wonders: homeWonders, regions, events } = await getHomeData()
 
   return (
     <>
@@ -92,6 +104,7 @@ export default async function Home() {
                     <span className="tag">{wonder.type}</span>
                     <h3>{wonder.name}</h3>
                     <p>{wonder.text}</p>
+                    {wonder.source && <span className="imageCredit">{wonder.source}</span>}
                     <Link className="cardLink" href="/merveilles">Découvrir <span>↗</span></Link>
                   </div>
                 </article>
@@ -118,6 +131,33 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        {events.length > 0 && (
+          <section className="section">
+            <div className="container">
+              <div className="sectionHead">
+                <div><div className="kicker">Agenda du Niger</div><h2>Les prochains rendez-vous</h2><p className="sectionLead">Événements culturels, festivals et rencontres publiés sur la plateforme.</p></div>
+                <Link className="textlink" href="/evenements">Tout l’agenda <span>→</span></Link>
+              </div>
+              <div className="eventGrid homeEventGrid">
+                {events.map((event) => (
+                  <article className="eventCard" key={event.id}>
+                    <div className="eventImage homeEventImage">
+                      <span className="eventBadge">🇳🇪 Niger</span>
+                      <span className="eventDate">{event.starts_at ? new Intl.DateTimeFormat('fr-FR', { day:'2-digit', month:'short', year:'numeric' }).format(new Date(event.starts_at)) : 'À confirmer'}</span>
+                    </div>
+                    <div className="eventBody">
+                      <div className="eventMeta">{event.city || 'Niger'}</div>
+                      <h2>{event.name}</h2>
+                      <p>{event.description || 'Découvrez cet événement au Niger.'}</p>
+                      <Link className="cardLink" href={`/evenements/${event.slug}`}>Voir l’événement <span>→</span></Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="section">
           <div className="container">
