@@ -47,15 +47,41 @@ export default async function Header() {
 
   return (
     <>
-      <div className="siteNotice">
-        <div className="container siteNoticeInner">
-          <span><strong>🇳🇪 Le Niger et ses Merveilles</strong><span className="siteNoticeSep">·</span> Culture · patrimoine · territoires</span>
-          <span className="siteNoticeRight">Une plateforme éditoriale ouverte aux contributions</span>
-        </div>
-      </div>
-
       <header className="siteHeader">
         <div className="container siteHeaderInner">
+          <details className="siteMobileMenu">
+            <summary aria-label="Ouvrir le menu principal"><Menu size={20} /></summary>
+            <div className="siteMobilePanel">
+              <div className="siteMobileHead">
+                <span>Navigation</span>
+                <span className="siteMiniFlag">🇳🇪</span>
+              </div>
+              <nav aria-label="Navigation mobile">
+                {mobileItems.map(({ label, href, icon: Icon }) => (
+                  <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
+                ))}
+                <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
+                <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
+                <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
+                <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
+                {isAdmin && (
+                  <>
+                    <div className="siteMobileAdminDivider" aria-hidden="true" />
+                    <Link className="siteMobileAdminLink" href="/admin">
+                      <ShieldCheck size={17} /><span>Administration</span>
+                    </Link>
+                    <Link className="siteMobileAdminPublish" href="/admin/evenements">
+                      <PlusCircle size={17} /><span>Publier un événement</span>
+                    </Link>
+                    <Link className="siteMobileAdminPublish" href="/admin/articles">
+                      <PlusCircle size={17} /><span>Publier un article</span>
+                    </Link>
+                  </>
+                )}
+              </nav>
+            </div>
+          </details>
+
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles, accueil">
             <span className="siteBrandMark" aria-hidden="true">
               <span />
@@ -88,44 +114,7 @@ export default async function Header() {
               Contribuer
             </Link>
 
-            <details className="siteMobileMenu">
-              <summary aria-label="Ouvrir le menu principal">
-                <Menu size={20} />
-              </summary>
-              <div className="siteMobilePanel">
-                <div className="siteMobileHead">
-                  <span>Navigation</span>
-                  <span className="siteMiniFlag">🇳🇪</span>
-                </div>
-                <nav aria-label="Navigation mobile">
-                  {mobileItems.map(({ label, href, icon: Icon }) => (
-                    <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
-                  ))}
-                  <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
-                  <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
-                  <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
-                  <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
 
-                  {isAdmin && (
-                    <>
-                      <div className="siteMobileAdminDivider" aria-hidden="true" />
-                      <Link className="siteMobileAdminLink" href="/admin">
-                        <ShieldCheck size={17} />
-                        <span>Administration</span>
-                      </Link>
-                      <Link className="siteMobileAdminPublish" href="/admin/evenements">
-                        <PlusCircle size={17} />
-                        <span>Publier un événement</span>
-                      </Link>
-                      <Link className="siteMobileAdminPublish" href="/admin/articles">
-                        <PlusCircle size={17} />
-                        <span>Publier un article</span>
-                      </Link>
-                    </>
-                  )}
-                </nav>
-              </div>
-            </details>
           </div>
         </div>
       </header>
