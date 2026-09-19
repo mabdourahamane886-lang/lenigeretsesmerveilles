@@ -82,7 +82,7 @@ export async function createEvent(formData: FormData) {
   if (endDate && endDate < startDate) throw new Error('La date de fin doit être après le début.')
   const { error } = await supabase.from('niger_events').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), city: text(formData,'city'), starts_at: startDate.toISOString(), ends_at: endDate?.toISOString() ?? null, description: text(formData,'description') || '', program: text(formData,'program') || '', location: text(formData,'location'), image_url: text(formData,'image_url'), published: formData.get('published') === 'on' })
   if (error) throw new Error(error.message)
-  revalidatePath('/admin/evenements')
+  revalidatePath('/admin/evenements'); revalidatePath('/evenements'); revalidatePath('/')
 }
 
 
@@ -101,4 +101,29 @@ export async function reviewContribution(formData: FormData) {
 
   if (error) throw new Error(error.message)
   revalidatePath('/admin/contributions')
+}
+
+
+export async function createMedia(formData: FormData) {
+  const supabase = await getAdminClient()
+  const title = String(formData.get('title') || '').trim()
+  const url = String(formData.get('url') || '').trim()
+  const credit = String(formData.get('credit') || '').trim()
+  if (!title || !url || !credit) throw new Error('Le titre, l’URL et le crédit sont obligatoires.')
+
+  const { error } = await supabase.from('niger_media').insert({
+    title,
+    description: text(formData, 'description') || '',
+    media_type: 'photo',
+    url,
+    credit,
+    region_id: text(formData, 'region_id'),
+    wonder_id: text(formData, 'wonder_id'),
+    published: formData.get('published') === 'on',
+  })
+
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin/medias')
+  revalidatePath('/media')
+  revalidatePath('/')
 }
