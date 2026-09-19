@@ -1,3 +1,5 @@
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mabdourahamane886-lang/lenigeretsesmerveilles)
+
 # Le Niger et ses Merveilles 🇳🇪
 
 Plateforme web nigérienne de découverte, d'événements, de culture, de patrimoine, de gastronomie et de contributions citoyennes.
