@@ -1,4 +1,4 @@
-name: verify-web-app
+name: verify-cloudflare-app
 
 on:
   push:
@@ -7,8 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,4 +21,4 @@ jobs:
           cache: npm
       - run: npm install
       - run: npm run lint
-      - run: npm run build
+      - run: npm run build:cloudflare
