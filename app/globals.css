@@ -424,7 +424,7 @@ body{
   box-shadow:0 9px 22px rgba(11,106,67,.18);
 }
 .siteContributeButton:hover{background:var(--green-dark);transform:translateY(-1px)}
-.siteMobileMenu{display:none;position:relative}
+.siteMobileMenu{display:none;position:relative;flex:none}
 .siteMobileMenu>summary{
   list-style:none;
   width:41px;
@@ -478,6 +478,12 @@ body{
   color:#fff;
 }
 .siteMiniFlag{font-size:15px}
+.contributionPage .narrow{max-width:820px}
+.contributionIntro{margin-bottom:28px}
+.contributionIntro .kicker{display:block;margin-bottom:10px;line-height:1.2}
+.contributionIntro h1{margin:0;line-height:1.04;font-size:clamp(40px,6vw,68px)}
+.contributionPage .lead{margin-top:16px}
+
 .siteMobileAdminDivider{
   height:1px;
   margin:7px 8px;
@@ -1262,7 +1268,8 @@ body{
 }
 @media(max-width:950px){
   .siteNav{display:none}
-  .siteMobileMenu{display:block}
+  .siteMobileMenu{display:block;position:relative;margin-right:auto;order:-1}
+
   .proHeroGrid{
     grid-template-columns:1fr;
     padding:78px 0 100px;
