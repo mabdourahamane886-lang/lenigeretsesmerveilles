@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { ArrowRight, BookOpenText, Drum, HandHeart, Languages } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
@@ -5,24 +7,46 @@ import { createClient } from '../../lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 const sections = [
-  ['👥','Peuples & traditions','Histoires, langues, vêtements, pratiques et savoir-faire.'],
-  ['🍲','Gastronomie','Plats, produits locaux et traditions culinaires.'],
-  ['🎭','Événements','Festivals, rencontres et rendez-vous culturels.'],
-  ['🧵','Artisanat','Créations, métiers d’art et savoir-faire transmis.'],
+  { icon: Languages, title: 'Langues & peuples', text: 'Une diversité linguistique et humaine à documenter avec précision.' },
+  { icon: HandHeart, title: 'Traditions & savoir-faire', text: 'Des pratiques transmises, adaptées et préservées au fil des générations.' },
+  { icon: Drum, title: 'Musique & célébrations', text: 'Rythmes, cérémonies, festivals et formes d’expression culturelle.' },
+  { icon: BookOpenText, title: 'Histoire & mémoire', text: 'Des récits qui permettent de mieux comprendre les territoires.' },
 ]
 
 export default async function CulturePage() {
   const supabase = await createClient()
-  const { data: cultures } = supabase ? await supabase.from('niger_cultures').select('id,title,slug,language,traditions,history,cover_url').eq('published',true).order('title') : { data: [] }
+  const { data: cultures } = supabase
+    ? await supabase.from('niger_cultures').select('id,title,slug,language,traditions,history,cover_url').eq('published', true).order('title')
+    : { data: [] }
 
-  return <><Header/><main className="page"><div className="container">
-    <div className="kicker">Identité & patrimoine</div><h1>Culture du Niger</h1>
-    <p className="lead">Une porte d’entrée vers la diversité culturelle, les traditions et les savoir-faire du Niger.</p>
-    <div className="detailGrid">{sections.map(([icon,title,text])=><section className="detailCard" key={title}><span>{icon}</span><h2>{title}</h2><p>{text}</p></section>)}</div>
-    <section className="sectionInner"><div className="sectionHead"><div><div className="kicker">Contenus publiés</div><h2>Découvrir les cultures</h2></div></div>
-      {!cultures?.length ? <div className="emptyState"><span className="emptyIcon">✦</span><div><h2>La mémoire culturelle se construit</h2><p className="muted">Les fiches culturelles validées par l’administration apparaîtront ici.</p></div></div> :
-      <div className="grid">{cultures.map((culture)=><article className="card" key={culture.id}><div className="cardimg" style={culture.cover_url?{backgroundImage:`url(${culture.cover_url})`}:undefined}/><div className="cardbody"><span className="tag">{culture.language || 'Culture'}</span><h3>{culture.title}</h3><p>{culture.history || culture.traditions || 'Traditions et patrimoine culturel du Niger.'}</p></div></article>)}</div>}
-    </section>
-    <div className="notice"><strong>Construisons cette mémoire ensemble.</strong><p>Les contenus culturels peuvent être proposés par des contributeurs puis vérifiés avant publication.</p></div>
-  </div></main><Footer/></>
+  return (
+    <>
+      <Header />
+      <main className="page">
+        <div className="container">
+          <section className="cultureHero">
+            <div><span className="kicker">Identité & patrimoine</span><h1>La culture du Niger est un territoire à part entière.</h1><p>Explorez les langues, les peuples, les traditions, l’artisanat, la mémoire et les pratiques qui donnent au Niger sa richesse culturelle.</p><Link className="proButton proButtonPrimary" href="/contribution">Participer à la mémoire culturelle <ArrowRight size={15}/></Link></div>
+            <div className="cultureHeroMark"><span>🇳🇪</span><small>Culture · Mémoire · Transmission</small></div>
+          </section>
+
+          <section className="catalogSection">
+            <div className="contentHeader"><div><span className="kicker">Explorer par thème</span><h2>Quatre portes d’entrée.</h2></div></div>
+            <div className="themeGrid">{sections.map(({ icon: Icon, title, text }) => <article className="themeCard" key={title}><span className="themeIcon"><Icon size={19}/></span><h3>{title}</h3><p>{text}</p></article>)}</div>
+          </section>
+
+          <section className="catalogSection">
+            <div className="contentHeader"><div><span className="kicker">Contenus publiés</span><h2>Découvrir les cultures.</h2><p>Des fiches culturelles publiées et vérifiées par l’administration.</p></div></div>
+            {!cultures?.length ? (
+              <div className="catalogEmpty large"><BookOpenText size={24}/><div><strong>La mémoire culturelle se construit.</strong><span>Les premières fiches vérifiées apparaîtront ici.</span></div></div>
+            ) : (
+              <div className="catalogGrid">{cultures.map(culture => <article className="catalogCard" key={culture.id}><div className="catalogImage" style={culture.cover_url ? {backgroundImage:'url(' + culture.cover_url + ')'} : undefined}><span className="catalogPill">{culture.language || 'Culture'}</span></div><div className="catalogBody"><h3>{culture.title}</h3><p>{culture.history || culture.traditions || 'Traditions et patrimoine culturel du Niger.'}</p><span className="cardLink">Lire la fiche <ArrowRight size={14}/></span></div></article>)}</div>
+            )}
+          </section>
+
+          <section className="notice proNotice"><strong>Une plateforme nourrie par la communauté.</strong><p>Vous pouvez proposer une tradition, un récit, une langue, un artisanat ou une source documentaire. Chaque contenu est vérifié avant publication.</p><Link className="textlink" href="/contribution">Contribuer <ArrowRight size={15}/></Link></section>
+        </div>
+      </main>
+      <Footer />
+    </>
+  )
 }
