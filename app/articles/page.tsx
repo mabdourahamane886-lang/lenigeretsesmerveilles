@@ -29,13 +29,13 @@ export default async function ArticlesPage() {
           ) : (
             <>
               <section className="featuredArticle">
-                <div className="featuredArticleImage" style={featured.cover_url ? { backgroundImage: 'url(' + featured.cover_url + ')' } : undefined} />
+                <div className="featuredArticleImage" style={featured!.cover_url ? { backgroundImage: 'url(' + featured!.cover_url + ')' } : undefined} />
                 <div className="featuredArticleBody">
-                  <span className="proMiniLabel">{featured.category || 'À la une'}</span>
-                  <h2>{featured.title}</h2>
-                  <p>{featured.excerpt || 'Découvrez cette publication consacrée au Niger.'}</p>
-                  <div className="articleMeta">{featured.author_name || 'Rédaction'}{featured.published_at ? ' · ' + new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'long',year:'numeric'}).format(new Date(featured.published_at)) : ''}</div>
-                  <Link className="proButton proButtonDark" href={'/articles/' + featured.slug}>Lire l’article <ArrowRight size={15}/></Link>
+                  <span className="proMiniLabel">{featured!.category || 'À la une'}</span>
+                  <h2>{featured!.title}</h2>
+                  <p>{featured!.excerpt || 'Découvrez cette publication consacrée au Niger.'}</p>
+                  <div className="articleMeta">{featured!.author_name || 'Rédaction'}{featured!.published_at ? ' · ' + new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'long',year:'numeric'}).format(new Date(featured!.published_at)) : ''}</div>
+                  <Link className="proButton proButtonDark" href={'/articles/' + featured!.slug}>Lire l’article <ArrowRight size={15}/></Link>
                 </div>
               </section>
 
