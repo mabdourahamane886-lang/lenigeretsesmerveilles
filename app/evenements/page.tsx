@@ -14,11 +14,12 @@ function formatEventDate(value?: string | null) {
 
 export default async function EvenementsPage() {
   const supabase=await createClient()
-  const {data:events}=supabase
+  const {data}=supabase
     ? await supabase.from('niger_events').select('id,name,slug,city,starts_at,ends_at,description,location,image_url,published').eq('published',true).order('starts_at',{ascending:true})
-    : {data:null}
+    : {data:[]}
 
-  const featured = events && events.length > 0 ? events[0] : null
+  const events = data ?? []
+  const featured = events[0] ?? null
 
   return (
     <>
