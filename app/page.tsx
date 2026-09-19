@@ -6,7 +6,6 @@ import {
   Camera,
   ChevronRight,
   Compass,
-  MapPinned,
   Send,
   Sparkles,
   Utensils,
