@@ -72,7 +72,33 @@ export async function createGastronomy(formData: FormData) {
 export async function createEvent(formData: FormData) {
   const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
   if (!name) throw new Error('Le nom de l’événement est obligatoire.')
-  const { error } = await supabase.from('niger_events').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), city: text(formData,'city'), starts_at: text(formData,'starts_at'), ends_at: text(formData,'ends_at'), description: text(formData,'description'), program: text(formData,'program'), location: text(formData,'location'), image_url: text(formData,'image_url'), published: formData.get('published') === 'on' })
+  const startsAt = String(formData.get('starts_at') || '').trim()
+  const endsAt = String(formData.get('ends_at') || '').trim()
+  if (!startsAt) throw new Error('La date de début est obligatoire.')
+  const startDate = new Date(startsAt)
+  const endDate = endsAt ? new Date(endsAt) : null
+  if (Number.isNaN(startDate.getTime())) throw new Error('La date de début est invalide.')
+  if (endDate && Number.isNaN(endDate.getTime())) throw new Error('La date de fin est invalide.')
+  if (endDate && endDate < startDate) throw new Error('La date de fin doit être après le début.')
+  const { error } = await supabase.from('niger_events').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), city: text(formData,'city'), starts_at: startDate.toISOString(), ends_at: endDate?.toISOString() ?? null, description: text(formData,'description') || '', program: text(formData,'program') || '', location: text(formData,'location'), image_url: text(formData,'image_url'), published: formData.get('published') === 'on' })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/evenements')
+}
+
+
+export async function reviewContribution(formData: FormData) {
+  const supabase = await getAdminClient()
+  const id = String(formData.get('id') || '').trim()
+  const status = String(formData.get('status') || '').trim()
+  const reviewerNotes = text(formData, 'reviewer_notes')
+  if (!id || !['approved', 'rejected', 'pending'].includes(status)) throw new Error('Décision de modération invalide.')
+
+  const { error } = await supabase.from('niger_contributions').update({
+    status,
+    reviewer_notes: reviewerNotes,
+    reviewed_at: status === 'pending' ? null : new Date().toISOString(),
+  }).eq('id', id)
+
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin/contributions')
 }
