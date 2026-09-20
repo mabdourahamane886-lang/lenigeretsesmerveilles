@@ -3,24 +3,15 @@
 import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
 
 export default function LoginForm({
   next,
   errorCode,
-  supabaseUrl,
-  supabasePublishableKey,
 }: {
   next: string
   errorCode?: string
-  supabaseUrl?: string
-  supabasePublishableKey?: string
 }) {
   const router = useRouter()
-  const supabase =
-    supabaseUrl && supabasePublishableKey
-      ? createBrowserClient(supabaseUrl, supabasePublishableKey)
-      : null
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(
@@ -37,21 +28,22 @@ export default function LoginForm({
     setError(null)
     setPending(true)
 
-    if (!supabase) {
-      setError('La configuration Supabase est indisponible sur Vercel.')
-      setPending(false)
-      return
-    }
+    try {
+      const response = await fetch('/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
 
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      const result = await response.json()
 
-    if (authError) {
-      setError('Adresse e-mail ou mot de passe incorrect.')
-      setPending(false)
-      return
-    }
+      if (!response.ok) {
+        setError(result.error ?? 'Impossible de se connecter.')
+        setPending(false)
+        return
+      }
 
-    router.replace(next)
+      router.replace(next)
     router.refresh()
   }
 
