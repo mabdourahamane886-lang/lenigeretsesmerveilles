@@ -1,0 +1,4 @@
+import type {Metadata} from 'next'
+import {createClient} from '../../../lib/supabase/server'
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const {slug}=await params;const supabase=await createClient();const {data}=supabase?await supabase.from('niger_articles').select('title,excerpt,cover_url,author_name').eq('slug',slug).eq('published',true).maybeSingle():{data:null};return {title:data?.title||'Article',description:data?.excerpt||'Histoire, culture et patrimoine du Niger.',authors:data?.author_name?[{name:data.author_name}]:undefined,openGraph:{type:'article',title:data?.title||'Article',description:data?.excerpt||'Le Niger et ses Merveilles',images:data?.cover_url?[{url:data.cover_url}]:undefined}}}
+export default function Layout({children}:{children:React.ReactNode}){return children}
