@@ -1,0 +1,6 @@
+import Link from 'next/link'
+import Header from '../../components/site/header'
+import Footer from '../../components/site/footer'
+export const metadata={title:'Plan du site',description:'Plan du site et accès rapide aux principales rubriques du Niger et ses Merveilles.'}
+const links=[['Accueil','/'],['Régions','/regions'],['Merveilles','/merveilles'],['Culture','/culture'],['Gastronomie','/gastronomie'],['Événements','/evenements'],['Photothèque','/media'],['Articles','/articles'],['Carte','/carte'],['Explorer','/explorer'],['À propos','/a-propos'],['Méthodologie','/methodologie'],['Contact','/contact'],['Contribuer','/contribution'],['Signaler une erreur','/signaler'],['Favoris','/favoris'],['Explorer autour de moi','/autour-de-moi']]
+export default function Page(){return <><Header/><main className="page"><div className="container"><span className="kicker">Navigation</span><h1>Plan du site</h1><p className="lead">Accédez directement aux principales rubriques de la plateforme.</p><div className="regionGrid">{links.map(([label,href])=><Link className="region regionLight" href={href} key={href}><b>{label}</b><strong>Ouvrir <span>→</span></strong></Link>)}</div></div></main><Footer/></>}
