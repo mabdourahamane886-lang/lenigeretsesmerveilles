@@ -6,9 +6,6 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
   const params = await searchParams
   const next = params.next?.startsWith('/admin') ? params.next : '/admin'
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-
   return (
     <main className="page loginPage">
       <div className="container loginWrap">
@@ -24,8 +21,6 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
         <LoginForm
           next={next}
           errorCode={params.error}
-          supabaseUrl={supabaseUrl}
-          supabasePublishableKey={supabasePublishableKey}
         />
       </div>
     </main>
