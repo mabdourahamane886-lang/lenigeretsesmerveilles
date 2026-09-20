@@ -2200,3 +2200,65 @@ body{
   .contributionPage .contributionIntro h1{font-size:43px;letter-spacing:-1.8px}
   .contributionPage .contributionIntro .lead{font-size:16px}
 }
+
+
+/* Explorer cards — responsive imagery */
+.proExplorerCard{
+  position:relative;
+  overflow:hidden;
+  min-height:300px;
+  padding:0 !important;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  isolation:isolate;
+}
+.proExplorerCardMedia{
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  transform:scale(1.001);
+  transition:transform .35s ease;
+}
+.proExplorerCardContent{
+  position:relative;
+  z-index:1;
+  min-height:300px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:22px;
+  color:#fff;
+}
+.proExplorerCardContent .proExplorerTop{
+  margin-bottom:auto;
+}
+.proExplorerCardContent .proExplorerIcon{
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.28);
+  color:#fff;
+  backdrop-filter:blur(8px);
+}
+.proExplorerCardContent .proMiniLabel,
+.proExplorerCardContent h3,
+.proExplorerCardContent p{
+  color:#fff;
+}
+.proExplorerCardContent p{
+  opacity:.88;
+}
+.proExplorerCard:hover .proExplorerCardMedia{
+  transform:scale(1.045);
+}
+@media(max-width:640px){
+  .proExplorerCard,
+  .proExplorerCardContent{
+    min-height:260px;
+  }
+  .proExplorerCardContent{
+    padding:18px;
+  }
+}
