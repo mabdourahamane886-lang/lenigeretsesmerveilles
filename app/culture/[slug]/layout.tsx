@@ -1,0 +1,4 @@
+import type {Metadata} from 'next'
+import {createClient} from '../../../lib/supabase/server'
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const {slug}=await params;const supabase=await createClient();const {data}=supabase?await supabase.from('niger_cultures').select('title,history,traditions,cover_url').eq('slug',slug).eq('published',true).maybeSingle():{data:null};return {title:data?.title||'Culture du Niger',description:data?.history||data?.traditions||'Culture, traditions et mémoire du Niger.',openGraph:{title:data?.title||'Culture du Niger',description:data?.history||data?.traditions||'Culture du Niger',images:data?.cover_url?[{url:data.cover_url}]:undefined}}}
+export default function Layout({children}:{children:React.ReactNode}){return children}
