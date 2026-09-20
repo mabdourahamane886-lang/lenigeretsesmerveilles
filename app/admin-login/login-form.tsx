@@ -39,12 +39,16 @@ export default function LoginForm({
 
       if (!response.ok) {
         setError(result.error ?? 'Impossible de se connecter.')
-        setPending(false)
         return
       }
 
       router.replace(next)
-    router.refresh()
+      router.refresh()
+    } catch {
+      setError('Impossible de joindre le serveur. Réessayez dans un instant.')
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
