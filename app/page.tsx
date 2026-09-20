@@ -56,12 +56,12 @@ const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
 }))
 
 const explorerCards = [
-  { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Parcourez le Niger territoire par territoire.' },
-  { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Paysages, villes historiques et lieux remarquables.' },
-  { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Langues, savoir-faire, histoire et pratiques.' },
-  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.' },
-  { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Festivals, rencontres et événements à venir.' },
-  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.' },
+  { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Parcourez le Niger territoire par territoire.', image: nigerMedia.agadez.image, alt: 'Paysage d’Agadez, Niger' },
+  { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Paysages, villes historiques et lieux remarquables.', image: nigerMedia.tenere.image, alt: 'Paysage du désert du Ténéré, Niger' },
+  { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Langues, savoir-faire, histoire et pratiques.', image: nigerMedia.zinder.image, alt: 'Patrimoine culturel de Zinder, Niger' },
+  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.', image: nigerMedia.niamey.image, alt: 'Fleuve Niger à Niamey, Niger' },
+  { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Festivals, rencontres et événements à venir.', image: nigerMedia.parcW.image, alt: 'Paysage du Parc national du W, Niger' },
+  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.', image: nigerMedia.niamey.image, alt: 'Paysage du Niger à Niamey' },
 ]
 
 async function getHomeData() {
@@ -196,15 +196,23 @@ export default async function Home() {
             </div>
 
             <div className="proExplorerGrid">
-              {explorerCards.map(({ href, icon: Icon, label, title, text }) => (
+              {explorerCards.map(({ href, icon: Icon, label, title, text, image, alt }) => (
                 <Link href={href} className="proExplorerCard" key={href}>
-                  <div className="proExplorerTop">
-                    <span className="proExplorerIcon"><Icon size={18} /></span>
-                    <ChevronRight size={16} />
+                  <div
+                    className="proExplorerCardMedia"
+                    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,45,32,.08) 5%, rgba(5,45,32,.78) 100%), url(${image})` }}
+                    role="img"
+                    aria-label={alt}
+                  />
+                  <div className="proExplorerCardContent">
+                    <div className="proExplorerTop">
+                      <span className="proExplorerIcon"><Icon size={18} /></span>
+                      <ChevronRight size={16} />
+                    </div>
+                    <span className="proMiniLabel">{label}</span>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
                   </div>
-                  <span className="proMiniLabel">{label}</span>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
                 </Link>
               ))}
             </div>
