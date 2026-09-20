@@ -3,11 +3,24 @@
 import Link from 'next/link'
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '../../lib/supabase/client'
+import { createBrowserClient } from '@supabase/ssr'
 
-export default function LoginForm({ next, errorCode }: { next: string; errorCode?: string }) {
+export default function LoginForm({
+  next,
+  errorCode,
+  supabaseUrl,
+  supabasePublishableKey,
+}: {
+  next: string
+  errorCode?: string
+  supabaseUrl?: string
+  supabasePublishableKey?: string
+}) {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase =
+    supabaseUrl && supabasePublishableKey
+      ? createBrowserClient(supabaseUrl, supabasePublishableKey)
+      : null
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(
@@ -25,7 +38,7 @@ export default function LoginForm({ next, errorCode }: { next: string; errorCode
     setPending(true)
 
     if (!supabase) {
-      setError('La configuration Supabase est indisponible.')
+      setError('La configuration Supabase est indisponible sur Vercel.')
       setPending(false)
       return
     }
