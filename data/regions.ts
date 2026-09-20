@@ -1,10 +1,10 @@
 export const regions = [
-  { slug:'agadez', name:'Agadez', description:'Ville historique de l’Aïr, carrefour saharien et patrimoine architectural remarquable.' },
-  { slug:'diffa', name:'Diffa', description:'Une région marquée par les paysages du Manga, le lac Tchad et des traditions riches.' },
-  { slug:'dosso', name:'Dosso', description:'Terre de traditions, d’agriculture et de patrimoine culturel au sud-ouest du Niger.' },
-  { slug:'maradi', name:'Maradi', description:'Un grand centre économique et culturel, connu pour son artisanat et ses marchés.' },
-  { slug:'niamey', name:'Niamey', description:'La capitale au bord du fleuve Niger, cœur administratif, culturel et créatif du pays.' },
-  { slug:'tahoua', name:'Tahoua', description:'Porte d’entrée de l’Ader et territoire de paysages rocheux et de traditions pastorales.' },
-  { slug:'tillaberi', name:'Tillabéri', description:'Entre fleuve Niger, savanes et espaces naturels, une région aux multiples visages.' },
-  { slug:'zinder', name:'Zinder', description:'Ancienne capitale, célèbre pour son histoire, ses quartiers anciens et son patrimoine.' },
+  { slug:'agadez', name:'Agadez', description:'Ville historique de l’Aïr, carrefour saharien et patrimoine architectural remarquable.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Grand%20Mosque%20Agadez.jpg', imageCredit:'Wikimedia Commons · Grand Mosque Agadez.jpg' },
+  { slug:'diffa', name:'Diffa', description:'Une région marquée par les paysages du Manga, le lac Tchad et des traditions riches.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Bienvenue%20%C3%A0%20Diffa.jpg', imageCredit:'Wikimedia Commons · Bienvenue à Diffa.jpg' },
+  { slug:'dosso', name:'Dosso', description:'Terre de traditions, d’agriculture et de patrimoine culturel au sud-ouest du Niger.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/La%20ville%20de%20Dosso%2001.jpg', imageCredit:'Wikimedia Commons · La ville de Dosso 01.jpg' },
+  { slug:'maradi', name:'Maradi', description:'Un grand centre économique et culturel, connu pour son artisanat et ses marchés.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Centre%20Godiya%20de%20Maradi.jpg', imageCredit:'Wikimedia Commons · Centre Godiya de Maradi.jpg' },
+  { slug:'niamey', name:'Niamey', description:'La capitale au bord du fleuve Niger, cœur administratif, culturel et créatif du pays.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Niamey%2C%20Niger%20River%20bank.jpg', imageCredit:'Wikimedia Commons · Niamey, Niger River bank.jpg' },
+  { slug:'tahoua', name:'Tahoua', description:'Porte d’entrée de l’Ader et territoire de paysages rocheux et de traditions pastorales.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Bienvenue%20%C3%A0%20Tahoua%2001.jpg', imageCredit:'Wikimedia Commons · Bienvenue à Tahoua 01.jpg' },
+  { slug:'tillaberi', name:'Tillabéri', description:'Entre fleuve Niger, savanes et espaces naturels, une région aux multiples visages.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Niger%2C%20Tillab%C3%A9ri%2C%202008%201.jpg', imageCredit:'Wikimedia Commons · Niger, Tillabéri, 2008 1.jpg' },
+  { slug:'zinder', name:'Zinder', description:'Ancienne capitale, célèbre pour son histoire, ses quartiers anciens et son patrimoine.', image:'https://commons.wikimedia.org/wiki/Special:FilePath/Ancient%20home%20zinder%20niger.jpg', imageCredit:'Wikimedia Commons · Ancient home zinder niger.jpg' },
 ] as const
