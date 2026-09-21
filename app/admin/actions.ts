@@ -2,18 +2,16 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '../../lib/supabase/server'
+import { isAdminAuthenticated } from '../../lib/admin-auth'
 
 function slugify(value: string) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
 async function getAdminClient() {
+  if (!(await isAdminAuthenticated())) throw new Error('Connexion administrateur requise.')
   const supabase = await createClient()
-  if (!supabase) throw new Error('Supabase n’est pas configuré.')
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error('Connexion administrateur requise.')
-  const { data: admin } = await supabase.from('niger_admins').select('user_id, role').eq('user_id', user.id).maybeSingle()
-  if (!admin) throw new Error('Accès administrateur refusé.')
+  if (!supabase) throw new Error('La base de données n’est pas configurée.')
   return supabase
 }
 
@@ -85,24 +83,16 @@ export async function createEvent(formData: FormData) {
   revalidatePath('/admin/evenements'); revalidatePath('/evenements'); revalidatePath('/')
 }
 
-
 export async function reviewContribution(formData: FormData) {
   const supabase = await getAdminClient()
   const id = String(formData.get('id') || '').trim()
   const status = String(formData.get('status') || '').trim()
   const reviewerNotes = text(formData, 'reviewer_notes')
   if (!id || !['approved', 'rejected', 'pending'].includes(status)) throw new Error('Décision de modération invalide.')
-
-  const { error } = await supabase.from('niger_contributions').update({
-    status,
-    reviewer_notes: reviewerNotes,
-    reviewed_at: status === 'pending' ? null : new Date().toISOString(),
-  }).eq('id', id)
-
+  const { error } = await supabase.from('niger_contributions').update({ status, reviewer_notes: reviewerNotes, reviewed_at: status === 'pending' ? null : new Date().toISOString() }).eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath('/admin/contributions')
 }
-
 
 export async function createMedia(formData: FormData) {
   const supabase = await getAdminClient()
@@ -110,20 +100,7 @@ export async function createMedia(formData: FormData) {
   const url = String(formData.get('url') || '').trim()
   const credit = String(formData.get('credit') || '').trim()
   if (!title || !url || !credit) throw new Error('Le titre, l’URL et le crédit sont obligatoires.')
-
-  const { error } = await supabase.from('niger_media').insert({
-    title,
-    description: text(formData, 'description') || '',
-    media_type: 'photo',
-    url,
-    credit,
-    region_id: text(formData, 'region_id'),
-    wonder_id: text(formData, 'wonder_id'),
-    published: formData.get('published') === 'on',
-  })
-
+  const { error } = await supabase.from('niger_media').insert({ title, description: text(formData, 'description') || '', media_type: 'photo', url, credit, region_id: text(formData, 'region_id'), wonder_id: text(formData, 'wonder_id'), published: formData.get('published') === 'on' })
   if (error) throw new Error(error.message)
-  revalidatePath('/admin/medias')
-  revalidatePath('/media')
-  revalidatePath('/')
+  revalidatePath('/admin/medias'); revalidatePath('/media'); revalidatePath('/')
 }
