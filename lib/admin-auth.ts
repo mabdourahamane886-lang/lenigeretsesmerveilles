@@ -3,6 +3,11 @@ import { cookies } from 'next/headers'
 const COOKIE_NAME = 'niger_admin_session'
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7
 
+// Administrateur unique de l'application.
+// Pour changer les identifiants, modifier ces deux constantes puis redéployer.
+const ADMIN_EMAIL = 'mabdourahamane8886@gmail.com'
+const ADMIN_PASSWORD = 'NigerAdmin-Rs4czyxejiov0UtB'
+
 function toBase64Url(value: string) {
   return btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
 }
@@ -12,22 +17,24 @@ function fromBase64Url(value: string) {
 }
 
 async function sign(value: string) {
-  const secret = process.env.ADMIN_SESSION_SECRET
-  if (!secret) throw new Error('ADMIN_SESSION_SECRET manquant.')
   const key = await crypto.subtle.importKey(
     'raw',
-    new TextEncoder().encode(secret),
+    new TextEncoder().encode(ADMIN_PASSWORD),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign', 'verify'],
+    ['sign'],
   )
   const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(value))
   return toBase64Url(String.fromCharCode(...new Uint8Array(signature)))
 }
 
-export async function createAdminSession(email: string) {
+export async function isAdminCredentialsValid(email: string, password: string) {
+  return email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD
+}
+
+export async function createAdminSession() {
   const exp = Math.floor(Date.now() / 1000) + SESSION_MAX_AGE
-  const payload = toBase64Url(JSON.stringify({ email, exp }))
+  const payload = toBase64Url(JSON.stringify({ email: ADMIN_EMAIL, exp }))
   const signature = await sign(payload)
   const cookieStore = await cookies()
 
@@ -41,10 +48,6 @@ export async function createAdminSession(email: string) {
 }
 
 export async function isAdminAuthenticated() {
-  const expectedEmail = process.env.ADMIN_EMAIL
-  const sessionSecret = process.env.ADMIN_SESSION_SECRET
-  if (!expectedEmail || !sessionSecret) return false
-
   const cookieStore = await cookies()
   const raw = cookieStore.get(COOKIE_NAME)?.value
   if (!raw) return false
@@ -54,14 +57,13 @@ export async function isAdminAuthenticated() {
 
   try {
     const expectedSignature = await sign(payload)
-    if (signature.length !== expectedSignature.length) return false
+    if (signature.length !== expectedSignature.length || signature !== expectedSignature) return false
 
     const payloadJson = JSON.parse(fromBase64Url(payload)) as { email?: string; exp?: number }
     return (
-      payloadJson.email === expectedEmail &&
+      payloadJson.email === ADMIN_EMAIL &&
       typeof payloadJson.exp === 'number' &&
-      payloadJson.exp > Math.floor(Date.now() / 1000) &&
-      signature === expectedSignature
+      payloadJson.exp > Math.floor(Date.now() / 1000)
     )
   } catch {
     return false
@@ -70,5 +72,11 @@ export async function isAdminAuthenticated() {
 
 export async function clearAdminSession() {
   const cookieStore = await cookies()
-  cookieStore.set(COOKIE_NAME, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 })
+  cookieStore.set(COOKIE_NAME, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 0,
+  })
 }
