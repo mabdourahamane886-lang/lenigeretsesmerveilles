@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 
 function slugify(value: string) {
@@ -10,8 +11,8 @@ function slugify(value: string) {
 
 async function getAdminClient() {
   if (!(await isAdminAuthenticated())) throw new Error('Connexion administrateur requise.')
-  const supabase = await createClient()
-  if (!supabase) throw new Error('La base de données n’est pas configurée.')
+  const supabase = createAdminClient()
+  if (!supabase) throw new Error('La connexion sécurisée à la base de données n’est pas configurée.')
   return supabase
 }
 
