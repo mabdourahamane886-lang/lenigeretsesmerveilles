@@ -16,9 +16,9 @@ export default function LoginForm({
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(
     errorCode === 'unauthorized'
-      ? 'Ce compte est connecté mais ne possède pas les droits administrateur.'
+      ? 'Accès administrateur refusé.'
       : errorCode === 'config'
-        ? 'Supabase Auth n’est pas correctement configuré sur le serveur.'
+        ? 'La connexion administrateur n’est pas configurée sur le serveur.'
         : null,
   )
   const [pending, setPending] = useState(false)
