@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   PlusCircle,
 } from 'lucide-react'
-import { createClient } from '../../lib/supabase/server'
+import { isAdminAuthenticated } from '../../lib/admin-auth'
 
 const navItems = [
   { label: 'Régions', href: '/regions', icon: Compass },
@@ -28,22 +28,7 @@ const mobileItems = [
 ]
 
 export default async function Header() {
-  const supabase = await createClient()
-  let isAdmin = false
-
-  if (supabase) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      const { data: admin } = await supabase
-        .from('niger_admins')
-        .select('user_id')
-        .eq('user_id', user.id)
-        .eq('role', 'admin')
-        .maybeSingle()
-
-      isAdmin = Boolean(admin)
-    }
-  }
+  const isAdmin = await isAdminAuthenticated()
 
   return (
     <>
