@@ -13,9 +13,9 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
           <span className="eyebrow loginEyebrow">🇳🇪 Espace sécurisé</span>
           <div className="kicker">Administration</div>
           <h1>Gérer Le Niger et ses Merveilles.</h1>
-          <p className="lead">Connectez-vous avec un compte autorisé pour publier les régions, merveilles, articles, cultures et campagnes.</p>
+          <p className="lead">Connectez-vous avec vos identifiants administrateur pour publier les régions, merveilles, articles, cultures et campagnes.</p>
           <div className="loginFacts">
-            <span>🔐 Accès réservé</span><span>•</span><span>Supabase Auth</span><span>•</span><span>Rôles administrateurs</span>
+            <span>🔐 Accès réservé</span><span>•</span><span>Authentification privée</span><span>•</span><span>Administration</span>
           </div>
         </div>
         <LoginForm
