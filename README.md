@@ -8,7 +8,7 @@ Plateforme web nigérienne de découverte, d'événements, de culture, de patrim
 
 - Next.js 15 + App Router
 - React 19
-- Supabase Auth + PostgreSQL
+- Authentification administrateur privée + Supabase/PostgreSQL pour les données
 - Cloudflare Workers
 - OpenNext for Cloudflare
 - Wikimedia Commons pour une partie de la photothèque avec crédits/licences
@@ -17,14 +17,18 @@ Plateforme web nigérienne de découverte, d'événements, de culture, de patrim
 
 Le projet est préparé pour Cloudflare Workers avec OpenNext. Cloudflare documente actuellement OpenNext pour conserver une application Next.js existante avec SSR, Server Actions, Middleware et App Router.
 
-### Secrets GitHub requis
+### Secrets de déploiement requis
 
-Dans GitHub → Settings → Secrets and variables → Actions, ajouter :
+Configurer sur la plateforme de déploiement :
 
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD_SALT_B64`
+- `ADMIN_PASSWORD_HASH_B64`
+- `ADMIN_SESSION_SECRET`
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY` (pour les écritures serveur)
 
 Le token Cloudflare doit être limité aux droits nécessaires pour déployer le Worker. Ne jamais le mettre dans le dépôt.
 
@@ -42,14 +46,11 @@ npm run deploy
 
 Le déploiement Cloudflare cible par défaut un sous-domaine `*.workers.dev` lorsque le compte Cloudflare autorise Workers.dev. Un domaine personnalisé peut ensuite être associé dans Cloudflare.
 
-## Supabase
+## Authentification et Supabase
 
-Le site utilise :
+La connexion `/admin-login` n'utilise pas Supabase Auth. L'identité administrateur est vérifiée côté serveur avec PBKDF2 et une session HMAC signée.
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-
-Aucune clé Service Role ne doit être exposée au navigateur.
+Supabase reste uniquement la base de données du contenu du site. Aucune connexion administrateur n'est envoyée à Supabase Auth.
 
 ## Contenu
 
