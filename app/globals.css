@@ -2262,3 +2262,33 @@ body{
     padding:18px;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Admin dashboard
+   ───────────────────────────────────────────────────────────── */
+.adminPagePro{min-height:100vh;padding:32px 0 72px;background:linear-gradient(180deg,#f7faf9 0%,#fff 42%);color:#12201c}
+.adminTopPro{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:24px}
+.adminTopPro h1{margin:6px 0 8px;font-size:clamp(30px,5vw,48px);line-height:1.05;letter-spacing:-.04em}
+.adminTopPro p{max-width:720px;margin:0;color:#5c6b65}
+.adminHeaderActions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.adminHeaderActions form{margin:0}
+.adminHeaderActions .proButton{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.adminWelcome{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:28px;border-radius:24px;background:linear-gradient(135deg,#0b5d3b,#123f2f);color:#fff;box-shadow:0 18px 50px rgba(11,93,59,.16);margin-bottom:22px}
+.adminWelcome h2{margin:7px 0 8px;font-size:clamp(22px,3vw,32px)}
+.adminWelcome p{margin:0;color:rgba(255,255,255,.78);max-width:760px}
+.adminWelcome p strong{color:#fff}
+.adminWelcomeFlag{font-size:58px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.15))}
+.adminStatsGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:34px}
+.adminStatCard{padding:18px;border:1px solid #e2e9e5;border-radius:18px;background:#fff;box-shadow:0 8px 25px rgba(18,32,28,.05)}
+.adminStatCard span{display:block;font-size:12px;font-weight:700;color:#718078;text-transform:uppercase;letter-spacing:.08em}
+.adminStatCard strong{display:block;margin-top:7px;font-size:30px;line-height:1}
+.adminSectionTitle{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;color:#0b5d3b}
+.adminSectionTitle h2{margin:3px 0 0;color:#12201c;font-size:25px}
+.adminModuleGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.adminModuleCard{display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:14px;padding:20px;border:1px solid #e2e9e5;border-radius:20px;background:#fff;color:inherit;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.adminModuleCard:hover{transform:translateY(-2px);border-color:#b9cec4;box-shadow:0 14px 35px rgba(18,32,28,.08)}
+.adminModuleCard h2{margin:0 0 6px;font-size:18px}
+.adminModuleCard p{margin:0;color:#66756e;font-size:14px;line-height:1.5}
+.adminModuleIcon{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:#edf6f1;color:#0b5d3b}
+@media (max-width:1050px){.adminStatsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.adminModuleGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){.adminPagePro{padding:20px 0 48px}.adminTopPro{flex-direction:column}.adminHeaderActions{width:100%;justify-content:flex-start}.adminWelcome{padding:22px}.adminWelcomeFlag{font-size:42px}.adminStatsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.adminModuleGrid{grid-template-columns:1fr}}
