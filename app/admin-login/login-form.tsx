@@ -17,9 +17,7 @@ export default function LoginForm({
   const [error, setError] = useState<string | null>(
     errorCode === 'unauthorized'
       ? 'Accès administrateur refusé.'
-      : errorCode === 'config'
-        ? 'La connexion administrateur n’est pas configurée sur le serveur.'
-        : null,
+      : null,
   )
   const [pending, setPending] = useState(false)
 
