@@ -4,15 +4,15 @@ const COOKIE_NAME = 'niger_admin_session'
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7
 
 // Administrateur unique de l'application.
-const ADMIN_EMAIL = 'mabdourahamane8886@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase() || ''
 
 // Le mot de passe n'est jamais stocké en clair.
 // PBKDF2-SHA256, 310 000 itérations.
-const PASSWORD_SALT_B64 = '2JV5SCSJMH9OTDbz2hKDaw=='
-const PASSWORD_HASH_B64 = 'waBcD01EG4sImuMb1togh5mqxrwGjiEVQaSI1snq3kw='
+const PASSWORD_SALT_B64 = process.env.ADMIN_PASSWORD_SALT_B64 || ''
+const PASSWORD_HASH_B64 = process.env.ADMIN_PASSWORD_HASH_B64 || ''
 
 // Secret uniquement utilisé côté serveur pour signer les sessions.
-const SESSION_SECRET = '7f5e0a2d8c4b6e1f9a3c7d5b8e2f4a6c1d9b3e7f5a8c2d6e4b1f9a7c3e5d8b2'
+const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || ''
 
 function fromBase64(value: string) {
   const binary = atob(value)
@@ -81,7 +81,8 @@ export function getAdminEmail() {
 }
 
 export async function isAdminCredentialsValid(email: string, password: string) {
-  if (email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase() || !password) return false
+  if (!ADMIN_EMAIL || !PASSWORD_SALT_B64 || !PASSWORD_HASH_B64 || !SESSION_SECRET) return false
+  if (email.trim().toLowerCase() !== ADMIN_EMAIL || !password) return false
 
   const candidateHash = await derivePasswordHash(password)
   const storedHash = fromBase64(PASSWORD_HASH_B64)
@@ -89,6 +90,7 @@ export async function isAdminCredentialsValid(email: string, password: string) {
 }
 
 export async function createAdminSession() {
+  if (!ADMIN_EMAIL || !SESSION_SECRET) throw new Error('Authentification administrateur non configurée.')
   const exp = Math.floor(Date.now() / 1000) + SESSION_MAX_AGE
   const payload = toBase64Url(
     new TextEncoder().encode(JSON.stringify({ email: ADMIN_EMAIL, exp })),
@@ -106,6 +108,7 @@ export async function createAdminSession() {
 }
 
 export async function isAdminAuthenticated() {
+  if (!ADMIN_EMAIL || !SESSION_SECRET) return false
   const cookieStore = await cookies()
   const raw = cookieStore.get(COOKIE_NAME)?.value
   if (!raw) return false
