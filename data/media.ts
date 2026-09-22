@@ -20,6 +20,12 @@ export const nigerMedia: Record<string, NigerMedia> = {
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:Zibar_sand_dunes.jpg',
     alt: 'Dunes du désert du Ténéré, Niger',
   },
+  gastronomie: {
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/La_cuisine_nig%C3%A9rienne.jpg?width=1200',
+    source: 'Wikimedia Commons', author: 'Tawaye', license: 'CC BY-SA 4.0',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:La_cuisine_nig%C3%A9rienne.jpg',
+    alt: 'Cuisine nigérienne, sauce noire à la nigérienne',
+  },
   niamey: {
     image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Niger_River_%C3%A0_Niamey.jpg?width=1800',
     source: 'Wikimedia Commons', author: 'Barke11', license: 'CC BY-SA 4.0',
