@@ -59,9 +59,9 @@ const explorerCards = [
   { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Parcourez le Niger territoire par territoire.', image: nigerMedia.agadez.image, alt: 'Paysage d’Agadez, Niger' },
   { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Paysages, villes historiques et lieux remarquables.', image: nigerMedia.tenere.image, alt: 'Paysage du désert du Ténéré, Niger' },
   { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Langues, savoir-faire, histoire et pratiques.', image: nigerMedia.zinder.image, alt: 'Patrimoine culturel de Zinder, Niger' },
-  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.', image: nigerMedia.niamey.image, alt: 'Fleuve Niger à Niamey, Niger' },
+  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.', image: nigerMedia.gastronomie.image, alt: nigerMedia.gastronomie.alt },
   { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Festivals, rencontres et événements à venir.', image: nigerMedia.parcW.image, alt: 'Paysage du Parc national du W, Niger' },
-  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.', image: nigerMedia.niamey.image, alt: 'Paysage du Niger à Niamey' },
+  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.', collage: [nigerMedia.agadez.image, nigerMedia.zinder.image, nigerMedia.tenere.image, nigerMedia.parcW.image], alt: 'Collage de paysages et patrimoines du Niger' },
 ]
 
 async function getHomeData() {
@@ -198,12 +198,22 @@ export default async function Home() {
             <div className="proExplorerGrid">
               {explorerCards.map(({ href, icon: Icon, label, title, text, image, alt }) => (
                 <Link href={href} className="proExplorerCard" key={href}>
-                  <div
-                    className="proExplorerCardMedia"
-                    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,45,32,.08) 5%, rgba(5,45,32,.78) 100%), url(${image})` }}
-                    role="img"
-                    aria-label={alt}
-                  />
+                  {'collage' in ({ image, alt } as any) ? null : null}
+                  {'collage' in (explorerCards.find(card => card.href === href) || {}) ? (
+                    <div className="proExplorerCardMedia proExplorerCollage" role="img" aria-label={alt}>
+                      {((explorerCards.find(card => card.href === href) as any)?.collage || []).map((src: string, index: number) => (
+                        <span key={src + index} style={{ backgroundImage: `url(${src})` }} />
+                      ))}
+                      <span className="proExplorerCollageShade" />
+                    </div>
+                  ) : (
+                    <div
+                      className="proExplorerCardMedia"
+                      style={{ backgroundImage: `linear-gradient(180deg, rgba(5,45,32,.08) 5%, rgba(5,45,32,.78) 100%), url(${image})` }}
+                      role="img"
+                      aria-label={alt}
+                    />
+                  )}
                   <div className="proExplorerCardContent">
                     <div className="proExplorerTop">
                       <span className="proExplorerIcon"><Icon size={18} /></span>
