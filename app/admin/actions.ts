@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
+import { uploadToSmoothBundle } from '../../lib/smooth-bundle'
 
 function slugify(value: string) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
@@ -28,125 +29,26 @@ export async function createArticle(formData: FormData) {
   const imageFile = formData.get('cover_file')
   let coverUrl = text(formData, 'cover_url')
 
-  if (imageFile instanceof File && imageFile.size > 0) {
-    if (!imageFile.type.startsWith('image/')) throw new Error('Le fichier de couverture doit être une image.')
-    if (imageFile.size > 8 * 1024 * 1024) throw new Error('L’image ne doit pas dépasser 8 Mo.')
-    const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const path = `articles/${slug}-cover.${ext}`
-    const upload = await supabase.storage.from('niger-media').upload(path, imageFile, { contentType: imageFile.type, upsert: false })
-    if (upload.error) throw new Error(upload.error.message)
-    coverUrl = supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl
-  }
-
-  const { data, error } = await supabase.from('niger_articles').insert({
-    title, slug,
-    category: text(formData,'category') || 'culture',
-    region_id: text(formData,'region_id'),
-    excerpt: text(formData,'excerpt') || '',
-    content,
-    cover_url: coverUrl,
-    author_name: text(formData,'author_name') || 'Mohamed Bickri Jr',
-    published,
-    published_at: published ? new Date().toISOString() : null
-  }).select('slug').single()
-
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/articles'); revalidatePath('/articles'); revalidatePath('/')
-  return { slug: data.slug }
-}
-
-export async function createAdvertisement(formData: FormData) {
-  const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim(), title = String(formData.get('title') || '').trim()
-  if (!name || !title) throw new Error('Le nom et le titre sont obligatoires.')
-  const { error } = await supabase.from('niger_advertisements').insert({ name, title, body: text(formData,'body'), media_url: text(formData,'media_url'), media_type: 'image', cta_label: text(formData,'cta_label'), destination_url: text(formData,'destination_url'), placement: text(formData,'placement') || 'home', starts_at: text(formData,'starts_at'), ends_at: text(formData,'ends_at'), active: formData.get('active') === 'on' })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/publicites'); revalidatePath('/')
-}
-
-export async function createRegion(formData: FormData) {
-  const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
-  if (!name) throw new Error('Le nom de la région est obligatoire.')
-  const { error } = await supabase.from('niger_regions').insert({ name, slug: slugify(name), description: text(formData,'description') || '', cover_url: text(formData,'cover_url') })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/regions'); revalidatePath('/regions')
-}
-
-export async function createWonder(formData: FormData) {
-  const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
-  if (!name) throw new Error('Le nom de la merveille est obligatoire.')
-  const { error } = await supabase.from('niger_wonders').insert({ name, slug: `${slugify(name)}-${Date.now()}`, category_id: text(formData,'category_id'), region_id: text(formData,'region_id'), short_description: text(formData,'short_description') || '', description: text(formData,'description') || '', history: text(formData,'history') || '', why_visit: text(formData,'why_visit') || '', latitude: formData.get('latitude') ? Number(formData.get('latitude')) : null, longitude: formData.get('longitude') ? Number(formData.get('longitude')) : null, cover_url: text(formData,'cover_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on', featured: formData.get('featured') === 'on' })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/merveilles'); revalidatePath('/merveilles'); revalidatePath('/')
-}
-
-export async function createCulture(formData: FormData) {
-  const supabase = await getAdminClient(), title = String(formData.get('title') || '').trim()
-  if (!title) throw new Error('Le titre est obligatoire.')
-  const { error } = await supabase.from('niger_cultures').insert({ title, slug: `${slugify(title)}-${Date.now()}`, region_id: text(formData,'region_id'), language: text(formData,'language'), traditions: text(formData,'traditions') || '', clothing: text(formData,'clothing') || '', gastronomy: text(formData,'gastronomy') || '', music_dance: text(formData,'music_dance') || '', crafts: text(formData,'crafts') || '', festivals: text(formData,'festivals') || '', history: text(formData,'history') || '', cover_url: text(formData,'cover_url'), published: formData.get('published') === 'on' })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/cultures'); revalidatePath('/culture')
-}
-
-export async function createGastronomy(formData: FormData) {
-  const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
-  if (!name) throw new Error('Le nom du plat est obligatoire.')
-  const { error } = await supabase.from('niger_gastronomy').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), description: text(formData,'description') || '', ingredients: text(formData,'ingredients') || '', preparation: text(formData,'preparation') || '', history: text(formData,'history') || '', image_url: text(formData,'image_url'), video_url: text(formData,'video_url'), published: formData.get('published') === 'on' })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/gastronomie')
-}
-
-export async function createEvent(formData: FormData) {
-  const supabase = await getAdminClient(), name = String(formData.get('name') || '').trim()
-  if (!name) throw new Error('Le nom de l’événement est obligatoire.')
-  const startsAt = String(formData.get('starts_at') || '').trim()
-  const endsAt = String(formData.get('ends_at') || '').trim()
-  if (!startsAt) throw new Error('La date de début est obligatoire.')
-  const startDate = new Date(startsAt)
-  const endDate = endsAt ? new Date(endsAt) : null
-  if (Number.isNaN(startDate.getTime())) throw new Error('La date de début est invalide.')
-  if (endDate && Number.isNaN(endDate.getTime())) throw new Error('La date de fin est invalide.')
-  if (endDate && endDate < startDate) throw new Error('La date de fin doit être après le début.')
-  const { error } = await supabase.from('niger_events').insert({ name, slug: `${slugify(name)}-${Date.now()}`, region_id: text(formData,'region_id'), city: text(formData,'city'), starts_at: startDate.toISOString(), ends_at: endDate?.toISOString() ?? null, description: text(formData,'description') || '', program: text(formData,'program') || '', location: text(formData,'location'), image_url: text(formData,'image_url'), published: formData.get('published') === 'on' })
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/evenements'); revalidatePath('/evenements'); revalidatePath('/')
-}
-
-export async function reviewContribution(formData: FormData) {
-  const supabase = await getAdminClient()
-  const id = String(formData.get('id') || '').trim()
-  const status = String(formData.get('status') || '').trim()
-  const reviewerNotes = text(formData, 'reviewer_notes')
-  if (!id || !['approved', 'rejected', 'pending'].includes(status)) throw new Error('Décision de modération invalide.')
-  const { error } = await supabase.from('niger_contributions').update({ status, reviewer_notes: reviewerNotes, reviewed_at: status === 'pending' ? null : new Date().toISOString() }).eq('id', id)
-  if (error) throw new Error(error.message)
-  revalidatePath('/admin/contributions')
-}
-
-export async function createMedia(formData: FormData) {
-  const supabase = await getAdminClient()
-  const title = String(formData.get('title') || '').trim()
-  const credit = String(formData.get('credit') || '').trim()
-  const imageFile = formData.get('image_file')
-  let url = String(formData.get('url') || '').trim()
-
-  if (!title || !credit) throw new Error('Le titre et le crédit sont obligatoires.')
+  const mediaType = String(formData.get('media_type') || 'photo')
 
   if (imageFile instanceof File && imageFile.size > 0) {
-    if (!imageFile.type.startsWith('image/')) throw new Error('Le fichier doit être une image.')
-    if (imageFile.size > 10 * 1024 * 1024) throw new Error('L’image ne doit pas dépasser 10 Mo.')
-    const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const path = `gallery/${Date.now()}-${slugify(title)}.${ext}`
-    const upload = await supabase.storage.from('niger-media').upload(path, imageFile, { contentType: imageFile.type, upsert: false })
-    if (upload.error) throw new Error(upload.error.message)
-    url = supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl
+    const isVideo = imageFile.type.startsWith('video/')
+    const isImage = imageFile.type.startsWith('image/')
+    if (!isImage && !isVideo) throw new Error('Le fichier doit être une image ou une vidéo.')
+    if (imageFile.size > 50 * 1024 * 1024) throw new Error('Le fichier ne doit pas dépasser 50 Mo.')
+    const ext = imageFile.name.split('.').pop()?.toLowerCase() || (isVideo ? 'mp4' : 'jpg')
+    const path = `gallery/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(title)}.${ext}`
+    const uploaded = await uploadToSmoothBundle(imageFile, path)
+    url = uploaded.url
   }
 
-  if (!url) throw new Error('Sélectionne une image depuis ta galerie ou indique une URL.')
+  if (!url) throw new Error('Sélectionne une photo/vidéo depuis ta galerie ou indique une URL.')
 
   const { error } = await supabase.from('niger_media').insert({
     title,
     description: text(formData, 'description') || '',
-    media_type: 'photo',
+    media_type: mediaType,
+    media_category: text(formData, 'media_category') || 'photo',
     url,
     credit,
     region_id: text(formData, 'region_id'),
