@@ -14,7 +14,11 @@ const PASSWORD_HASH_B64 = process.env.ADMIN_PASSWORD_HASH_B64 || ''
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
 
 // Secret uniquement utilisé côté serveur pour signer les sessions.
-const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || ''
+// Si ADMIN_SESSION_SECRET n'est pas défini, on dérive un secret de repli
+// à partir des identifiants admin afin que la connexion reste fonctionnelle.
+const SESSION_SECRET =
+  process.env.ADMIN_SESSION_SECRET ||
+  (ADMIN_EMAIL && ADMIN_PASSWORD ? `niger-admin:${ADMIN_EMAIL}:${ADMIN_PASSWORD}` : '')
 
 function fromBase64(value: string) {
   const binary = atob(value)
