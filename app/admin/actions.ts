@@ -19,12 +19,40 @@ const text = (formData: FormData, name: string) => String(formData.get(name) || 
 
 export async function createArticle(formData: FormData) {
   const supabase = await getAdminClient()
-  const title = String(formData.get('title') || '').trim(), content = String(formData.get('content') || '').trim()
+  const title = String(formData.get('title') || '').trim()
+  const content = String(formData.get('content') || '').trim()
   if (!title || !content) throw new Error('Le titre et le contenu sont obligatoires.')
+
   const published = formData.get('published') === 'on'
-  const { error } = await supabase.from('niger_articles').insert({ title, slug: `${slugify(title)}-${Date.now()}`, category: text(formData,'category') || 'culture', excerpt: text(formData,'excerpt') || '', content, cover_url: text(formData,'cover_url'), author_name: text(formData,'author_name') || 'Abdourahamane Mohamed', published, published_at: published ? new Date().toISOString() : null })
+  const slug = `${slugify(title)}-${Date.now()}`
+  const imageFile = formData.get('cover_file')
+  let coverUrl = text(formData, 'cover_url')
+
+  if (imageFile instanceof File && imageFile.size > 0) {
+    if (!imageFile.type.startsWith('image/')) throw new Error('Le fichier de couverture doit être une image.')
+    if (imageFile.size > 8 * 1024 * 1024) throw new Error('L’image ne doit pas dépasser 8 Mo.')
+    const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const path = `articles/${slug}-cover.${ext}`
+    const upload = await supabase.storage.from('niger-media').upload(path, imageFile, { contentType: imageFile.type, upsert: false })
+    if (upload.error) throw new Error(upload.error.message)
+    coverUrl = supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl
+  }
+
+  const { data, error } = await supabase.from('niger_articles').insert({
+    title, slug,
+    category: text(formData,'category') || 'culture',
+    region_id: text(formData,'region_id'),
+    excerpt: text(formData,'excerpt') || '',
+    content,
+    cover_url: coverUrl,
+    author_name: text(formData,'author_name') || 'Mohamed Bickri Jr',
+    published,
+    published_at: published ? new Date().toISOString() : null
+  }).select('slug').single()
+
   if (error) throw new Error(error.message)
-  revalidatePath('/admin/articles'); revalidatePath('/')
+  revalidatePath('/admin/articles'); revalidatePath('/articles'); revalidatePath('/')
+  return { slug: data.slug }
 }
 
 export async function createAdvertisement(formData: FormData) {
@@ -97,10 +125,34 @@ export async function reviewContribution(formData: FormData) {
 export async function createMedia(formData: FormData) {
   const supabase = await getAdminClient()
   const title = String(formData.get('title') || '').trim()
-  const url = String(formData.get('url') || '').trim()
   const credit = String(formData.get('credit') || '').trim()
-  if (!title || !url || !credit) throw new Error('Le titre, l’URL et le crédit sont obligatoires.')
-  const { error } = await supabase.from('niger_media').insert({ title, description: text(formData, 'description') || '', media_type: 'photo', url, credit, region_id: text(formData, 'region_id'), wonder_id: text(formData, 'wonder_id'), published: formData.get('published') === 'on' })
+  const imageFile = formData.get('image_file')
+  let url = String(formData.get('url') || '').trim()
+
+  if (!title || !credit) throw new Error('Le titre et le crédit sont obligatoires.')
+
+  if (imageFile instanceof File && imageFile.size > 0) {
+    if (!imageFile.type.startsWith('image/')) throw new Error('Le fichier doit être une image.')
+    if (imageFile.size > 10 * 1024 * 1024) throw new Error('L’image ne doit pas dépasser 10 Mo.')
+    const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const path = `gallery/${Date.now()}-${slugify(title)}.${ext}`
+    const upload = await supabase.storage.from('niger-media').upload(path, imageFile, { contentType: imageFile.type, upsert: false })
+    if (upload.error) throw new Error(upload.error.message)
+    url = supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl
+  }
+
+  if (!url) throw new Error('Sélectionne une image depuis ta galerie ou indique une URL.')
+
+  const { error } = await supabase.from('niger_media').insert({
+    title,
+    description: text(formData, 'description') || '',
+    media_type: 'photo',
+    url,
+    credit,
+    region_id: text(formData, 'region_id'),
+    wonder_id: text(formData, 'wonder_id'),
+    published: formData.get('published') === 'on'
+  })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/medias'); revalidatePath('/media'); revalidatePath('/')
 }
