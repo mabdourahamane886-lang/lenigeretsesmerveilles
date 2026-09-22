@@ -3,6 +3,7 @@ import { ArrowRight, ChefHat, History, Utensils } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
+import { nigerMedia } from '../../data/media'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +16,7 @@ export default async function GastronomiePage() {
       <Header />
       <main className="page">
         <div className="container">
-          <div className="foodHero"><div><span className="kicker">Saveurs du Niger</span><h1>Une cuisine, des territoires, des histoires.</h1><p>Découvrez les plats, produits, recettes et traditions culinaires publiés sur la plateforme.</p></div><div className="foodHeroIcon"><Utensils size={31}/><span>Gastronomie nigérienne</span></div></div>
+          <div className="foodHero" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,45,32,.94) 0%, rgba(5,45,32,.72) 55%, rgba(5,45,32,.22) 100%), url(${nigerMedia.gastronomie.image})` }}><div><span className="kicker">Saveurs du Niger</span><h1>Une cuisine, des territoires, des histoires.</h1><p>Découvrez les plats, produits, recettes et traditions culinaires publiés sur la plateforme.</p></div><div className="foodHeroIcon"><Utensils size={31}/><span>Gastronomie nigérienne</span></div></div>
 
           {!items?.length ? (
             <div className="catalogEmpty large"><ChefHat size={25}/><div><strong>La rubrique gastronomique se construit.</strong><span>Les spécialités validées par l’administration apparaîtront ici.</span></div><Link className="textlink" href="/contribution">Proposer une spécialité <ArrowRight size={14}/></Link></div>
