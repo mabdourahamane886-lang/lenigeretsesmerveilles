@@ -49,7 +49,7 @@ export default function ArticleForm() {
     <label>Auteur<input name="author_name" defaultValue="Mohamed Bickri Jr" /></label>
     <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
     {state?.error && <p className="formError">{state.error}</p>}
-    {state?.slug && <div className="notice proNotice"><strong>Publication enregistrée.</strong><p>Votre lien : <a href={'/articles/' + state.slug} target="_blank" rel="noreferrer">{window.location.origin + '/articles/' + state.slug}</a></p><button type="button" className="btn primary" onClick={copyLink}>Copier le lien</button></div>}
+    {state?.slug && <div className="notice proNotice"><strong>Publication enregistrée.</strong><p>Votre lien : <a href={'/articles/' + state.slug} target="_blank" rel="noreferrer">/articles/{state.slug}</a></p><button type="button" className="btn primary" onClick={copyLink}>Copier le lien</button></div>}
     <SubmitButton />
   </form>
 }
