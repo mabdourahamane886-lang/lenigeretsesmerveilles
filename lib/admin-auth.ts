@@ -6,10 +6,12 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7
 // Administrateur unique de l'application.
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase() || ''
 
-// Le mot de passe n'est jamais stocké en clair.
-// PBKDF2-SHA256, 310 000 itérations.
+// Deux modes possibles :
+// 1) Mot de passe haché (recommandé) : PBKDF2-SHA256, 310 000 itérations.
+// 2) Mot de passe en clair via ADMIN_PASSWORD (fallback simple).
 const PASSWORD_SALT_B64 = process.env.ADMIN_PASSWORD_SALT_B64 || ''
 const PASSWORD_HASH_B64 = process.env.ADMIN_PASSWORD_HASH_B64 || ''
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
 
 // Secret uniquement utilisé côté serveur pour signer les sessions.
 const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || ''
@@ -81,12 +83,23 @@ export function getAdminEmail() {
 }
 
 export async function isAdminCredentialsValid(email: string, password: string) {
-  if (!ADMIN_EMAIL || !PASSWORD_SALT_B64 || !PASSWORD_HASH_B64 || !SESSION_SECRET) return false
+  if (!ADMIN_EMAIL || !SESSION_SECRET) return false
   if (email.trim().toLowerCase() !== ADMIN_EMAIL || !password) return false
 
-  const candidateHash = await derivePasswordHash(password)
-  const storedHash = fromBase64(PASSWORD_HASH_B64)
-  return constantTimeEqual(candidateHash, storedHash)
+  // Mode 1 : mot de passe haché (PBKDF2) si les variables sont présentes.
+  if (PASSWORD_SALT_B64 && PASSWORD_HASH_B64) {
+    const candidateHash = await derivePasswordHash(password)
+    const storedHash = fromBase64(PASSWORD_HASH_B64)
+    return constantTimeEqual(candidateHash, storedHash)
+  }
+
+  // Mode 2 : mot de passe en clair via ADMIN_PASSWORD (comparaison à temps constant).
+  if (ADMIN_PASSWORD) {
+    const encoder = new TextEncoder()
+    return constantTimeEqual(encoder.encode(password), encoder.encode(ADMIN_PASSWORD))
+  }
+
+  return false
 }
 
 export async function createAdminSession() {
