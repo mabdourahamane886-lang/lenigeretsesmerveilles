@@ -11,7 +11,9 @@ function SubmitButton() {
 
 type State = { error?: string; slug?: string } | null
 
-export default function ArticleForm() {
+type Option = { name?: string; slug?: string; id?: string }
+
+export default function ArticleForm({ categories, regions }: { categories: Option[]; regions: Option[] }) {
   const [state, action] = useActionState(async (_state: State, formData: FormData): Promise<State> => {
     try { const result = await createArticle(formData); return { slug: result.slug } }
     catch (e) { return { error: e instanceof Error ? e.message : 'Une erreur est survenue.' } }
@@ -30,18 +32,11 @@ export default function ArticleForm() {
     <label>Contenu<textarea required name="content" rows={10} placeholder="Rédige le contenu…" /></label>
     <div className="formRow">
       <label>Catégorie<select name="category" defaultValue="culture">
-        <option value="tourisme">Tourisme</option><option value="culture">Culture</option><option value="histoire">Histoire</option><option value="patrimoine">Patrimoine</option><option value="gastronomie">Gastronomie</option><option value="nature">Nature</option><option value="artisanat">Artisanat</option><option value="architecture">Architecture</option><option value="evenements">Événements</option><option value="actualites">Actualités</option><option value="portraits">Portraits</option>
+        {categories.map((category) => <option key={category.slug} value={category.slug}>{category.name}</option>)}
       </select></label>
       <label>Région<select name="region_id" defaultValue="">
         <option value="">Toutes les régions</option>
-        <option value="4c7302c8-92b4-4f74-a2a9-763e096b37b4">Agadez</option>
-        <option value="e299b661-cc78-480d-bcec-f3f4990e72d8">Diffa</option>
-        <option value="47cb5df7-fd12-48ba-86a7-e8f27a889ea3">Dosso</option>
-        <option value="b7b8bec2-b882-4b8d-badf-f7f1a41415e1">Maradi</option>
-        <option value="f1bb789a-333d-464d-981a-63f42cf658c9">Niamey</option>
-        <option value="a920073a-aed9-4256-a32b-06b3a4c9ce5a">Tahoua</option>
-        <option value="0d36ab66-e28c-48d9-bd50-971b6bd8ec8a">Tillabéri</option>
-        <option value="5ec4952d-441d-4fd4-adfe-ea33f388d2f8">Zinder</option>
+        {regions.map((region) => <option key={region.id} value={region.id}>{region.name}</option>)}
       </select></label>
     </div>
     <label>Image de couverture<input type="file" name="cover_file" accept="image/*" /></label>
