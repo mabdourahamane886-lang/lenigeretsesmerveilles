@@ -87,28 +87,31 @@ export default async function AdminMedias() {
         <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
         <button className="btn primary">Publier dans la galerie du site</button>
 
-        <label style={{
-          position:'fixed',
-          left:'50%',
-          bottom:'18px',
-          transform:'translateX(-50%)',
-          zIndex:60,
-          width:'min(220px,calc(100vw - 32px))',
-          minHeight:58,
-          display:'flex',
-          alignItems:'center',
-          justifyContent:'center',
-          gap:10,
-          borderRadius:999,
-          background:'#0b5d3b',
-          color:'#fff',
-          boxShadow:'0 12px 35px rgba(5,45,32,.30)',
-          fontWeight:900,
-          cursor:'pointer',
-          border:'3px solid rgba(255,255,255,.92)',
-        }}>
-          <span aria-hidden="true" style={{fontSize:25}}>📷</span>
-          <span>Prendre une photo</span>
+        <label
+          aria-label="Prendre une photo"
+          title="Prendre une photo"
+          style={{
+            position:'fixed',
+            right:'18px',
+            bottom:'18px',
+            zIndex:60,
+            width:62,
+            height:62,
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            borderRadius:'50%',
+            background:'#fff',
+            color:'#4f5b56',
+            boxShadow:'0 4px 18px rgba(0,0,0,.22)',
+            cursor:'pointer',
+            border:'1px solid rgba(0,0,0,.08)',
+          }}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M5 7.5h3l1.5-2h5L16 7.5h3A2 2 0 0 1 21 9.5v8A2 2 0 0 1 19 19.5H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/>
+            <circle cx="12" cy="13.5" r="3.25"/>
+          </svg>
           <input
             style={fileInputStyle}
             type="file"
