@@ -190,9 +190,9 @@ export default async function Home() {
             <div className="proSectionIntro">
               <div>
                 <div className="kicker">Explorer par univers</div>
-                <h2>Tout le Niger, en quelques gestes.</h2>
+                <h2>Tout le Niger, en quelques clics.</h2>
               </div>
-              <p>Une navigation pensée pour passer rapidement d’un territoire à une histoire, d’un patrimoine à un événement.</p>
+              <p>Une navigation conçue pour passer rapidement d’un territoire à une histoire, d’un patrimoine à un événement.</p>
             </div>
 
             <div className="proExplorerGrid">
@@ -237,7 +237,7 @@ export default async function Home() {
             <div className="proSectionIntro proSectionIntroLight">
               <div>
                 <div className="kicker">Sélection éditoriale</div>
-                <h2>Les merveilles qui ouvrent le voyage.</h2>
+                <h2>Les merveilles qui ouvrent la découverte.</h2>
               </div>
               <Link className="proInlineLink proInlineLinkLight" href="/merveilles">Voir toute la sélection <ArrowRight size={16} /></Link>
             </div>
@@ -277,7 +277,7 @@ export default async function Home() {
             <div className="proSectionIntro">
               <div>
                 <div className="kicker">Les territoires</div>
-                <h2>8 régions, 8 portes d’entrée.</h2>
+                <h2>8 régions, 8 portes d’entrée vers la découverte.</h2>
               </div>
               <Link className="proInlineLink" href="/regions">Explorer les régions <ArrowRight size={16} /></Link>
             </div>
@@ -301,7 +301,7 @@ export default async function Home() {
               <div className="proEditorialLayout">
                 <div className="proEditorialCopy">
                   <div className="kicker">La vie du Niger</div>
-                  <h2>Ce qui se passe. Ce qui se raconte.</h2>
+                  <h2>Ce qui se passe, ce qui se raconte.</h2>
                   <p>
                     L’agenda et les publications donnent un rythme à la plateforme :
                     découvrez les prochains rendez-vous et les histoires récemment publiées.
@@ -347,7 +347,7 @@ export default async function Home() {
               <div>
                 <span className="proMiniLabel">Participer</span>
                 <h2>Vous connaissez une histoire qui mérite d’être racontée ?</h2>
-                <p>Proposez une merveille, un événement, une histoire culturelle ou une ressource. Les contributions sont vérifiées avant publication.</p>
+                <p>Proposez une merveille, un événement, une histoire culturelle ou une ressource. Chaque contribution est vérifiée avant sa publication.</p>
               </div>
               <Link className="proButton proButtonDark" href="/contribution">Contribuer <ArrowRight size={16} /></Link>
             </div>
