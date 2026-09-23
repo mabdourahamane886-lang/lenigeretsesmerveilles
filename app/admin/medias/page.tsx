@@ -2,6 +2,33 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import { createMedia } from '../actions'
 
+const fileInputStyle = {
+  position: 'absolute' as const,
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden' as const,
+  clip: 'rect(0,0,0,0)',
+  whiteSpace: 'nowrap' as const,
+  border: 0,
+}
+
+const mediaActionStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 8,
+  minHeight: 54,
+  padding: '12px 16px',
+  border: '1px solid #dfe6df',
+  borderRadius: 16,
+  background: '#fff',
+  color: '#10231c',
+  fontWeight: 800,
+  cursor: 'pointer',
+}
+
 export default async function AdminMedias() {
   const supabase = await createClient()
   const [{ data: regions }, { data: wonders }, { data: media }] = supabase
@@ -15,12 +42,45 @@ export default async function AdminMedias() {
   return (
     <main className="section"><div className="container">
       <Link className="textlink" href="/admin">← Administration</Link>
-      <div className="adminHero"><div><div className="kicker">Médias</div><h1>Galerie du Niger</h1><p className="muted">Publie directement une photo ou une vidéo depuis ta galerie. Le fichier est envoyé vers Smooth Bundle pour le CDN, puis la publication est enregistrée dans Supabase.</p></div></div>
+      <div className="adminHero"><div><div className="kicker">Médias</div><h1>Galerie du Niger</h1><p className="muted">Ajoute une photo ou une vidéo comme dans WhatsApp : caméra, vidéo, galerie ou bouton +. Le fichier est envoyé vers Smooth Bundle puis enregistré dans Supabase.</p></div></div>
+
       <form className="adminForm" action={createMedia} encType="multipart/form-data">
         <label>Titre<input required name="title" placeholder="Grande Mosquée d’Agadez" /></label>
-        <label>Description<textarea name="description" rows={3} /></label>
-        <label>Choisir une photo ou une vidéo depuis ma galerie<input required type="file" name="image_file" accept="image/*,video/mp4,video/webm,video/quicktime,video/avi,video/x-matroska" /></label>
-        <label>Ou URL du média<input name="url" placeholder="https://..." /></label>
+        <label>Description<textarea name="description" rows={3} />
+
+        <div style={{display:'grid',gap:10}}>
+          <span style={{fontSize:13,fontWeight:850}}>Ajouter un média</span>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:10}}>
+            <label style={mediaActionStyle}>
+              <span aria-hidden="true" style={{fontSize:22}}>📷</span>
+              <span>Caméra</span>
+              <input style={fileInputStyle} type="file" name="camera_file" accept="image/*" capture="environment" />
+            </label>
+
+            <label style={mediaActionStyle}>
+              <span aria-hidden="true" style={{fontSize:22}}>🎥</span>
+              <span>Vidéo</span>
+              <input style={fileInputStyle} type="file" name="video_file" accept="video/*" capture="environment" />
+            </label>
+
+            <label style={{...mediaActionStyle, background:'#0b5d3b',color:'#fff',borderColor:'#0b5d3b'}}>
+              <span aria-hidden="true" style={{fontSize:22}}>🖼️</span>
+              <span>Galerie</span>
+              <input style={fileInputStyle} type="file" name="image_file" accept="image/*,video/*" />
+            </label>
+          </div>
+
+          <details style={{border:'1px solid #dfe6df',borderRadius:16,background:'#f8faf8',padding:'4px 12px'}}>
+            <summary style={{cursor:'pointer',fontWeight:850,padding:'10px 2px'}}>➕ Plus d’options</summary>
+            <div style={{display:'grid',gap:8,padding:'4px 0 10px',color:'#5f6d65',fontSize:12}}>
+              <span>📎 Galerie de fichiers : utilise « Galerie » pour sélectionner une image ou une vidéo enregistrée sur ton appareil.</span>
+              <span>🔗 URL : tu peux aussi utiliser une URL publique ci-dessous.</span>
+              <span>📱 Sur mobile, « Caméra » ouvre directement la caméra et « Vidéo » ouvre l’enregistrement vidéo si le navigateur l’autorise.</span>
+            </div>
+          </details>
+        </div>
+
+        <label>Ou URL du média<span className="optional">Optionnel si tu utilises Caméra, Vidéo ou Galerie</span><input name="url" placeholder="https://..." /></label>
         <label>Crédit / licence<input required name="credit" placeholder="Auteur — source — licence" /></label>
         <div className="formRow">
           <label>Type<select name="media_type"><option value="photo">Photo</option><option value="video">Vidéo</option></select></label>
@@ -33,6 +93,7 @@ export default async function AdminMedias() {
         <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
         <button className="btn primary">Publier dans la galerie du site</button>
       </form>
+
       <div className="grid" style={{marginTop:24}}>{(media || []).map((item) => <article className="card" key={item.id}>
         <div style={{aspectRatio:'16/9',overflow:'hidden',background:'#eee'}}>{item.media_type === 'video' ? <video src={item.url} controls preload="metadata" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : <img src={item.url} alt={item.title} style={{width:'100%',height:'100%',objectFit:'cover'}} />}</div>
         <div className="cardbody"><span className="tag">{item.published?'Publié':'Brouillon'}</span><h3>{item.title}</h3><p className="muted">{item.credit}</p><a className="textlink" href={item.url} target="_blank" rel="noreferrer">Ouvrir le média direct ↗</a></div>
