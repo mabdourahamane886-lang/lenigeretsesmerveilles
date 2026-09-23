@@ -40,7 +40,7 @@ export default async function Header() {
             </Link>
           </div>
 
-          <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles, accueil">
+          <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
             <span className="siteBrandMark" aria-hidden="true">
               <span />
               <span />
