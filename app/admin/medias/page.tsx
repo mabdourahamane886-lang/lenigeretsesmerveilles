@@ -40,7 +40,7 @@ export default async function AdminMedias() {
     : [{ data: [] }, { data: [] }, { data: [] }]
 
   return (
-    <main className="section"><div className="container">
+    <main className="section"><div className="container" style={{paddingBottom:100}}>
       <Link className="textlink" href="/admin">← Administration</Link>
       <div className="adminHero"><div><div className="kicker">Médias</div><h1>Galerie du Niger</h1><p className="muted">Ajoute une photo ou une vidéo comme dans WhatsApp : caméra, vidéo, galerie ou bouton +. Le fichier est envoyé vers Smooth Bundle puis enregistré dans Supabase.</p></div></div>
 
@@ -50,13 +50,7 @@ export default async function AdminMedias() {
 
         <div style={{display:'grid',gap:10}}>
           <span style={{fontSize:13,fontWeight:850}}>Ajouter un média</span>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:10}}>
-            <label style={mediaActionStyle}>
-              <span aria-hidden="true" style={{fontSize:22}}>📷</span>
-              <span>Caméra</span>
-              <input style={fileInputStyle} type="file" name="camera_file" accept="image/*" capture="environment" />
-            </label>
-
+          <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:10}}>
             <label style={mediaActionStyle}>
               <span aria-hidden="true" style={{fontSize:22}}>🎥</span>
               <span>Vidéo</span>
@@ -75,7 +69,7 @@ export default async function AdminMedias() {
             <div style={{display:'grid',gap:8,padding:'4px 0 10px',color:'#5f6d65',fontSize:12}}>
               <span>📎 Galerie de fichiers : utilise « Galerie » pour sélectionner une image ou une vidéo enregistrée sur ton appareil.</span>
               <span>🔗 URL : tu peux aussi utiliser une URL publique ci-dessous.</span>
-              <span>📱 Sur mobile, « Caméra » ouvre directement la caméra et « Vidéo » ouvre l’enregistrement vidéo si le navigateur l’autorise.</span>
+              <span>📱 Le bouton Caméra en bas ouvre directement la caméra sur les téléphones compatibles.</span>
             </div>
           </details>
         </div>
@@ -92,6 +86,37 @@ export default async function AdminMedias() {
         </div>
         <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
         <button className="btn primary">Publier dans la galerie du site</button>
+
+        <label style={{
+          position:'fixed',
+          left:'50%',
+          bottom:'18px',
+          transform:'translateX(-50%)',
+          zIndex:60,
+          width:'min(220px,calc(100vw - 32px))',
+          minHeight:58,
+          display:'flex',
+          alignItems:'center',
+          justifyContent:'center',
+          gap:10,
+          borderRadius:999,
+          background:'#0b5d3b',
+          color:'#fff',
+          boxShadow:'0 12px 35px rgba(5,45,32,.30)',
+          fontWeight:900,
+          cursor:'pointer',
+          border:'3px solid rgba(255,255,255,.92)',
+        }}>
+          <span aria-hidden="true" style={{fontSize:25}}>📷</span>
+          <span>Prendre une photo</span>
+          <input
+            style={fileInputStyle}
+            type="file"
+            name="camera_file"
+            accept="image/*"
+            capture="environment"
+          />
+        </label>
       </form>
 
       <div className="grid" style={{marginTop:24}}>{(media || []).map((item) => <article className="card" key={item.id}>
