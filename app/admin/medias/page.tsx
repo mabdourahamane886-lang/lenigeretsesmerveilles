@@ -15,11 +15,11 @@ export default async function AdminMedias() {
   return (
     <main className="section"><div className="container">
       <Link className="textlink" href="/admin">← Administration</Link>
-      <div className="adminHero"><div><div className="kicker">Médias</div><h1>Galerie du Niger</h1><p className="muted">Les nouveaux médias envoyés depuis l’administration sont publiés sur Smooth Bundle pour une diffusion CDN rapide, tandis que Supabase conserve les métadonnées.</p></div></div>
+      <div className="adminHero"><div><div className="kicker">Médias</div><h1>Galerie du Niger</h1><p className="muted">Publie directement une photo ou une vidéo depuis ta galerie. Le fichier est envoyé vers Smooth Bundle pour le CDN, puis la publication est enregistrée dans Supabase.</p></div></div>
       <form className="adminForm" action={createMedia} encType="multipart/form-data">
         <label>Titre<input required name="title" placeholder="Grande Mosquée d’Agadez" /></label>
         <label>Description<textarea name="description" rows={3} /></label>
-        <label>Photo ou vidéo depuis ma galerie<input required type="file" name="image_file" accept="image/*,video/mp4,video/webm,video/quicktime,video/avi,video/x-matroska" /></label>
+        <label>Choisir une photo ou une vidéo depuis ma galerie<input required type="file" name="image_file" accept="image/*,video/mp4,video/webm,video/quicktime,video/avi,video/x-matroska" /></label>
         <label>Ou URL du média<input name="url" placeholder="https://..." /></label>
         <label>Crédit / licence<input required name="credit" placeholder="Auteur — source — licence" /></label>
         <div className="formRow">
@@ -31,7 +31,7 @@ export default async function AdminMedias() {
           <label>Merveille<select name="wonder_id"><option value="">Aucune</option>{(wonders || []).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
         </div>
         <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
-        <button className="btn primary">Envoyer sur Smooth Bundle</button>
+        <button className="btn primary">Publier dans la galerie du site</button>
       </form>
       <div className="grid" style={{marginTop:24}}>{(media || []).map((item) => <article className="card" key={item.id}>
         <div style={{aspectRatio:'16/9',overflow:'hidden',background:'#eee'}}>{item.media_type === 'video' ? <video src={item.url} controls preload="metadata" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : <img src={item.url} alt={item.title} style={{width:'100%',height:'100%',objectFit:'cover'}} />}</div>
