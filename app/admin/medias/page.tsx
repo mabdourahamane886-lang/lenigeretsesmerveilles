@@ -84,7 +84,7 @@ export default async function AdminMedias() {
           <label>Région<select name="region_id"><option value="">Toutes</option>{(regions || []).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
           <label>Merveille<select name="wonder_id"><option value="">Aucune</option>{(wonders || []).map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
         </div>
-        <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
+        <label className="check"><input type="checkbox" name="published" defaultChecked /> Publier immédiatement</label>
         <button className="btn primary">Publier dans la galerie du site</button>
 
         <label
