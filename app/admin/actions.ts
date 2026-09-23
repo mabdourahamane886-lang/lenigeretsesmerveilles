@@ -65,36 +65,40 @@ export async function createMedia(formData: FormData) {
     throw new Error('La catégorie du média est invalide.')
   }
 
-  const imageFile = formData.get('image_file')
+  const fileCandidates = ['camera_file', 'video_file', 'image_file']
+    .map((name) => formData.get(name))
+    .filter((value): value is File => value instanceof File && value.size > 0)
+
+  const mediaFile = fileCandidates[0]
   let mediaUrl = url
   let mediaType = selectedMediaType
 
-  if (imageFile instanceof File && imageFile.size > 0) {
-    const isVideo = imageFile.type.startsWith('video/')
-    const isImage = imageFile.type.startsWith('image/')
+  if (mediaFile) {
+    const isVideo = mediaFile.type.startsWith('video/')
+    const isImage = mediaFile.type.startsWith('image/')
 
     if (!isImage && !isVideo) {
       throw new Error('Le fichier doit être une image ou une vidéo.')
     }
 
-    if (imageFile.size > 50 * 1024 * 1024) {
+    if (mediaFile.size > 50 * 1024 * 1024) {
       throw new Error('Le fichier ne doit pas dépasser 50 Mo.')
     }
 
     mediaType = isVideo ? 'video' : 'photo'
 
     const ext =
-      imageFile.name.split('.').pop()?.toLowerCase() ||
+      mediaFile.name.split('.').pop()?.toLowerCase() ||
       (isVideo ? 'mp4' : 'jpg')
 
     const path = `gallery/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(title)}.${ext}`
 
-    const uploaded = await uploadToSmoothBundle(imageFile, path)
+    const uploaded = await uploadToSmoothBundle(mediaFile, path)
     mediaUrl = uploaded.url
   }
 
   if (!mediaUrl) {
-    throw new Error('Sélectionne une photo/vidéo depuis ta galerie ou indique une URL.')
+    throw new Error('Utilise Caméra, Vidéo, Galerie ou indique une URL du média.')
   }
 
   const { error } = await supabase.from('niger_media').insert({
