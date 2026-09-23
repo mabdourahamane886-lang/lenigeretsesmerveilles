@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: '%s | Le Niger et ses Merveilles',
   },
   description:
-    'Explorez les 8 régions du Niger, ses merveilles, ses cultures, sa gastronomie, ses événements et ses récits dans une plateforme numérique moderne.',
+    'Explorez les 8 régions du Niger, ses merveilles, ses cultures, sa gastronomie, ses événements et ses récits sur une plateforme numérique moderne.',
   keywords: [
     'Niger',
     'tourisme Niger',
@@ -35,12 +35,12 @@ export const metadata: Metadata = {
     siteName: 'Le Niger et ses Merveilles',
     title: 'Le Niger et ses Merveilles 🇳🇪',
     description:
-      'Une plateforme pour explorer les territoires, patrimoines, cultures et histoires du Niger.',
+      'Une plateforme pour explorer les territoires, les patrimoines, les cultures et les histoires du Niger.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Le Niger et ses Merveilles 🇳🇪',
-    description: 'Explorez le Niger autrement.',
+    description: 'Découvrez le Niger autrement.',
   },
   robots: {
     index: true,
