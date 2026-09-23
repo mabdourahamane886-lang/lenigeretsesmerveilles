@@ -138,7 +138,7 @@ export default async function Home() {
             <div className="proHeroCopy">
               <div className="proEyebrow">
                 <span className="proEyebrowDot" />
-                Plateforme culturelle & touristique du Niger
+                Plateforme culturelle et touristique du Niger
               </div>
               <h1>Le Niger, <em>raconté</em> autrement.</h1>
               <p>
@@ -154,7 +154,7 @@ export default async function Home() {
                 </Link>
               </div>
               <div className="proHeroProof">
-                <span><strong>08</strong> régions</span>
+                <span><strong>8</strong> régions</span>
                 <span><strong>∞</strong> histoires à raconter</span>
                 <span><strong>🇳🇪</strong> une mémoire à préserver</span>
               </div>
