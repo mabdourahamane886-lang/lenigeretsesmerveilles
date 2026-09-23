@@ -39,8 +39,8 @@ export default function Footer() {
 
           <div className="siteFooterColumn siteFooterFeatured">
             <span className="siteFooterKicker">Notre mission</span>
-            <h3>Rendre le patrimoine plus visible, plus accessible et mieux documenté.</h3>
-            <p>Les contenus proposés par la communauté passent par une étape de vérification avant publication.</p>
+            <h3>Rendre le patrimoine du Niger plus visible, plus accessible et mieux documenté.</h3>
+            <p>Les contenus proposés par la communauté sont vérifiés avant leur publication.</p>
           </div>
         </div>
 
