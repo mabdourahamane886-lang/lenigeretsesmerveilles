@@ -52,24 +52,36 @@ export default async function AdminMedias() {
           <span style={{fontSize:13,fontWeight:850}}>Ajouter un média</span>
           <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:10}}>
             <label style={mediaActionStyle}>
-              <span aria-hidden="true" style={{fontSize:22}}>🎥</span>
-              <span>Vidéo</span>
-              <input style={fileInputStyle} type="file" name="video_file" accept="video/*" capture="environment" />
+              <span aria-hidden="true" style={{fontSize:22}}>🖼️</span>
+              <span>Photo — Galerie</span>
+              <input style={fileInputStyle} type="file" name="photo_gallery_file" accept="image/*" />
+            </label>
+
+            <label style={mediaActionStyle}>
+              <span aria-hidden="true" style={{fontSize:22}}>🎬</span>
+              <span>Vidéo — Galerie</span>
+              <input style={fileInputStyle} type="file" name="video_gallery_file" accept="video/*" />
             </label>
 
             <label style={{...mediaActionStyle, background:'#0b5d3b',color:'#fff',borderColor:'#0b5d3b'}}>
-              <span aria-hidden="true" style={{fontSize:22}}>🖼️</span>
-              <span>Galerie</span>
-              <input style={fileInputStyle} type="file" name="image_file" accept="image/*,video/*" />
+              <span aria-hidden="true" style={{fontSize:22}}>📷</span>
+              <span>Prendre une photo</span>
+              <input style={fileInputStyle} type="file" name="camera_file" accept="image/*" capture="environment" />
             </label>
-          </div>
+
+            <label style={{...mediaActionStyle, background:'#10231c',color:'#fff',borderColor:'#10231c'}}>
+              <span aria-hidden="true" style={{fontSize:22}}>🎥</span>
+              <span>Prendre une vidéo</span>
+              <input style={fileInputStyle} type="file" name="video_camera_file" accept="video/*" capture="environment" />
+            </label>
+          </div>div>
 
           <details style={{border:'1px solid #dfe6df',borderRadius:16,background:'#f8faf8',padding:'4px 12px'}}>
             <summary style={{cursor:'pointer',fontWeight:850,padding:'10px 2px'}}>➕ Plus d’options</summary>
             <div style={{display:'grid',gap:8,padding:'4px 0 10px',color:'#5f6d65',fontSize:12}}>
-              <span>📎 Galerie de fichiers : utilise « Galerie » pour sélectionner une image ou une vidéo enregistrée sur ton appareil.</span>
+              <span>📎 Galerie : « Photo — Galerie » et « Vidéo — Galerie » ouvrent la galerie/fichiers de ton appareil.</span>
+              <span>📱 Caméra : les boutons dédiés ouvrent directement la caméra sur les téléphones compatibles.</span>
               <span>🔗 URL : tu peux aussi utiliser une URL publique ci-dessous.</span>
-              <span>📱 Le bouton Caméra en bas ouvre directement la caméra sur les téléphones compatibles.</span>
             </div>
           </details>
         </div>
