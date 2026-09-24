@@ -65,7 +65,17 @@ export async function createMedia(formData: FormData) {
     throw new Error('La catégorie du média est invalide.')
   }
 
-  const fileCandidates = ['camera_file', 'video_file', 'image_file']
+  // Les champs dédiés permettent de choisir une photo/vidéo depuis la galerie
+  // ou de capturer directement avec la caméra sur mobile. Les anciens champs
+  // restent acceptés pour compatibilité avec d'éventuelles anciennes versions.
+  const fileCandidates = [
+    'photo_gallery_file',
+    'video_gallery_file',
+    'camera_file',
+    'video_camera_file',
+    'video_file',
+    'image_file',
+  ]
     .map((name) => formData.get(name))
     .filter((value): value is File => value instanceof File && value.size > 0)
 
