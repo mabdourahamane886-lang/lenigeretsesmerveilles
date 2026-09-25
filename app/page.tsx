@@ -156,7 +156,7 @@ export default async function Home() {
               <div className="proHeroProof">
                 <span><strong>8</strong> régions</span>
                 <span><strong>∞</strong> histoires à raconter</span>
-                <span><strong>🇳🇪</strong> une mémoire à préserver</span>
+                <span><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span> une mémoire à préserver</span>
               </div>
             </div>
 
