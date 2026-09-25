@@ -56,4 +56,4 @@ Supabase reste uniquement la base de données du contenu du site. Aucune connexi
 
 Les contenus publics sont stockés dans Supabase : régions, merveilles, événements, cultures, gastronomie, articles, médias et contributions. Les contributions publiques sont modérées avant publication.
 
-<!-- deployment-trigger: 2026-09-24 -->
+<!-- deployment-trigger: 2026-09-25 -->
