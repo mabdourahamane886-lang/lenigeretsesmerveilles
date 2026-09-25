@@ -2369,3 +2369,22 @@ body{
   .adminStatCard{padding:14px}
   .adminStatCard strong{font-size:25px}
 }
+
+
+/* Drapeau du Niger explicite — évite les différences d’affichage des emojis */
+.proNigerFlag{
+  display:inline-flex;
+  width:22px;
+  height:14px;
+  position:relative;
+  vertical-align:-2px;
+  overflow:hidden;
+  border-radius:2px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.18);
+  flex:none;
+}
+.proNigerFlag i{display:block;position:absolute;left:0;right:0;height:33.333%;}
+.proNigerFlag i:nth-child(1){top:0;background:#e0522d}
+.proNigerFlag i:nth-child(2){top:33.333%;background:#fff}
+.proNigerFlag i:nth-child(3){bottom:0;background:#16864a}
+.proNigerFlag:after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:#e6812b;left:50%;top:50%;transform:translate(-50%,-50%)}
