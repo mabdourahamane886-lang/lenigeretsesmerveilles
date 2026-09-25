@@ -10,7 +10,7 @@ export default function Footer() {
             <Link className="siteBrand siteFooterBrandLink" href="/">
               <span className="siteBrandMark" aria-hidden="true"><span /><span /><span /></span>
               <span className="siteBrandCopy">
-                <strong>Le Niger et ses Merveilles</strong>
+                <span className="footerBrandFlag proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span><strong>Le Niger et ses Merveilles</strong>
                 <small>Explorer · Comprendre · Préserver</small>
               </span>
             </Link>
@@ -46,7 +46,7 @@ export default function Footer() {
 
         <div className="siteFooterBottom">
           <span>© 2026 Le Niger et ses Merveilles</span>
-          <span>🇳🇪 Fait pour raconter le Niger.</span>
+          <span className="footerMade"><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span> Fait pour raconter le Niger.</span>
           <Link href="/recherche">Rechercher <ArrowUpRight size={13} /></Link>
         </div>
       </div>
