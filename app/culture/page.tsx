@@ -26,7 +26,7 @@ export default async function CulturePage() {
         <div className="container">
           <section className="cultureHero">
             <div><span className="kicker">Identité & patrimoine</span><h1>La culture du Niger est un territoire à part entière.</h1><p>Explorez les langues, les peuples, les traditions, l’artisanat, la mémoire et les pratiques qui donnent au Niger sa richesse culturelle.</p><Link className="proButton proButtonPrimary" href="/contribution">Participer à la mémoire culturelle <ArrowRight size={15}/></Link></div>
-            <div className="cultureHeroMark"><span>🇳🇪</span><small>Culture · Mémoire · Transmission</small></div>
+            <div className="cultureHeroMark"><span><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span></span><small>Culture · Mémoire · Transmission</small></div>
           </section>
 
           <section className="catalogSection">
