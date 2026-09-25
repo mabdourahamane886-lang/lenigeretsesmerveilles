@@ -315,7 +315,7 @@ export default async function Home() {
                 <div className="proEditorialVisual" style={{ backgroundImage: `url(${nigerMedia.zinder.image})` }}>
                   <div className="proEditorialOverlay" />
                   <div className="proEditorialQuote">
-                    <span>🇳🇪</span>
+                    <span><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span></span>
                     <strong>Le patrimoine n’est vivant que lorsqu’il est transmis.</strong>
                   </div>
                 </div>
