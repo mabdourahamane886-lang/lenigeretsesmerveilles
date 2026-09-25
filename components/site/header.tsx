@@ -47,7 +47,6 @@ export default async function Header() {
               <span />
             </span>
             <span className="siteBrandCopy">
-              <span className="proNigerFlag proNigerFlagBrand" aria-label="Niger" role="img"><i /><i /><i /></span>
               <strong>Le Niger et ses Merveilles</strong>
               <small>Explorer · Comprendre · Préserver</small>
             </span>
