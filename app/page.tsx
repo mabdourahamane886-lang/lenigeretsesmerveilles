@@ -207,16 +207,16 @@ export default async function Home() {
             </div>
 
             <div className="proExplorerGrid">
-              {explorerCards.map(({ href, icon: Icon, label, title, text, image, alt }) => (
+              {explorerCards.map(({ href, icon: Icon, label, title, text, image, alt, collage }) => (
                 <Link href={href} className="proExplorerCard" key={href}>
-                  {'collage' in (explorerCards.find(card => card.href === href) || {}) ? (
+                  {collage ? (
                     <div
                       className="proExplorerCardMedia"
                       role="img"
                       aria-label={alt}
                       style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '2px', overflow: 'hidden' }}
                     >
-                      {((explorerCards.find(card => card.href === href) as any)?.collage || []).map((src: string, index: number) => (
+                      {collage.map((src, index) => (
                         <span key={src + index} style={{ backgroundImage: `linear-gradient(rgba(5,45,32,.08), rgba(5,45,32,.18)), url(${src})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
                       ))}
                     </div>
