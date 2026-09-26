@@ -229,7 +229,7 @@ export default async function AdminPage() {
               <p className="muted">Aucun événement enregistré.</p>
             ) : (
               <div className="adminActivityList">
-                {dashboard.recentEvents.map((item: any) => (
+                {dashboard.recentEvents.map((item: RecentEvent) => (
                   <div className="adminActivityRow" key={item.id}>
                     <div><strong>{item.name}</strong><span>{formatDate(item.starts_at)}</span></div>
                     <span className={item.published ? 'statusPill statusPublished' : 'statusPill'}>{item.published ? 'Publié' : 'Brouillon'}</span>
