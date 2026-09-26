@@ -11,7 +11,7 @@ const slugify=(v:string)=>v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const num=(f:FormData,n:string)=>{const v=t(f,n);if(!v)return null;const x=Number(v);return Number.isFinite(x)?x:null}
 const dt=(f:FormData,n:string)=>{const v=t(f,n);return v?new Date(v).toISOString():null}
 async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexion administrateur requise.');const s=createAdminClient();if(!s)throw new Error('La connexion sécurisée à la base de données n’est pas configurée.');return s}
-function refresh(...p:string[]){p.forEach(revalidatePath)}
+function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
 export async function createMedia(f:FormData){
  const s=await db(), title=String(f.get('title')||'').trim(), credit=t(f,'credit'), url=t(f,'url')
