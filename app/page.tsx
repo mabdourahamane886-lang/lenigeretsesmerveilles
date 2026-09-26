@@ -46,6 +46,17 @@ type HomeArticle = {
   published_at?: string | null
 }
 
+type ExplorerCard = {
+  href: string
+  icon: typeof Compass
+  label: string
+  title: string
+  text: string
+  image?: string
+  alt: string
+  collage?: string[]
+}
+
 const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
   id: `static-${index}`,
   name: wonder.name,
