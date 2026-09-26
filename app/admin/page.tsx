@@ -24,6 +24,22 @@ import { isAdminAuthenticated, clearAdminSession, getAdminEmail } from '../../li
 import { createAdminClient } from '../../lib/supabase/admin'
 import { redirect } from 'next/navigation'
 
+type RecentArticle = {
+  id: string | number
+  title: string
+  slug: string | null
+  published: boolean | null
+  created_at: string
+}
+
+type RecentEvent = {
+  id: string | number
+  name: string
+  slug: string | null
+  published: boolean | null
+  starts_at: string | null
+}
+
 const modules = [
   { icon: Landmark, title: 'Merveilles', href: '/admin/merveilles', description: 'Créer et publier les patrimoines et sites remarquables.' },
   { icon: Map, title: 'Régions', href: '/admin/regions', description: 'Gérer les huit régions et leurs informations.' },
