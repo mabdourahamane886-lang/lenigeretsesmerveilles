@@ -1,7 +1,7 @@
 'use client'
 
 import { Camera, ImagePlus, Video, X } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function MediaPicker() {
   const galleryInput = useRef<HTMLInputElement>(null)
@@ -10,15 +10,19 @@ export default function MediaPicker() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState('')
 
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
+
   const choose = (selected: File | null) => {
     if (!selected) return
-    if (preview) URL.revokeObjectURL(preview)
     setFile(selected)
     setPreview(URL.createObjectURL(selected))
   }
 
   const clear = () => {
-    if (preview) URL.revokeObjectURL(preview)
     setFile(null)
     setPreview('')
     if (galleryInput.current) galleryInput.current.value = ''
