@@ -46,6 +46,7 @@ export default async function Header() {
               <span />
               <span />
             </span>
+            <span className="siteBrandFlag" aria-hidden="true">🇳🇪</span>
             <span className="siteBrandCopy">
               <strong>Le Niger et ses Merveilles</strong>
               <small>Explorer · Comprendre · Préserver</small>
@@ -77,7 +78,6 @@ export default async function Header() {
               <div className="siteMobilePanel">
                 <div className="siteMobileHead">
                   <span>Navigation</span>
-                  <span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span>
                 </div>
                 <nav aria-label="Navigation mobile">
                   {mobileItems.map(({ label, href, icon: Icon }) => (
