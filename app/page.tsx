@@ -66,7 +66,7 @@ const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
   source: wonder.credit ? `${wonder.credit.source} · ${wonder.credit.author} · ${wonder.credit.license}` : null,
 }))
 
-const explorerCards = [
+const explorerCards: ExplorerCard[] = [
   { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Parcourez le Niger territoire par territoire.', image: nigerMedia.agadez.image, alt: 'Paysage d’Agadez, Niger' },
   { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Paysages, villes historiques et lieux remarquables.', image: nigerMedia.tenere.image, alt: 'Paysage du désert du Ténéré, Niger' },
   { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Langues, savoir-faire, histoire et pratiques.', image: nigerMedia.zinder.image, alt: 'Patrimoine culturel de Zinder, Niger' },
