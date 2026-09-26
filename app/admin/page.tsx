@@ -160,7 +160,7 @@ export default async function AdminPage() {
           <div className="adminQuickButtons">
             <Link href="/admin/articles" className="adminQuickButton"><Plus size={16} /> Nouvel article</Link>
             <Link href="/admin/evenements" className="adminQuickButton"><CalendarDays size={16} /> Nouvel événement</Link>
-            <Link href="/admin/medias" className="adminQuickButton"><Camera size={16} /> Ajouter un média</Link>
+            <Link href="/admin/medias" className="adminQuickButton"><Camera size={16} /> 📷 Prendre une photo</Link>
             <Link href="/admin/contributions" className="adminQuickButton"><MessageSquareText size={16} /> Modérer</Link>
           </div>
         </section>
