@@ -2,6 +2,16 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import ArticleForm from './article-form'
 
+type AdminArticleRow = {
+  id: string | number
+  title: string
+  slug: string | null
+  category: string | null
+  published: boolean | null
+  created_at: string
+  niger_regions?: { name?: string | null } | { name?: string | null }[] | null
+}
+
 export default async function AdminArticles() {
   const supabase = await createClient()
   const [{ data: articles }, { data: categories }, { data: regions }] = supabase
