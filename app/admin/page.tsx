@@ -98,8 +98,8 @@ async function getDashboardData() {
   return {
     connected: true,
     stats: { merveilles, regions, articles, evenements, cultures, contributions },
-    recentArticles: recentArticlesResult.data || [],
-    recentEvents: recentEventsResult.data || [],
+    recentArticles: (recentArticlesResult.data || []) as RecentArticle[],
+    recentEvents: (recentEventsResult.data || []) as RecentEvent[],
     pendingContributions: pendingResult.count ?? 0,
   }
 }
