@@ -27,7 +27,7 @@ export default async function AdminArticles() {
     <div className="adminHero"><div><span className="kicker">Publications</span><h1>Créer et publier</h1><p className="muted">Choisis une catégorie, une région et une image depuis ta galerie. Chaque publication publiée possède son propre lien partageable.</p></div></div>
     <ArticleForm categories={categories || []} regions={regions || []} />
     <section className="adminList"><div className="sectionHead"><div><div className="kicker">Contenus</div><h2>Publications enregistrées</h2></div></div>
-      {!articles?.length ? <p className="muted">Aucune publication pour le moment.</p> : <div className="adminRows">{articles.map((article: any) => {
+      {!articles?.length ? <p className="muted">Aucune publication pour le moment.</p> : <div className="adminRows">{articles.map((article: AdminArticleRow) => {
         const region = Array.isArray(article.niger_regions) ? article.niger_regions[0]?.name : article.niger_regions?.name
         return <div className="adminRow" key={article.id}><div><b>{article.title}</b><span className="muted">{article.category} · {region || 'Toutes les régions'} · {article.published ? 'Publié' : 'Brouillon'}</span>{article.published && article.slug && <div style={{display:'flex',gap:10,flexWrap:'wrap'}}><Link className="textlink" href={'/articles/' + article.slug}>Voir →</Link><Link className="textlink" href={'/articles/' + article.slug}>Lien à copier →</Link></div>}</div><span>{new Date(article.created_at).toLocaleDateString('fr-FR')}</span></div>
       })}</div>}
