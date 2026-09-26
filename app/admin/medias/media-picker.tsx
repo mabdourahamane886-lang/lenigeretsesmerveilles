@@ -70,8 +70,8 @@ export default function MediaPicker() {
         <button type="button" onClick={() => galleryInput.current?.click()} className="mediaPickerButton" aria-label="Choisir une photo ou une vidéo depuis la galerie">
           <ImagePlus size={21} /> Galerie
         </button>
-        <button type="button" onClick={() => cameraInput.current?.click()} className="mediaPickerButton mediaPickerCamera" aria-label="Prendre une photo avec la caméra">
-          <Camera size={21} /> Caméra
+        <button type="button" onClick={() => cameraInput.current?.click()} className="mediaPickerButton mediaPickerCamera" aria-label="Ouvrir la caméra et prendre une photo" title="Prendre une photo avec la caméra">
+          <Camera size={21} /> <span>📷 Prendre une photo</span>
         </button>
         <button type="button" onClick={() => videoInput.current?.click()} className="mediaPickerButton" aria-label="Prendre une vidéo avec la caméra">
           <Video size={20} /> Prendre une vidéo
