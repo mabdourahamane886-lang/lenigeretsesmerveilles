@@ -40,12 +40,12 @@ export default async function Header() {
             </Link>
           </div>
 
-          {/* Header production fix: one Niger flag only. */}
+          {/* Un seul drapeau du Niger dans l’en-tête. */}
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
             <span className="siteBrandMark" aria-label="Drapeau du Niger" role="img">
-              <span />
-              <span />
-              <span />
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
             </span>
             <span className="siteBrandCopy">
               <strong>Le Niger et ses Merveilles</strong>
