@@ -51,7 +51,7 @@ export default function LoginForm({
 
   return (
     <form className="loginCard" onSubmit={handleSubmit}>
-      <div className="loginCardHead"><span className="brandmark">🇳🇪</span><div><strong>Connexion administrateur</strong><span>Accès à votre tableau de bord</span></div></div>
+      <div className="loginCardHead"><span className="brandmark proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span><div><strong>Connexion administrateur</strong><span>Accès à votre tableau de bord</span></div></div>
       <label>E-mail<input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="administrateur@exemple.com" /></label>
       <label>Mot de passe<input required type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Votre mot de passe" /></label>
       {error && <p className="formError" role="alert">{error}</p>}
