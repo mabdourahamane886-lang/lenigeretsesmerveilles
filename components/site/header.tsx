@@ -41,12 +41,11 @@ export default async function Header() {
           </div>
 
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
-            <span className="siteBrandMark" aria-hidden="true">
+            <span className="siteBrandMark" aria-label="Drapeau du Niger" role="img">
               <span />
               <span />
               <span />
             </span>
-            <span className="siteBrandFlag proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span>
             <span className="siteBrandCopy">
               <strong>Le Niger et ses Merveilles</strong>
               <small>Explorer · Comprendre · Préserver</small>
