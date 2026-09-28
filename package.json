@@ -6,11 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "build:cloudflare": "opennextjs-cloudflare build",
-    "preview:cloudflare": "opennextjs-cloudflare build && wrangler dev",
-    "deploy": "opennextjs-cloudflare build && wrangler deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -29,9 +25,7 @@
     "eslint-config-next": "15.5.24",
     "tailwindcss": "^4.0.0",
     "@tailwindcss/postcss": "^4.0.0",
-    "typescript": "^5.7.2",
-    "@opennextjs/cloudflare": "^1.20.6",
-    "wrangler": "^4.135.0"
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=20.0.0"
