@@ -46,7 +46,7 @@ export default async function Header() {
               <span />
               <span />
             </span>
-            <span className="siteBrandFlag" aria-hidden="true">🇳🇪</span>
+            <span className="siteBrandFlag proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span>
             <span className="siteBrandCopy">
               <strong>Le Niger et ses Merveilles</strong>
               <small>Explorer · Comprendre · Préserver</small>
