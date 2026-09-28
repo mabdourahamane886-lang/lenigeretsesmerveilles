@@ -2428,22 +2428,22 @@ img{max-width:100%}
 .siteHeaderInner{min-height:78px;display:flex;align-items:center;gap:20px}
 .siteBrand{display:flex;align-items:center;gap:12px;min-width:250px}
 .siteBrandMark{
-  width:42px;height:42px;border-radius:13px;overflow:hidden;display:grid;
+  width:44px;height:44px;border-radius:13px;overflow:hidden;display:grid;
   grid-template-rows:1fr 1fr 1fr;flex:none;
   box-shadow:0 8px 18px rgba(6,61,43,.18);
 }
 .siteBrandMark span:nth-child(1){background:var(--rebuild-orange)}
 .siteBrandMark span:nth-child(2){background:#fff;position:relative}
 .siteBrandMark span:nth-child(3){background:var(--rebuild-green-2)}
+/* Drapeau principal du Niger : un seul disque orange centré dans la bande blanche. */
 .siteBrandMark span:nth-child(2):after{
-  content:"";position:absolute;width:10px;height:10px;border-radius:50%;
-  background:var(--rebuild-orange-2);left:50%;top:50%;transform:translate(-50%,-50%);
+  content:"";position:absolute;width:12px;height:12px;border-radius:50%;
+  background:var(--rebuild-orange);left:50%;top:50%;transform:translate(-50%,-50%);
+  box-shadow:0 1px 4px rgba(230,129,43,.22);
 }
-.siteBrandFlag{font-size:18px;line-height:1;display:inline-flex;align-items:center;margin-left:2px;filter:saturate(1.05)}
 .siteBrandCopy{display:grid;gap:3px;min-width:0}
 .siteBrandCopy strong{font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.1;white-space:nowrap}
 .siteBrandCopy small{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#7a867f;font-weight:800}
-.proNigerFlagBrand{width:27px;height:17px;vertical-align:middle;box-shadow:0 2px 7px rgba(0,0,0,.12);margin-right:3px}
 .siteNav{display:flex;align-items:center;justify-content:center;gap:4px;flex:1}
 .siteNav a{
   display:inline-flex;align-items:center;gap:7px;padding:10px 10px;border-radius:11px;
@@ -2714,7 +2714,6 @@ img{max-width:100%}
   .siteBrandMark{width:38px;height:38px;border-radius:11px}
   .siteBrandCopy strong{font-size:13px}
   .siteBrandCopy small{font-size:7px;letter-spacing:.1em}
-  .proNigerFlagBrand{width:22px;height:14px}
   .siteContributeButton{display:none}
   .proHero{min-height:auto}
   .proHeroGrid{padding:48px 0 42px}
