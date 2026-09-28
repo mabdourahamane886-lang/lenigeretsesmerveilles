@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft, Camera, CheckCircle2, FileVideo, ImagePlus, Plus, Upload, Video } from 'lucide-react'
-import { createClient } from '../../../lib/supabase/server'
-import { createMedia } from '../actions'
+import { createClient } from '../../lib/supabase/server'
+import { createMedia } from '../../app/admin/actions'
 
 const hiddenFile = {
   position: 'absolute' as const,
