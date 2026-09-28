@@ -40,6 +40,7 @@ export default async function Header() {
             </Link>
           </div>
 
+          {/* Header production fix: one Niger flag only. */}
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
             <span className="siteBrandMark" aria-label="Drapeau du Niger" role="img">
               <span />
