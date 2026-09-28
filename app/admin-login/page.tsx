@@ -10,7 +10,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
     <main className="page loginPage">
       <div className="container loginWrap">
         <div className="loginIntro">
-          <span className="eyebrow loginEyebrow">🇳🇪 Espace sécurisé</span>
+          <span className="eyebrow loginEyebrow"><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span> Espace sécurisé</span>
           <div className="kicker">Administration</div>
           <h1>Gérer Le Niger et ses Merveilles.</h1>
           <p className="lead">Connectez-vous avec vos identifiants administrateur pour publier les régions, merveilles, articles, cultures et campagnes.</p>
