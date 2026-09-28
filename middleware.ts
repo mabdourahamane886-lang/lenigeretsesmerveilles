@@ -1,16 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next()
-
-  // Force UTF-8 for HTML responses so French accents and punctuation
-  // are always interpreted correctly by browsers, crawlers and CDNs.
-  const accept = request.headers.get('accept') || ''
-  if (accept.includes('text/html')) {
-    response.headers.set('Content-Type', 'text/html; charset=utf-8')
-  }
-
-  return response
+/**
+ * Lightweight request middleware.
+ *
+ * Authentication for the admin area is intentionally handled by the
+ * server-side admin guard. This middleware only forwards requests so that
+ * Next.js/Vercel can manage response headers and streaming normally.
+ */
+export function middleware(_request: NextRequest) {
+  return NextResponse.next()
 }
 
 export const config = {
