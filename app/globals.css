@@ -2428,9 +2428,9 @@ img{max-width:100%}
 .siteHeaderInner{min-height:78px;display:flex;align-items:center;gap:20px}
 .siteBrand{display:flex;align-items:center;gap:12px;min-width:250px}
 .siteBrandMark{
-  width:44px;height:44px;border-radius:13px;overflow:hidden;display:grid;
+  width:48px;height:32px;border-radius:2px;overflow:hidden;display:grid;
   grid-template-rows:1fr 1fr 1fr;flex:none;
-  box-shadow:0 8px 18px rgba(6,61,43,.18);
+  box-shadow:0 4px 12px rgba(6,61,43,.16);
 }
 .siteBrandMark span:nth-child(1){background:var(--rebuild-orange)}
 .siteBrandMark span:nth-child(2){background:#fff;position:relative}
@@ -2439,7 +2439,6 @@ img{max-width:100%}
 .siteBrandMark span:nth-child(2):after{
   content:"";position:absolute;width:12px;height:12px;border-radius:50%;
   background:var(--rebuild-orange);left:50%;top:50%;transform:translate(-50%,-50%);
-  box-shadow:0 1px 4px rgba(230,129,43,.22);
 }
 .siteBrandFlag,.proNigerFlagBrand{display:none!important}
 .siteBrandCopy .siteMiniFlag,.siteBrandCopy .siteBrandFlag,.siteBrandCopy .proNigerFlagBrand,.siteBrandCopy .proNigerFlag{display:none!important}
