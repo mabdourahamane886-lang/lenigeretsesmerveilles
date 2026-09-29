@@ -2387,7 +2387,6 @@ body{
 .proNigerFlag i:nth-child(1){top:0;background:#e0522d}
 .proNigerFlag i:nth-child(2){top:33.333%;background:#fff}
 .proNigerFlag i:nth-child(3){bottom:0;background:#16864a}
-.proNigerFlag:after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:#e6812b;left:50%;top:50%;transform:translate(-50%,-50%)}
 
 
 /* =========================================================
