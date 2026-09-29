@@ -58,5 +58,6 @@ Les contenus publics sont stockés dans Supabase : régions, merveilles, événe
 
 <!-- deployment-trigger: 2026-09-25 -->
 
-
 <!-- Production deployment trigger: Niger flag correction -->
+
+<!-- Vercel production retry: 2026-09-29 -->
