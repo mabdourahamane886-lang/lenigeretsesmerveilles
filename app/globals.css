@@ -2781,3 +2781,20 @@ img{max-width:100%}
 .mediaDetailCard p{line-height:1.7;color:var(--muted)}
 .mediaDetailBack{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:24px;flex-wrap:wrap}
 @media(max-width:640px){.mediaDetailBack{align-items:flex-start;flex-direction:column}}
+
+
+/* Admin social publication composer */
+.publicationComposer{max-width:760px;margin:20px auto;background:#fff;border:1px solid #e7e8ec;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+.publicationIdentity{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid #eef0f3;margin-bottom:16px}
+.publicationIdentity>div:nth-child(2){display:flex;flex-direction:column;gap:5px}
+.publicationIdentity select{width:max-content;border:0;background:#f1f3f5;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:700}
+.publicationAvatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#f4f5f7;font-size:22px;flex:0 0 auto}
+.publicationTextLabel span{display:block;font-size:18px;font-weight:800;margin-bottom:8px}
+.publicationTextLabel textarea{font-size:18px;line-height:1.55;min-height:150px;border:0!important;padding:0!important;resize:vertical;background:transparent}
+.publicationTextLabel textarea:focus{outline:none;box-shadow:none}
+.publicationMediaPreview{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #e5e7eb;border-radius:14px;padding:14px;margin:14px 0;background:#fafafa}
+.publicationMediaPreview div{display:flex;flex-direction:column;gap:4px}.publicationMediaPreview span{font-size:12px;color:#667085}
+.publicationOption{display:flex;align-items:center;gap:12px;border:1px solid #e5e7eb;border-radius:14px;padding:12px;margin-bottom:14px}
+.publicationOption input[type=file]{max-width:100%;font-size:13px}.publicationOption small{color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.publicationComposer .btn{min-height:46px;border-radius:12px}.publicationComposer .btn.primary{font-weight:850;width:100%;font-size:15px}
+@media(max-width:640px){.publicationComposer{padding:14px;border-radius:16px}.publicationMediaPreview{align-items:flex-start;flex-direction:column}.publicationMediaPreview .btn{width:100%}}
