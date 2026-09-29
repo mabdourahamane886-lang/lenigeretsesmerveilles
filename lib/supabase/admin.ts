@@ -1,12 +1,16 @@
+import "server-only"
+
 import { createClient } from '@supabase/supabase-js'
 
 /**
- * Server-only Supabase client for owner/admin writes.
- * Never import this file into a Client Component.
+ * Client Supabase strictement serveur pour les écritures administrateur.
+ * La clé secrète/service-role ne doit jamais être importée dans un Client Component.
  */
 export function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const secretKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+  const secretKey =
+    process.env.SUPABASE_SECRET_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
 
   if (!url || !secretKey) return null
 
@@ -14,6 +18,7 @@ export function createAdminClient() {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+      detectSessionInUrl: false,
     },
   })
 }
