@@ -47,3 +47,38 @@ export async function createEvent(f:FormData){const s=await db(),name=String(f.g
 export async function createAdvertisement(f:FormData){const s=await db(),name=String(f.get('name')||'').trim(),title=String(f.get('title')||'').trim();if(!name||!title)throw new Error('Le nom et le titre sont obligatoires.');const {error}=await s.from('niger_advertisements').insert({name,title,body:t(f,'body')||'',media_url:t(f,'media_url'),media_type:t(f,'media_url')?'image':'text',cta_label:t(f,'cta_label'),destination_url:t(f,'destination_url'),starts_at:dt(f,'starts_at'),ends_at:dt(f,'ends_at'),placement:t(f,'placement')||'home',active:on(f,'active')});if(error)throw new Error(`Impossible d’enregistrer la campagne : ${error.message}`);refresh('/admin/publicites','/')}
 
 export async function reviewContribution(f:FormData){const s=await db(),id=t(f,'id'),status=t(f,'status');if(!id||!['pending','approved','rejected'].includes(status||''))throw new Error('Action de modération invalide.');const {error}=await s.from('niger_contributions').update({status,reviewer_notes:t(f,'reviewer_notes')}).eq('id',id);if(error)throw new Error(`Impossible de mettre à jour la contribution : ${error.message}`);refresh('/admin/contributions','/admin')}
+
+
+export async function createPublication(f:FormData){
+ const s=await db()
+ const contentText=String(f.get('content')||'').trim()
+ const visibility=String(f.get('visibility')||'public')
+ if(!contentText && !f.get('media_file')) throw new Error('Ajoute un texte ou une photo/vidéo avant de publier.')
+ if(!['public','private'].includes(visibility)) throw new Error('Visibilité invalide.')
+ const mediaFile=f.get('media_file')
+ const musicFile=f.get('music_file')
+ let mediaUrl:string|null=null
+ let mediaType:'none'|'photo'|'video'='none'
+ let musicUrl:string|null=null
+ if(mediaFile instanceof File && mediaFile.size>0){
+   if(mediaFile.size>50*1024*1024) throw new Error('La photo ou vidéo ne doit pas dépasser 50 Mo.')
+   if(!mediaFile.type.startsWith('image/') && !mediaFile.type.startsWith('video/')) throw new Error('Le média doit être une image ou une vidéo.')
+   mediaType=mediaFile.type.startsWith('video/')?'video':'photo'
+   const ext=mediaFile.name.split('.').pop()?.toLowerCase()||(mediaType==='video'?'mp4':'jpg')
+   mediaUrl=(await uploadToSmoothBundle(mediaFile,`publications/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(mediaFile.name)}.${ext}`)).url
+ }
+ if(musicFile instanceof File && musicFile.size>0){
+   if(musicFile.size>25*1024*1024) throw new Error('Le fichier audio ne doit pas dépasser 25 Mo.')
+   if(!musicFile.type.startsWith('audio/')) throw new Error('Le fichier Musique doit être un fichier audio.')
+   const ext=musicFile.name.split('.').pop()?.toLowerCase()||'mp3'
+   musicUrl=(await uploadToSmoothBundle(musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`)).url
+ }
+ const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
+ const {error}=await s.from('niger_publications').insert({
+   author_name:'Le Niger et ses Merveilles NE', content:contentText, media_url:mediaUrl, media_type:mediaType, music_url:musicUrl,
+   tagged_people:tagged, location:t(f,'location'), mood:t(f,'mood'), activity:t(f,'activity'), allow_messages:on(f,'allow_messages'),
+   visibility, published:true, published_at:new Date().toISOString(),
+ })
+ if(error) throw new Error('Impossible de publier : '+error.message)
+ refresh('/admin/publications','/publications','/')
+}
