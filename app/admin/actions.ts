@@ -16,19 +16,77 @@ function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
 export async function createMedia(f:FormData){
  if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
+
+ const fail=(message:string)=>{
+  redirect('/admin/medias?error='+encodeURIComponent(message))
+ }
+
  const s=createAdminClient()
- if(!s) throw new Error('La connexion sécurisée à la base de données n’est pas configurée.')
- const title=String(f.get('title')||'').trim(), credit=t(f,'credit'), url=t(f,'url')
- if(!title)throw new Error('Le titre est obligatoire.');if(!credit)throw new Error('Le crédit / la licence est obligatoire.')
- const category=String(f.get('media_category')||'photo'), selected=String(f.get('media_type')||'photo')
- if(!['photo','illustration','patrimoine','tourisme','culture','evenement'].includes(category))throw new Error('Catégorie média invalide.')
- const files=['media_file','photo_gallery_file','video_gallery_file','camera_file','video_camera_file','video_file','image_file'].map(n=>f.get(n)).filter((x):x is File=>x instanceof File&&x.size>0)
- let mediaUrl=url, mediaType=selected
+ if(!s){fail('La connexion sécurisée à la base de données n’est pas configurée.');return}
+
+ const title=String(f.get('title')||'').trim()
+ const credit=t(f,'credit')
+ const url=t(f,'url')
+ if(!title){fail('Le titre est obligatoire.');return}
+ if(!credit){fail('Le crédit / la licence est obligatoire.');return}
+
+ const category=String(f.get('media_category')||'photo')
+ const selected=String(f.get('media_type')||'photo')
+ if(!['photo','illustration','patrimoine','tourisme','culture','evenement'].includes(category)){
+  fail('Catégorie média invalide.');return
+ }
+
+ const files=['media_file','photo_gallery_file','video_gallery_file','camera_file','video_camera_file','video_file','image_file']
+  .map(n=>f.get(n))
+  .filter((x):x is File=>x instanceof File&&x.size>0)
+
+ let mediaUrl=url
+ let mediaType=selected
  const file=files[0]
- if(file){const image=file.type.startsWith('image/'),video=file.type.startsWith('video/');if(!image&&!video)throw new Error('Le fichier doit être une image ou une vidéo.');if(file.size>50*1024*1024)throw new Error('Le fichier ne doit pas dépasser 50 Mo.');mediaType=video?'video':'photo';const ext=file.name.split('.').pop()?.toLowerCase()||(video?'mp4':'jpg');mediaUrl=(await uploadToSmoothBundle(file,`gallery/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(title)}.${ext}`)).url}
- if(!mediaUrl)throw new Error('Sélectionne une photo/vidéo ou indique une URL.')
- const {error}=await s.from('niger_media').insert({title,description:t(f,'description')||'',media_type:mediaType,media_category:category,url:mediaUrl,credit,region_id:t(f,'region_id'),wonder_id:t(f,'wonder_id'),published:on(f,'published')})
- if(error)throw new Error(`Impossible d’enregistrer le média : ${error.message}`);refresh('/admin/medias','/media','/')
+
+ if(file){
+  const image=file.type.startsWith('image/')
+  const video=file.type.startsWith('video/')
+  if(!image&&!video){fail('Le fichier doit être une image ou une vidéo.');return}
+  if(file.size>50*1024*1024){fail('Le fichier ne doit pas dépasser 50 Mo.');return}
+
+  mediaType=video?'video':'photo'
+  const ext=file.name.split('.').pop()?.toLowerCase()||(video?'mp4':'jpg')
+
+  try{
+   const uploaded=await uploadToSmoothBundle(
+    file,
+    `gallery/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(title)}.${ext}`
+   )
+   mediaUrl=uploaded.url
+  }catch(error){
+   const message=error instanceof Error?error.message:'Échec de l’envoi du fichier.'
+   fail('Upload du média impossible : '+message)
+   return
+  }
+ }
+
+ if(!mediaUrl){fail('Sélectionne une photo/vidéo ou indique une URL.');return}
+
+ const {error}=await s.from('niger_media').insert({
+  title,
+  description:t(f,'description')||'',
+  media_type:mediaType,
+  media_category:category,
+  url:mediaUrl,
+  credit,
+  region_id:t(f,'region_id'),
+  wonder_id:t(f,'wonder_id'),
+  published:on(f,'published')
+ })
+
+ if(error){
+  fail('Impossible d’enregistrer le média : '+error.message)
+  return
+ }
+
+ refresh('/admin/medias','/media','/')
+ redirect('/admin/medias?success=1')
 }
 
 export async function createArticle(f:FormData){
