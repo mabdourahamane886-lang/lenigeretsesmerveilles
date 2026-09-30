@@ -1,25 +1,28 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { createAdminClient } from '../../../lib/supabase/admin'
+import { createClient } from '../../../lib/supabase/server'
 import { createMedia } from '../actions'
 import MediaPicker from './media-picker'
-import { isAdminAuthenticated } from '../../../lib/admin-auth'
 
 export default async function AdminMedias(){
- if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
- const s=createAdminClient()
- if (!s) throw new Error('La connexion sécurisée à la base de données n’est pas configurée.')
- const [regionsResult,wondersResult,mediaResult]=await Promise.all([
-  s.from('niger_regions').select('id,name').order('name'),
-  s.from('niger_wonders').select('id,name').order('name'),
-  s.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at',{ascending:false})
- ])
- if (regionsResult.error) throw new Error(`Impossible de charger les régions : ${regionsResult.error.message}`)
- if (wondersResult.error) throw new Error(`Impossible de charger les merveilles : ${wondersResult.error.message}`)
- if (mediaResult.error) throw new Error(`Impossible de charger les médias : ${mediaResult.error.message}`)
- const regions=regionsResult.data||[]
- const wonders=wondersResult.data||[]
- const media=mediaResult.data||[]
+ const supabase = await createClient()
+ let regions:any[] = []
+ let wonders:any[] = []
+ let media:any[] = []
+
+ if (supabase) {
+  try {
+   const results = await Promise.allSettled([
+    supabase.from('niger_regions').select('id,name').order('name'),
+    supabase.from('niger_wonders').select('id,name').order('name'),
+    supabase.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at',{ascending:false}),
+   ])
+   if (results[0].status === 'fulfilled' && !results[0].value.error) regions = results[0].value.data || []
+   if (results[1].status === 'fulfilled' && !results[1].value.error) wonders = results[1].value.data || []
+   if (results[2].status === 'fulfilled' && !results[2].value.error) media = results[2].value.data || []
+  } catch {
+   // The admin interface must remain renderable even if a non-critical read fails.
+  }
+ }
  return <main className="section"><div className="container" style={{paddingBottom:100}}>
   <Link className="textlink" href="/admin">← Administration</Link>
   <div className="adminHero"><div><span className="kicker">Médias</span><h1>Galerie du Niger</h1><p className="muted">Ajoute une photo ou une vidéo depuis la galerie de ton téléphone, comme dans WhatsApp. Le média est prévisualisé avant publication.</p></div></div>
