@@ -1,6 +1,7 @@
 import { createClient } from '../../lib/supabase/server'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function PublicationsPage() {
   const s = await createClient()
