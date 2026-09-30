@@ -61,6 +61,7 @@ export default async function Header() {
               </Link>
             ))}
             <Link href="/articles"><BookOpenText size={15} />Articles</Link>
+            <Link href="/publications"><BookOpenText size={15} />Publications</Link>
             <Link href="/carte"><Compass size={15} />Carte</Link>
           </nav>
 
@@ -84,6 +85,7 @@ export default async function Header() {
                     <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
                   ))}
                   <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
+                  <Link href="/publications"><BookOpenText size={17} /><span>Publications</span></Link>
                   <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
                   <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
                   <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
