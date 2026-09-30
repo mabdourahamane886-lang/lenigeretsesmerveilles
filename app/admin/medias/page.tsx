@@ -1,9 +1,12 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
 import { createMedia } from '../actions'
 import MediaPicker from './media-picker'
+import { isAdminAuthenticated } from '../../../lib/admin-auth'
 
 export default async function AdminMedias(){
+ if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
  const s=await createClient()
  const [{data:regions},{data:wonders},{data:media}]=s?await Promise.all([
   s.from('niger_regions').select('id,name').order('name'),
