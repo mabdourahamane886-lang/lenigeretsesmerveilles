@@ -3,25 +3,37 @@ import { createClient } from '../../../lib/supabase/server'
 import { createMedia } from '../actions'
 import MediaPicker from './media-picker'
 
-export default async function AdminMedias(){
- const supabase = await createClient()
- let regions:any[] = []
- let wonders:any[] = []
- let media:any[] = []
+type OptionRow = { id: string; name: string }
+type MediaRow = {
+ id: string
+ title: string
+ url: string
+ credit: string
+ published: boolean
+ region_id: string | null
+ media_type: 'photo' | 'video'
+ media_category: string | null
+ created_at: string
+}
 
- if (supabase) {
-  try {
-   const results = await Promise.allSettled([
+export default async function AdminMedias(){
+ let regions:OptionRow[]=[]
+ let wonders:OptionRow[]=[]
+ let media:MediaRow[]=[]
+ try {
+  const supabase=await createClient()
+  if(supabase){
+   const results=await Promise.allSettled([
     supabase.from('niger_regions').select('id,name').order('name'),
     supabase.from('niger_wonders').select('id,name').order('name'),
     supabase.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at',{ascending:false}),
    ])
-   if (results[0].status === 'fulfilled' && !results[0].value.error) regions = results[0].value.data || []
-   if (results[1].status === 'fulfilled' && !results[1].value.error) wonders = results[1].value.data || []
-   if (results[2].status === 'fulfilled' && !results[2].value.error) media = results[2].value.data || []
-  } catch {
-   // The admin interface must remain renderable even if a non-critical read fails.
+   if(results[0].status==='fulfilled'&&!results[0].value.error) regions=results[0].value.data||[]
+   if(results[1].status==='fulfilled'&&!results[1].value.error) wonders=results[1].value.data||[]
+   if(results[2].status==='fulfilled'&&!results[2].value.error) media=results[2].value.data||[]
   }
+ } catch {
+  // La page reste rendable avec des listes vides si une lecture échoue.
  }
  return <main className="section"><div className="container" style={{paddingBottom:100}}>
   <Link className="textlink" href="/admin">← Administration</Link>
@@ -37,14 +49,14 @@ export default async function AdminMedias(){
     <label>Catégorie<select name="media_category"><option value="photo">Photo</option><option value="illustration">Illustration</option><option value="patrimoine">Patrimoine</option><option value="tourisme">Tourisme</option><option value="culture">Culture</option><option value="evenement">Événement</option></select></label>
    </div>
    <div className="formRow">
-    <label>Région<select name="region_id"><option value="">Toutes</option>{(regions||[]).map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
-    <label>Merveille<select name="wonder_id"><option value="">Aucune</option>{(wonders||[]).map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+    <label>Région<select name="region_id"><option value="">Toutes</option>{regions.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+    <label>Merveille<select name="wonder_id"><option value="">Aucune</option>{wonders.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
    </div>
    <label className="check"><input type="checkbox" name="published" defaultChecked/> Publier immédiatement</label>
    <button className="btn primary">Publier dans la galerie du site</button>
   </form>
   <section className="adminList" style={{marginTop:24}}><div className="sectionHead"><div><div className="kicker">Bibliothèque</div><h2>Médias enregistrés</h2></div></div>
-   {!media?.length?<p className="muted">Aucun média pour le moment.</p>:<div className="grid">{media.map(item=><article className="card" key={item.id}>
+   {!media.length?<p className="muted">Aucun média pour le moment.</p>:<div className="grid">{media.map(item=><article className="card" key={item.id}>
     <div style={{aspectRatio:'16/9',overflow:'hidden',background:'#eee'}}>{item.media_type==='video'?<video src={item.url} controls preload="metadata" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:<img src={item.url} alt={item.title} style={{width:'100%',height:'100%',objectFit:'cover'}}/>}</div>
     <div className="cardbody"><span className="tag">{item.published?'Publié':'Brouillon'} · {item.media_type==='video'?'Vidéo':'Photo'}</span><h3>{item.title}</h3><p className="muted">{item.credit}</p><a className="textlink" href={item.url} target="_blank" rel="noreferrer">Ouvrir le média direct ↗</a></div>
    </article>)}</div>}
