@@ -16,7 +16,10 @@ type MediaRow = {
  created_at: string
 }
 
-export default async function AdminMedias(){
+export default async function AdminMedias({ searchParams }: { searchParams?: Promise<{ error?: string; success?: string }> }){
+ const params = searchParams ? await searchParams : {}
+ const errorMessage = params.error || ''
+ const successMessage = params.success === '1' ? 'Média publié avec succès dans la galerie.' : ''
  let regions:OptionRow[]=[]
  let wonders:OptionRow[]=[]
  let media:MediaRow[]=[]
@@ -37,6 +40,8 @@ export default async function AdminMedias(){
  }
  return <main className="section"><div className="container" style={{paddingBottom:100}}>
   <Link className="textlink" href="/admin">← Administration</Link>
+  {errorMessage && <div role="alert" style={{margin:'16px 0',padding:'14px 16px',borderRadius:12,background:'#fff1f0',border:'1px solid #f3b7b2',color:'#9b1c1c',fontWeight:700}}>⚠️ {errorMessage}</div>}
+  {successMessage && <div role="status" style={{margin:'16px 0',padding:'14px 16px',borderRadius:12,background:'#eefbf3',border:'1px solid #b7e4c7',color:'#176b3a',fontWeight:700}}>✅ {successMessage}</div>}
   <div className="adminHero"><div><span className="kicker">Médias</span><h1>Galerie du Niger</h1><p className="muted">Ajoute une photo ou une vidéo depuis la galerie de ton téléphone, comme dans WhatsApp. Le média est prévisualisé avant publication.</p></div></div>
   <form className="adminForm" action={createMedia} encType="multipart/form-data">
    <label>Titre<input required name="title" placeholder="Grande Mosquée d’Agadez"/></label>
