@@ -1,18 +1,25 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { createClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
 import { createMedia } from '../actions'
 import MediaPicker from './media-picker'
 import { isAdminAuthenticated } from '../../../lib/admin-auth'
 
 export default async function AdminMedias(){
  if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
- const s=await createClient()
- const [{data:regions},{data:wonders},{data:media}]=s?await Promise.all([
+ const s=createAdminClient()
+ if (!s) throw new Error('La connexion sécurisée à la base de données n’est pas configurée.')
+ const [regionsResult,wondersResult,mediaResult]=await Promise.all([
   s.from('niger_regions').select('id,name').order('name'),
   s.from('niger_wonders').select('id,name').order('name'),
   s.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at',{ascending:false})
- ]):[{data:[]},{data:[]},{data:[]}]
+ ])
+ if (regionsResult.error) throw new Error(`Impossible de charger les régions : ${regionsResult.error.message}`)
+ if (wondersResult.error) throw new Error(`Impossible de charger les merveilles : ${wondersResult.error.message}`)
+ if (mediaResult.error) throw new Error(`Impossible de charger les médias : ${mediaResult.error.message}`)
+ const regions=regionsResult.data||[]
+ const wonders=wondersResult.data||[]
+ const media=mediaResult.data||[]
  return <main className="section"><div className="container" style={{paddingBottom:100}}>
   <Link className="textlink" href="/admin">← Administration</Link>
   <div className="adminHero"><div><span className="kicker">Médias</span><h1>Galerie du Niger</h1><p className="muted">Ajoute une photo ou une vidéo depuis la galerie de ton téléphone, comme dans WhatsApp. Le média est prévisualisé avant publication.</p></div></div>
