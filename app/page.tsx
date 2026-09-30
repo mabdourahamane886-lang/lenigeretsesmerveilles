@@ -46,6 +46,16 @@ type HomeArticle = {
   published_at?: string | null
 }
 
+type HomePublication = {
+  id: string
+  author_name?: string | null
+  content?: string | null
+  media_url?: string | null
+  media_type?: string | null
+  location?: string | null
+  published_at?: string | null
+}
+
 type ExplorerCard = {
   href: string
   icon: typeof Compass
@@ -83,10 +93,11 @@ async function getHomeData() {
       regions: fallbackRegions,
       events: [] as HomeEvent[],
       articles: [] as HomeArticle[],
+      publications: [] as HomePublication[],
     }
   }
 
-  const [{ data: publishedWonders }, { data: regions }, { data: events }, { data: articles }] = await Promise.all([
+  const [{ data: publishedWonders }, { data: regions }, { data: events }, { data: articles }, { data: publications }] = await Promise.all([
     supabase
       .from('niger_wonders')
       .select('id,name,short_description,description,cover_url,published,featured')
@@ -108,6 +119,13 @@ async function getHomeData() {
       .eq('published', true)
       .order('published_at', { ascending: false })
       .limit(3),
+    supabase
+      .from('niger_publications')
+      .select('id,author_name,content,media_url,media_type,location,published_at')
+      .eq('published', true)
+      .eq('visibility', 'public')
+      .order('published_at', { ascending: false })
+      .limit(3),
   ])
 
   const homeWonders: HomeWonder[] = publishedWonders?.length
@@ -125,6 +143,7 @@ async function getHomeData() {
     regions: regions?.length ? regions : fallbackRegions,
     events: events || [],
     articles: articles || [],
+    publications: publications || [],
   }
 }
 
@@ -134,7 +153,7 @@ function formatDate(value?: string | null) {
 }
 
 export default async function Home() {
-  const { wonders: homeWonders, regions, events, articles } = await getHomeData()
+  const { wonders: homeWonders, regions, events, articles, publications } = await getHomeData()
   const featuredWonder = homeWonders[0]
 
   return (
@@ -347,6 +366,38 @@ export default async function Home() {
                   ))}
                 </div>
               )}
+            </div>
+          </section>
+        )}
+
+        {publications.length > 0 && (
+          <section className="section proSection">
+            <div className="container">
+              <div className="proSectionIntro">
+                <div>
+                  <div className="kicker">Publications</div>
+                  <h2>Les dernières nouvelles du Niger.</h2>
+                </div>
+                <Link className="proInlineLink" href="/publications">Voir toutes les publications <ArrowRight size={16} /></Link>
+              </div>
+              <div className="proArticleRow">
+                {publications.map((publication) => (
+                  <article className="proArticleCard" key={publication.id}>
+                    {publication.media_url && publication.media_type === 'photo' && (
+                      <img src={publication.media_url} alt="" className="proArticleImage" style={{objectFit:'cover'}} />
+                    )}
+                    {publication.media_url && publication.media_type === 'video' && (
+                      <video src={publication.media_url} controls className="proArticleImage" style={{objectFit:'cover'}} />
+                    )}
+                    <div className="proArticleBody">
+                      <span className="proMiniLabel">{publication.location || 'Niger'}</span>
+                      <h3>{publication.content ? publication.content.slice(0, 120) : 'Publication du Niger et ses Merveilles'}</h3>
+                      <p>{publication.author_name || 'Le Niger et ses Merveilles'}</p>
+                      <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
         )}
