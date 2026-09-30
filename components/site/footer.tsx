@@ -33,6 +33,7 @@ export default function Footer() {
             <h3>Découvrir</h3>
             <Link href="/evenements">Agenda</Link>
             <Link href="/articles">Articles</Link>
+            <Link href="/publications">Publications</Link>
             <Link href="/media"><Camera size={14} />Photothèque</Link>
             <Link href="/carte"><Compass size={14} />Carte du Niger</Link>
           </div>
