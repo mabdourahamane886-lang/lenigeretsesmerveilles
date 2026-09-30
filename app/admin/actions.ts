@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { uploadToSmoothBundle } from '../../lib/smooth-bundle'
@@ -14,7 +15,10 @@ async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexio
 function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
 export async function createMedia(f:FormData){
- const s=await db(), title=String(f.get('title')||'').trim(), credit=t(f,'credit'), url=t(f,'url')
+ if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
+ const s=createAdminClient()
+ if(!s) throw new Error('La connexion sécurisée à la base de données n’est pas configurée.')
+ const title=String(f.get('title')||'').trim(), credit=t(f,'credit'), url=t(f,'url')
  if(!title)throw new Error('Le titre est obligatoire.');if(!credit)throw new Error('Le crédit / la licence est obligatoire.')
  const category=String(f.get('media_category')||'photo'), selected=String(f.get('media_type')||'photo')
  if(!['photo','illustration','patrimoine','tourisme','culture','evenement'].includes(category))throw new Error('Catégorie média invalide.')
