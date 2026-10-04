@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
+import { uploadToSmoothBundle } from '../../lib/smooth-bundle'
 
 const t=(f:FormData,n:string)=>String(f.get(n)||'').trim()||null
 const on=(f:FormData,n:string)=>f.get(n)==='on'
@@ -12,13 +13,6 @@ const num=(f:FormData,n:string)=>{const v=t(f,n);if(!v)return null;const x=Numbe
 const dt=(f:FormData,n:string)=>{const v=t(f,n);return v?new Date(v).toISOString():null}
 async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexion administrateur requise.');const s=createAdminClient();if(!s)throw new Error('La connexion sécurisée à la base de données n’est pas configurée.');return s}
 function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
-async function uploadToSupabaseStorage(s:any,file:File,path:string,bucket='niger-media'){
-  const {error}=await s.storage.from(bucket).upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false,cacheControl:'31536000'})
-  if(error) throw new Error(error.message)
-  const {data}=s.storage.from(bucket).getPublicUrl(path)
-  if(!data?.publicUrl) throw new Error('Aucune URL publique n’a été générée pour le média.')
-  return {url:data.publicUrl}
-}
 
 export async function createMedia(f:FormData){
  if (!(await isAdminAuthenticated())) redirect('/admin-login?next=/admin/medias')
@@ -60,8 +54,7 @@ export async function createMedia(f:FormData){
   const ext=file.name.split('.').pop()?.toLowerCase()||(video?'mp4':'jpg')
 
   try{
-   const uploaded=await uploadToSupabaseStorage(
-    s,
+   const uploaded=await uploadToSmoothBundle(
     file,
     `gallery/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(title)}.${ext}`
    )
@@ -134,13 +127,13 @@ export async function createPublication(f:FormData){
    if(!mediaFile.type.startsWith('image/') && !mediaFile.type.startsWith('video/')) throw new Error('Le média doit être une image ou une vidéo.')
    mediaType=mediaFile.type.startsWith('video/')?'video':'photo'
    const ext=mediaFile.name.split('.').pop()?.toLowerCase()||(mediaType==='video'?'mp4':'jpg')
-   mediaUrl=(await uploadToSupabaseStorage(s,mediaFile,`publications/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(mediaFile.name)}.${ext}`,'social-media')).url
+   mediaUrl=(await uploadToSmoothBundle(mediaFile,`publications/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(mediaFile.name)}.${ext}`)).url
  }
  if(musicFile instanceof File && musicFile.size>0){
    if(musicFile.size>25*1024*1024) throw new Error('Le fichier audio ne doit pas dépasser 25 Mo.')
    if(!musicFile.type.startsWith('audio/')) throw new Error('Le fichier Musique doit être un fichier audio.')
    const ext=musicFile.name.split('.').pop()?.toLowerCase()||'mp3'
-   musicUrl=(await uploadToSupabaseStorage(s,musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`,'social-media')).url
+   musicUrl=(await uploadToSmoothBundle(musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`)).url
  }
  const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
  const {error}=await s.from('niger_publications').insert({
