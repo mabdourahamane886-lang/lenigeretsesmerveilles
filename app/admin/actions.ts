@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 
@@ -13,7 +14,7 @@ const dt=(f:FormData,n:string)=>{const v=t(f,n);return v?new Date(v).toISOString
 async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexion administrateur requise.');const s=createAdminClient();if(!s)throw new Error('La connexion sécurisée à la base de données n’est pas configurée.');return s}
 function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
-async function uploadToSupabaseStorage(s:any,file:File,path:string){
+async function uploadToSupabaseStorage(s:SupabaseClient,file:File,path:string){
  const bucket='niger-media'
  const {error}=await s.storage.from(bucket).upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false,cacheControl:'31536000'})
  if(error) throw new Error(error.message)
