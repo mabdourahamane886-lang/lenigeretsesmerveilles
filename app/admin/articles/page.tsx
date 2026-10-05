@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
+import { regions as fallbackRegions } from '../../../data/regions'
 import ArticleForm from './article-form'
 
 type AdminArticleRow = {
@@ -13,19 +15,20 @@ type AdminArticleRow = {
 }
 
 export default async function AdminArticles() {
-  const supabase = await createClient()
+  const supabase = createAdminClient() || await createClient()
   const [{ data: articles }, { data: categories }, { data: regions }] = supabase
     ? await Promise.all([
         supabase.from('niger_articles').select('id,title,slug,category,region_id,published,created_at,niger_regions(name)').order('created_at', { ascending: false }),
         supabase.from('niger_categories').select('name,slug').order('name'),
         supabase.from('niger_regions').select('id,name').order('name'),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }]
+    : [{ data: [] }, { data: [] }, { data: fallbackRegions.map((region) => ({ id: '', name: region.name })) }]
+  const regionOptions = regions?.length ? regions : fallbackRegions.map((region) => ({ id: '', name: region.name }))
 
   return <main className="section"><div className="container">
     <Link className="textlink" href="/admin">← Administration</Link>
     <div className="adminHero"><div><span className="kicker">Publications</span><h1>Créer et publier</h1><p className="muted">Choisis une catégorie, une région et une image depuis ta galerie. Chaque publication publiée possède son propre lien partageable.</p></div></div>
-    <ArticleForm categories={categories || []} regions={regions || []} />
+    <ArticleForm categories={categories || []} regions={regionOptions} />
     <section className="adminList"><div className="sectionHead"><div><div className="kicker">Contenus</div><h2>Publications enregistrées</h2></div></div>
       {!articles?.length ? <p className="muted">Aucune publication pour le moment.</p> : <div className="adminRows">{articles.map((article: AdminArticleRow) => {
         const region = Array.isArray(article.niger_regions) ? article.niger_regions[0]?.name : article.niger_regions?.name

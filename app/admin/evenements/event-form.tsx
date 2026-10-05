@@ -24,7 +24,7 @@ export default function EventForm({ regions }: { regions: { id: string; name: st
   return <form className="adminForm" action={action}>
     <label>Nom<input required name="name" placeholder="Nom de l’événement"/></label>
     <div className="formRow">
-      <label>Région<select name="region_id"><option value="">Choisir</option>{regions.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+      <label>Région<select name="region_id"><option value="">Choisir</option>{regions.map((r, index)=><option key={`${r.id || 'region'}-${index}`} value={r.id}>{r.name}</option>)}</select></label>
       <label>Ville<input name="city"/></label>
     </div>
     <div className="formRow">

@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { ArrowLeft, Camera, CheckCircle2, FileVideo, ImagePlus, Plus, Upload, Video } from 'lucide-react'
 import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
+import { regions as fallbackRegions } from '../../data/regions'
+import wondersFallback from '../../data/wonders'
 import { createMedia } from '../../app/admin/actions'
 
 const hiddenFile = {
@@ -16,7 +19,7 @@ const hiddenFile = {
 }
 
 export default async function AdminMedias() {
-  const supabase = await createClient()
+  const supabase = createAdminClient() || await createClient()
   const [{ data: regions }, { data: wonders }, { data: media }] = supabase
     ? await Promise.all([
         supabase.from('niger_regions').select('id,name').order('name'),
@@ -26,7 +29,9 @@ export default async function AdminMedias() {
           .select('id,title,url,credit,published,region_id,media_type,media_category,created_at')
           .order('created_at', { ascending: false }),
       ])
-    : [{ data: [] }, { data: [] }, { data: [] }]
+    : [{ data: fallbackRegions.map((region) => ({ id: '', name: region.name })) }, { data: wondersFallback.map((wonder, index) => ({ id: `fallback-${index}`, name: wonder.name })) }, { data: [] }]
+  const regionOptions = regions?.length ? regions : fallbackRegions.map((region) => ({ id: '', name: region.name }))
+  const wonderOptions = wonders?.length ? wonders : wondersFallback.map((wonder, index) => ({ id: `fallback-${index}`, name: wonder.name }))
 
   return (
     <main className="adminPagePro">
@@ -140,14 +145,14 @@ export default async function AdminMedias() {
               Région
               <select name="region_id">
                 <option value="">Toutes les régions</option>
-                {(regions || []).map((region) => <option key={region.id} value={region.id}>{region.name}</option>)}
+                {regionOptions.map((region, index) => <option key={`${region.id || 'fallback'}-${index}`} value={region.id}>{region.name}</option>)}
               </select>
             </label>
             <label>
               Merveille associée
               <select name="wonder_id">
                 <option value="">Aucune</option>
-                {(wonders || []).map((wonder) => <option key={wonder.id} value={wonder.id}>{wonder.name}</option>)}
+                {wonderOptions.map((wonder) => <option key={wonder.id} value={wonder.id}>{wonder.name}</option>)}
               </select>
             </label>
           </div>

@@ -36,7 +36,7 @@ export default function ArticleForm({ categories, regions }: { categories: Optio
       </select></label>
       <label>Région<select name="region_id" defaultValue="">
         <option value="">Toutes les régions</option>
-        {regions.map((region) => <option key={region.id} value={region.id}>{region.name}</option>)}
+        {regions.map((region, index) => <option key={`${region.id || 'region'}-${index}`} value={region.id}>{region.name}</option>)}
       </select></label>
     </div>
     <label>Image de couverture<input type="file" name="cover_file" accept="image/*" /></label>
