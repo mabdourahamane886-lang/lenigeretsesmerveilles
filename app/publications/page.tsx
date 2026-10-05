@@ -1,17 +1,22 @@
-import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function PublicationsPage() {
-  const s = await createClient()
-  const { data: publications } = s
+  // This is a server-only, public read. The explicit filters keep private and
+  // draft publications out while the admin client avoids an anonymous-session
+  // cookie/RLS mismatch on the public route.
+  const s = createAdminClient()
+  const { data: publications, error } = s
     ? await s.from('niger_publications')
         .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published_at')
         .eq('published', true)
         .eq('visibility', 'public')
         .order('published_at', { ascending: false })
-    : { data: [] }
+    : { data: [], error: new Error('Supabase non configuré') }
+
+  if (error) console.error('[v0] Impossible de charger les publications:', error.message)
 
   return (
     <main className="section">
