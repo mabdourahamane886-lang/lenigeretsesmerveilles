@@ -31,7 +31,8 @@ export default async function PublicationsPage() {
 
         <div style={{display:'grid',gap:24}}>
           {!publications?.length ? <p className="muted">Aucune publication publiée pour le moment.</p> : publications.map((p) => (
-            <article className="card" key={p.id}>
+            <article className="card" id={`publication-${p.id}`} key={p.id}>
+              <a className="textlink" href={`#publication-${p.id}`} aria-label={`Lien vers la publication de ${p.author_name || 'Le Niger et ses Merveilles'}`} style={{display:'inline-flex',marginBottom:12,fontSize:13}}>Lien direct vers cette publication</a>
               <div className="cardbody">
                 <div style={{display:'flex',alignItems:'center',gap:12}}>
                   <div className="publicationAvatar">🇳🇪</div>

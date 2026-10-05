@@ -385,7 +385,7 @@ export default async function Home() {
               </div>
               <div className="proArticleRow">
                 {publications.map((publication) => (
-                  <article className="proArticleCard" key={publication.id}>
+                  <Link href={`/publications#publication-${publication.id}`} className="proArticleCard" key={publication.id}>
                     {publication.media_url && publication.media_type === 'photo' && (
                       <img src={publication.media_url} alt="" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
@@ -398,7 +398,7 @@ export default async function Home() {
                       <p>{publication.author_name || 'Le Niger et ses Merveilles'}</p>
                       <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
                     </div>
-                  </article>
+                  </Link>
                 ))}
               </div>
             </div>
