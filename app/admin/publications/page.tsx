@@ -1,9 +1,14 @@
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
 import PublicationComposer from './publication-composer'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminPublications() {
-  const s = await createClient()
+  // The admin page must use the server-side service client: the public RLS
+  // policy intentionally hides drafts and private publications from anon users.
+  const s = createAdminClient()
   const { data: publications } = s
     ? await s.from('niger_publications')
         .select('id,content,media_url,media_type,location,mood,activity,published,published_at,created_at')

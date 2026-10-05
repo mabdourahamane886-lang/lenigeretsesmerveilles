@@ -18,6 +18,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
 // à partir des identifiants admin afin que la connexion reste fonctionnelle.
 const SESSION_SECRET =
   process.env.ADMIN_SESSION_SECRET ||
+  process.env.SUPABASE_JWT_SECRET ||
   (ADMIN_EMAIL && ADMIN_PASSWORD ? `niger-admin:${ADMIN_EMAIL}:${ADMIN_PASSWORD}` : '')
 
 function fromBase64(value: string) {
