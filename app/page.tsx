@@ -18,7 +18,7 @@ import Footer from '../components/site/footer'
 import wonders from '../data/wonders'
 import { nigerMedia } from '../data/media'
 import { regions as fallbackRegions } from '../data/regions'
-import { createClient } from '../lib/supabase/server'
+import { createAdminClient } from '../lib/supabase/admin'
 
 type HomeWonder = {
   id: string
@@ -89,7 +89,7 @@ const explorerCards: ExplorerCard[] = [
 ]
 
 async function getHomeData() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   if (!supabase) {
     return {
       wonders: staticWonders,
