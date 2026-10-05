@@ -1,12 +1,12 @@
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
-import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 import wonders from '../../data/wonders'
 
 export const dynamic = 'force-dynamic'
 
 export default async function MerveillesPage() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data } = supabase
     ? await supabase.from('niger_wonders').select('id,name,short_description,description,cover_url,published').eq('published', true).order('name')
     : { data: null }
