@@ -153,3 +153,85 @@ export async function createPublication(f:FormData){
  if(error) throw new Error('Impossible de publier : '+error.message)
  refresh('/admin/publications','/publications','/')
 }
+
+
+async function fetchCodaRows(){
+ const token=process.env.CODA_API_TOKEN?.trim()
+ const docId=process.env.CODA_PUBLICATIONS_DOC_ID?.trim()||'gi4RXbIIVE'
+ const tableId=process.env.CODA_PUBLICATIONS_TABLE_ID?.trim()||'grid-iR0ZFog7KM'
+ if(!token) throw new Error('La synchronisation Coda n’est pas configurée. Ajoute CODA_API_TOKEN dans les variables d’environnement du site.')
+ const rows:any[]=[]
+ let pageToken=''
+ do{
+   const url=new URL(\`https://coda.io/apis/v1/docs/\${docId}/tables/\${tableId}/rows\`)
+   url.searchParams.set('useColumnNames','true')
+   url.searchParams.set('valueFormat','simple')
+   url.searchParams.set('limit','100')
+   if(pageToken) url.searchParams.set('pageToken',pageToken)
+   const response=await fetch(url.toString(),{headers:{Authorization:\`Bearer \${token}\`},cache:'no-store'})
+   if(!response.ok) throw new Error(\`Coda a répondu HTTP \${response.status}. Vérifie le jeton Coda et les identifiants du document.\`)
+   const body=await response.json()
+   rows.push(...(body.items||[]))
+   pageToken=body.nextPageToken||''
+ }while(pageToken)
+ return rows
+}
+
+function codaText(value:unknown){
+ if(value==null) return ''
+ if(typeof value==='string'||typeof value==='number'||typeof value==='boolean') return String(value)
+ if(Array.isArray(value)) return value.map(codaText).filter(Boolean).join(', ')
+ if(typeof value==='object'&&value&&'name' in value) return String((value as {name?:unknown}).name||'')
+ return ''
+}
+
+export async function syncCodaPublications(){
+ const s=await db()
+ const rows=await fetchCodaRows()
+ let created=0,updated=0
+ for(const row of rows){
+   const values=(row.values||{}) as Record<string,unknown>
+   const title=codaText(values['Titre']).trim()
+   const body=codaText(values['Contenu']).trim()
+   const image=codaText(values['Image URL']).trim()||null
+   const type=codaText(values['Type']).trim()
+   const status=codaText(values['Statut']).trim()
+   const visibility=codaText(values['Visibilité']).trim()||'public'
+   const location=codaText(values['Lieu']).trim()||null
+   const dateValue=codaText(values['Date de publication']).trim()
+   if(!title&&!body) continue
+   const published=status==='Publié' && visibility==='public'
+   const content=title && body ? \`**\${title}**\\n\\n\${body}\` : (title||body)
+   const mediaType=type==='video'?'video':type==='photo'?'photo':'none'
+   const publishedAt=dateValue && !Number.isNaN(Date.parse(dateValue)) ? new Date(dateValue).toISOString() : new Date().toISOString()
+   const payload={
+     coda_row_id:String(row.id),
+     author_name:'Le Niger et ses Merveilles NE',
+     content,
+     media_url:image,
+     media_type:mediaType,
+     music_url:null,
+     tagged_people:[],
+     location,
+     mood:null,
+     activity:null,
+     allow_messages:false,
+     visibility,
+     published,
+     published_at:published?publishedAt:null
+   }
+   const {data:existing,error:findError}=await s.from('niger_publications').select('id').eq('coda_row_id',String(row.id)).maybeSingle()
+   if(findError) throw new Error('Lecture Supabase impossible : '+findError.message)
+   if(existing){
+     const {error}=await s.from('niger_publications').update(payload).eq('id',existing.id)
+     if(error) throw new Error('Mise à jour de publication impossible : '+error.message)
+     updated++
+   }else{
+     const {error}=await s.from('niger_publications').insert(payload)
+     if(error) throw new Error('Création de publication impossible : '+error.message)
+     created++
+   }
+ }
+ refresh('/admin/publications','/publications','/')
+ return {created,updated,total:rows.length}
+}
