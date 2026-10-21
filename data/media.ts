@@ -21,10 +21,10 @@ export const nigerMedia: Record<string, NigerMedia> = {
     alt: 'Dunes du désert du Ténéré, Niger',
   },
   gastronomie: {
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/La_cuisine_nig%C3%A9rienne.jpg?width=1200',
-    source: 'Wikimedia Commons', author: 'Tawaye', license: 'CC BY-SA 4.0',
-    sourceUrl: 'https://commons.wikimedia.org/wiki/File:La_cuisine_nig%C3%A9rienne.jpg',
-    alt: 'Cuisine nigérienne, sauce noire à la nigérienne',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Brochettes_de_viande_de_boeuf_au_piment_frais.jpg?width=1400',
+    source: 'Wikimedia Commons', author: 'Adèlekiema', license: 'CC0 1.0 (domaine public)',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Brochettes_de_viande_de_boeuf_au_piment_frais.jpg',
+    alt: 'Brochettes de viande de bœuf au piment frais, spécialité photographiée au Niger',
   },
   niamey: {
     image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Niger_River_%C3%A0_Niamey.jpg?width=1800',
