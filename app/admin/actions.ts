@@ -163,13 +163,13 @@ async function fetchCodaRows(){
  const rows:any[]=[]
  let pageToken=''
  do{
-   const url=new URL(\`https://coda.io/apis/v1/docs/\${docId}/tables/\${tableId}/rows\`)
+   const url=new URL(`https://coda.io/apis/v1/docs/${docId}/tables/${tableId}/rows`)
    url.searchParams.set('useColumnNames','true')
    url.searchParams.set('valueFormat','simple')
    url.searchParams.set('limit','100')
    if(pageToken) url.searchParams.set('pageToken',pageToken)
-   const response=await fetch(url.toString(),{headers:{Authorization:\`Bearer \${token}\`},cache:'no-store'})
-   if(!response.ok) throw new Error(\`Coda a répondu HTTP \${response.status}. Vérifie le jeton Coda et les identifiants du document.\`)
+   const response=await fetch(url.toString(),{headers:{Authorization:`Bearer ${token}`},cache:'no-store'})
+   if(!response.ok) throw new Error(`Coda a répondu HTTP ${response.status}. Vérifie le jeton Coda et les identifiants du document.`)
    const body=await response.json()
    rows.push(...(body.items||[]))
    pageToken=body.nextPageToken||''
@@ -201,7 +201,7 @@ export async function syncCodaPublications(){
    const dateValue=codaText(values['Date de publication']).trim()
    if(!title&&!body) continue
    const published=status==='Publié' && visibility==='public'
-   const content=title && body ? \`**\${title}**\\n\\n\${body}\` : (title||body)
+   const content=title && body ? `**${title}**\n\n${body}` : (title||body)
    const mediaType=type==='video'?'video':type==='photo'?'photo':'none'
    const publishedAt=dateValue && !Number.isNaN(Date.parse(dateValue)) ? new Date(dateValue).toISOString() : new Date().toISOString()
    const payload={
