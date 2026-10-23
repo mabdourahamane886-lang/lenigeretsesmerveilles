@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { createPublication, syncCodaPublications } from '../actions'
+import { createPublication } from '../actions'
 
 export default function PublicationComposer() {
   const photoRef = useRef<HTMLInputElement>(null)
@@ -9,35 +9,22 @@ export default function PublicationComposer() {
   const [photoName, setPhotoName] = useState('')
   const [musicName, setMusicName] = useState('')
   const [loading, setLoading] = useState(false)
-  const [syncing, setSyncing] = useState(false)
+  const [publicationUrl, setPublicationUrl] = useState('')
   const [error, setError] = useState('')
-  const [syncMessage, setSyncMessage] = useState('')
 
   async function submit(formData: FormData) {
     setLoading(true)
     setError('')
     try {
-      await createPublication(formData)
+      const result = await createPublication(formData)
+      const url = `${window.location.origin}/publications/${result.id}`
+      setPublicationUrl(url)
+      await navigator.clipboard.writeText(url).catch(() => undefined)
       window.location.reload()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Impossible de publier cette publication.')
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function syncCoda() {
-    setSyncing(true)
-    setError('')
-    setSyncMessage('')
-    try {
-      const result = await syncCodaPublications()
-      setSyncMessage(`Coda synchronisé : ${result.created} créée(s), ${result.updated} mise(s) à jour.`)
-      window.location.reload()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Synchronisation Coda impossible.')
-    } finally {
-      setSyncing(false)
     }
   }
 
@@ -125,16 +112,6 @@ export default function PublicationComposer() {
         {error && <p role="alert" style={{color:'#b42318',fontWeight:700}}>{error}</p>}
       </form>
 
-      <div style={{marginTop:16,display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
-        <button type="button" className="btn" onClick={syncCoda} disabled={syncing}>
-          {syncing ? 'Synchronisation…' : '↻ Synchroniser Coda'}
-        </button>
-        <span className="muted" style={{fontSize:13}}>
-          Publie depuis la table Coda « Publications du site » puis synchronise ici.
-        </span>
-      </div>
-
-      {syncMessage && <p role="status" style={{color:'#16794c',fontWeight:700}}>{syncMessage}</p>}
     </div>
   )
 }
