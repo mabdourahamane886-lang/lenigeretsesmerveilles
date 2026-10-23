@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
@@ -15,7 +16,13 @@ export default async function RegionsPage() {
   const items = data?.length
     ? data.map((region) => {
         const fallback = fallbackRegions.find((item) => item.slug === region.slug)
-        return { id: String(region.id), name: region.name, slug: region.slug, image: region.cover_url || fallback?.image }
+        return {
+          id: String(region.id),
+          name: region.name || fallback?.name || '',
+          slug: region.slug,
+          description: region.description || fallback?.description || 'Découvrez le patrimoine et les activités de cette région du Niger.',
+          image: region.cover_url || fallback?.image,
+        }
       })
     : fallbackRegions.map((region, index) => ({ id: `static-${index}`, ...region }))
 
@@ -26,23 +33,33 @@ export default async function RegionsPage() {
         <div className="container">
           <div className="kicker">Explorer le Niger · 8 régions</div>
           <h1>Bienvenue au cœur du Niger 🇳🇪</h1>
-          <p className="lead">Découvrez les huit régions du Niger à travers leurs photos.</p>
-          <div className="regionGrid">
+          <p className="lead">Découvrez les paysages, les cultures, les activités et le rôle de chaque région dans la vie du pays.</p>
+          <div className="regionGrid" style={{alignItems:'stretch',gap:24}}>
             {items.map((region) => (
-              <Link
+              <article
                 className="region regionLight"
                 key={region.id}
-                href={`/regions/${region.slug}`}
-                aria-label={`Bienvenue à ${region.name} — découvrir la région`}
-                style={{display:'block',overflow:'hidden',padding:0,borderRadius:22,textDecoration:'none',background:'#fff',border:'1px solid rgba(18,48,42,.1)',boxShadow:'0 12px 32px rgba(17,45,38,.08)'}}
+                style={{display:'flex',flexDirection:'column',overflow:'hidden',padding:0,borderRadius:22,background:'#fff',border:'1px solid rgba(18,48,42,.1)',boxShadow:'0 12px 32px rgba(17,45,38,.08)',height:'100%'}}
               >
-                <div style={{position:'relative',width:'100%',height:260,backgroundColor:'#e7e8df',backgroundImage:region.image ? `linear-gradient(180deg,rgba(8,24,20,.02) 15%,rgba(8,24,20,.68) 100%),url("${region.image}")` : 'linear-gradient(135deg,#e9efe5,#d6e0d2)',backgroundSize:'cover',backgroundPosition:'center'}}>
-                  <div style={{position:'absolute',left:20,right:20,bottom:20,color:'#fff',textShadow:'0 2px 12px rgba(0,0,0,.35)'}}>
-                    <span style={{display:'block',fontSize:13,fontWeight:800,textTransform:'uppercase',letterSpacing:'.12em',marginBottom:6}}>Bienvenue à</span>
-                    <span style={{display:'block',fontSize:30,lineHeight:1.1,fontWeight:850}}>{region.name}</span>
+                <Link href={`/regions/${region.slug}`} aria-label={`Bienvenue à ${region.name}`} style={{display:'block',textDecoration:'none'}}>
+                  <div style={{position:'relative',width:'100%',height:250,backgroundColor:'#e7e8df',backgroundImage:region.image ? `linear-gradient(180deg,rgba(8,24,20,.02) 15%,rgba(8,24,20,.72) 100%),url("${region.image}")` : 'linear-gradient(135deg,#e9efe5,#d6e0d2)',backgroundSize:'cover',backgroundPosition:'center'}}>
+                    <div style={{position:'absolute',left:20,right:20,bottom:20,color:'#fff',textShadow:'0 2px 12px rgba(0,0,0,.4)'}}>
+                      <span style={{display:'block',fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.13em',marginBottom:7}}>Bienvenue à</span>
+                      <span style={{display:'block',fontSize:30,lineHeight:1.1,fontWeight:850}}>{region.name}</span>
+                    </div>
                   </div>
+                </Link>
+                <div style={{display:'flex',flexDirection:'column',alignItems:'stretch',gap:18,padding:'22px 22px 24px',flex:1}}>
+                  <p style={{margin:0,color:'#4e6159',fontSize:14,lineHeight:1.85,whiteSpace:'pre-line'}}>{region.description}</p>
+                  <Link
+                    href={`/regions/${region.slug}`}
+                    className="proInlineLink"
+                    style={{marginTop:'auto',alignSelf:'flex-start',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9,padding:'12px 17px',borderRadius:999,background:'#145c43',color:'#fff',fontWeight:750,textDecoration:'none',boxShadow:'0 6px 16px rgba(20,92,67,.18)'}}
+                  >
+                    Explorer la région <ArrowUpRight size={17}/>
+                  </Link>
                 </div>
-              </Link>
+              </article>
             ))}
           </div>
         </div>
