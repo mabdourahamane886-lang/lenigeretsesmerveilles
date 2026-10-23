@@ -145,11 +145,12 @@ export async function createPublication(f:FormData){
    musicUrl=(await uploadToSupabaseStorage(s,musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`)).url
  }
  const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
- const {error}=await s.from('niger_publications').insert({
+ const {data:publication,error}=await s.from('niger_publications').insert({
    author_name:'Le Niger et ses Merveilles NE', content:contentText, media_url:mediaUrl, media_type:mediaType, music_url:musicUrl,
    tagged_people:tagged, location:t(f,'location'), mood:t(f,'mood'), activity:t(f,'activity'), allow_messages:on(f,'allow_messages'),
    visibility, published:true, published_at:new Date().toISOString(),
- })
- if(error) throw new Error('Impossible de publier : '+error.message)
+ }).select('id').single()
+ if(error || !publication) throw new Error('Impossible de publier : '+(error?.message||'identifiant de publication absent'))
  refresh('/admin/publications','/publications','/')
+ return { id: String(publication.id) }
 }
