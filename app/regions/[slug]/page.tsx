@@ -20,7 +20,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
     name: fallback.name,
     slug: fallback.slug,
     description: fallback.description,
-    cover_url: null as string | null,
+    cover_url: fallback.image as string | null,
   }
 
   let wonders: Array<{ id: string; name: string; short_description: string | null; cover_url: string | null }> = []
@@ -43,7 +43,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
         name: dbRegion.name || fallback.name,
         slug: dbRegion.slug || fallback.slug,
         description: dbRegion.description || fallback.description,
-        cover_url: dbRegion.cover_url || null,
+        cover_url: dbRegion.cover_url || fallback.image,
       }
 
       const [{ data: dbWonders }, { data: dbCultures }, { data: dbGastronomy }, { data: dbEvents }] = await Promise.all([
