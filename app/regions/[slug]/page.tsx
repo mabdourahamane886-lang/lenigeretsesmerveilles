@@ -67,14 +67,25 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
         <div className="container">
           <Link className="proBack" href="/regions">← Toutes les régions</Link>
 
-          <section className="detailHero">
-            <div className="detailHeroImage" style={region.cover_url ? { backgroundImage: `url(${region.cover_url})` } : undefined}>
-              <div className="detailHeroOverlay" />
-              <div className="detailHeroContent">
-                <span className="detailEyebrow">Région du Niger · {region.name}</span>
-                <h1>{region.name}</h1>
-                <p>{region.description || 'Explorez le patrimoine, les paysages et les cultures de cette région du Niger.'}</p>
-              </div>
+          <section className="detailHero" style={{display:'grid',gap:0,overflow:'hidden',borderRadius:28,border:'1px solid rgba(18,48,42,.12)',boxShadow:'0 18px 48px rgba(17,45,38,.10)',background:'#fff'}}>
+            <div
+              role="img"
+              aria-label={`Photographie de la région de ${region.name}`}
+              style={{
+                minHeight:280,
+                height:'clamp(250px, 42vw, 460px)',
+                backgroundColor:'#e7e8df',
+                backgroundImage:region.cover_url ? 'linear-gradient(180deg,rgba(8,24,20,.02),rgba(8,24,20,.18)),url(' + region.cover_url + ')' : 'linear-gradient(135deg,#e9efe5,#d6e0d2)',
+                backgroundSize:'cover',
+                backgroundPosition:'center',
+              }}
+            />
+            <div style={{padding:'clamp(24px, 4vw, 44px)',background:'linear-gradient(135deg,#fff 0%,#f7faf6 100%)'}}>
+              <span className="detailEyebrow" style={{display:'inline-flex',alignItems:'center',padding:'8px 12px',borderRadius:999,background:'#e7f2e9',color:'#145c43',fontSize:12,fontWeight:800,letterSpacing:'.08em',textTransform:'uppercase'}}>
+                Région du Niger · {region.name}
+              </span>
+              <h1 style={{margin:'18px 0 14px',fontSize:'clamp(2rem,5vw,3.5rem)',lineHeight:1.05,letterSpacing:'-.035em',color:'#153c30'}}>{region.name}</h1>
+              <p style={{margin:0,maxWidth:900,color:'#43584e',fontSize:'clamp(1rem,1.5vw,1.1rem)',lineHeight:1.95,whiteSpace:'pre-line'}}>{region.description || 'Explorez le patrimoine, les paysages et les cultures de cette région du Niger.'}</p>
             </div>
           </section>
 
