@@ -18,9 +18,9 @@ export default async function RegionsPage() {
         const fallback = fallbackRegions.find((item) => item.slug === region.slug)
         return {
           id: String(region.id),
-          name: region.name || fallback?.name || '',
-          slug: region.slug,
-          description: region.description || fallback?.description || 'Découvrez le patrimoine et les activités de cette région du Niger.',
+          name: fallback?.name || region.name || '',
+          slug: fallback?.slug || region.slug,
+          description: fallback?.description || region.description || 'Découvrez le patrimoine et les activités de cette région du Niger.',
           image: region.cover_url || fallback?.image,
         }
       })
@@ -54,7 +54,7 @@ export default async function RegionsPage() {
                   <Link
                     href={`/regions/${region.slug}`}
                     className="proInlineLink"
-                    style={{marginTop:'auto',alignSelf:'flex-start',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9,padding:'12px 17px',borderRadius:999,background:'#145c43',color:'#fff',fontWeight:750,textDecoration:'none',boxShadow:'0 6px 16px rgba(20,92,67,.18)'}}
+                    style={{marginTop:'auto',alignSelf:'stretch',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:9,padding:'12px 17px',borderRadius:999,background:'#145c43',color:'#fff',fontWeight:800,textDecoration:'none',boxShadow:'0 6px 16px rgba(20,92,67,.18)',width:'100%',minHeight:48}}
                   >
                     Explorer la région <ArrowUpRight size={17}/>
                   </Link>
