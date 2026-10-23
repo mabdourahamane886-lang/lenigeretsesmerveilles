@@ -46,7 +46,8 @@ export default async function AdminPublications() {
                     <h3>{p.content ? p.content.slice(0,110) : 'Publication média'}</h3>
                     {p.mood && <p>{p.mood}</p>}
                     {p.activity && <p className="muted">{p.activity}</p>}
-                    {p.published && <Link className="textlink" href="/publications">Voir sur le site →</Link>}
+                    {p.published && <Link className="textlink" href={`/publications/${p.id}`}>Ouvrir la publication →</Link>}
+                  {p.published && <p className="muted" style={{overflowWrap:'anywhere'}}>Lien direct : {`https://lenigeretsesmerveilles.vercel.app/publications/${p.id}`}</p>}
                   </div>
                 </article>
               ))}
