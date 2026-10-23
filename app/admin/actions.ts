@@ -155,12 +155,14 @@ export async function createPublication(f:FormData){
 }
 
 
-async function fetchCodaRows(){
+type CodaRow = { id: string | number; values?: Record<string, unknown> }
+
+async function fetchCodaRows(): Promise<CodaRow[]> {
  const token=process.env.CODA_API_TOKEN?.trim()
  const docId=process.env.CODA_PUBLICATIONS_DOC_ID?.trim()||'gi4RXbIIVE'
  const tableId=process.env.CODA_PUBLICATIONS_TABLE_ID?.trim()||'grid-iR0ZFog7KM'
  if(!token) throw new Error('La synchronisation Coda n’est pas configurée. Ajoute CODA_API_TOKEN dans les variables d’environnement du site.')
- const rows:any[]=[]
+ const rows: CodaRow[]=[]
  let pageToken=''
  do{
    const url=new URL(`https://coda.io/apis/v1/docs/${docId}/tables/${tableId}/rows`)
