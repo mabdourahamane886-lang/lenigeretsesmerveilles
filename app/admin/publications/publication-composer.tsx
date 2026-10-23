@@ -20,7 +20,7 @@ export default function PublicationComposer() {
       const url = `${window.location.origin}/publications/${result.id}`
       setPublicationUrl(url)
       await navigator.clipboard.writeText(url).catch(() => undefined)
-      window.location.reload()
+      formData.forEach((_value, key) => { if (key !== 'visibility') formData.delete(key) })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Impossible de publier cette publication.')
     } finally {
@@ -110,6 +110,7 @@ export default function PublicationComposer() {
         </button>
 
         {error && <p role="alert" style={{color:'#b42318',fontWeight:700}}>{error}</p>}
+        {publicationUrl && <div className="notice proNotice" role="status"><strong>Publication publiée !</strong><p>Le lien direct a été copié si le navigateur l’autorise :</p><a href={publicationUrl} target="_blank" rel="noreferrer">{publicationUrl}</a><button type="button" className="btn" onClick={() => navigator.clipboard.writeText(publicationUrl)}>Copier le lien</button></div>}
       </form>
 
     </div>
