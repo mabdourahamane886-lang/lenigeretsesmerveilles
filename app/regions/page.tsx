@@ -20,11 +20,11 @@ export default async function RegionsPage() {
           id: String(region.id),
           name: fallback?.name || region.name || '',
           slug: fallback?.slug || region.slug,
-          description: fallback?.description || region.description || 'Découvrez le patrimoine et les activités de cette région du Niger.',
+          description: (fallback?.description || region.description || 'Découvrez le patrimoine et les activités de cette région du Niger.').split(/\n\s*\n/)[0],
           image: region.cover_url || fallback?.image,
         }
       })
-    : fallbackRegions.map((region, index) => ({ id: `static-${index}`, ...region }))
+    : fallbackRegions.map((region, index) => ({ id: `static-${index}`, ...region, description: region.description.split(/\n\s*\n/)[0] }))
 
   return (
     <>
