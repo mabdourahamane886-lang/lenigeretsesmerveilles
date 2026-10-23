@@ -20,7 +20,6 @@ export default function PublicationComposer() {
       const url = `${window.location.origin}/publications/${result.id}`
       setPublicationUrl(url)
       await navigator.clipboard.writeText(url).catch(() => undefined)
-      formData.forEach((_value, key) => { if (key !== 'visibility') formData.delete(key) })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Impossible de publier cette publication.')
     } finally {
