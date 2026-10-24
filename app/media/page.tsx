@@ -7,6 +7,15 @@ import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
+export async function generateMetadata() {
+  return {
+    title: 'Photothèque du Niger',
+    description: 'Photos et vidéos documentaires du Niger, avec descriptions, catégories et crédits.',
+    alternates: { canonical: '/media' },
+    openGraph: { title: 'Photothèque du Niger', description: 'Explorez les images et vidéos documentaires du Niger.', url: '/media', type: 'website' as const },
+  }
+}
+
 const categoryLabels: Record<string, string> = {
   photo: 'Photographie',
   illustration: 'Illustration',
