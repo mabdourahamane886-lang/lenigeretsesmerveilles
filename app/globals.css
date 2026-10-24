@@ -774,7 +774,7 @@ body{
 }
 .proInlineLink:hover{color:var(--orange)}
 .proSectionIntroLight h2{color:#fff}
-.proSectionIntroLight .kicker{color:#e6b75f}
+.proSectionIntroLight .kicker{color:#fff}
 
 /* Explorer */
 .proExplorerGrid{
