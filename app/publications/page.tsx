@@ -1,11 +1,25 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles, Utensils } from 'lucide-react'
+import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+type Publication = {
+  id: string
+  author_name: string | null
+  content: string | null
+  media_url: string | null
+  media_type: string | null
+  music_url: string | null
+  tagged_people: string[] | null
+  location: string | null
+  mood: string | null
+  activity: string | null
+  published_at: string | null
+}
 
 function formatDate(value?: string | null) {
   if (!value) return ''
@@ -26,7 +40,7 @@ const categories = [
 
 export default async function PublicationsPage() {
   const supabase = createAdminClient()
-  let publications: any[] = []
+  let publications: Publication[] = []
   let loadError = false
 
   if (supabase) {
@@ -40,7 +54,7 @@ export default async function PublicationsPage() {
       console.error('[publications] Impossible de charger les publications:', error.message)
       loadError = true
     } else {
-      publications = data || []
+      publications = (data ?? []) as Publication[]
     }
   } else {
     loadError = true
