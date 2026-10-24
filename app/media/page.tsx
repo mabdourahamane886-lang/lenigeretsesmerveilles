@@ -66,7 +66,7 @@ export default async function MediaPage() {
               '@type': 'CollectionPage',
               name: 'Photothèque du Niger',
               description: 'Médias documentaires du Niger avec crédits, catégories et informations de publication.',
-              url: 'https://lenigeretsesmerveilles.vercel.app/media',
+              url: 'https://lenigeretsesmerveilles-ngr.vercel.app/media',
               mainEntity: { '@type': 'ItemList', numberOfItems: items.length, itemListElement: itemList },
             }}
           />
