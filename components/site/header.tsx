@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import {
   BookOpenText,
+  HeartHandshake,
   Camera,
   CalendarDays,
   Compass,
@@ -19,6 +20,7 @@ const navItems = [
   { label: 'Merveilles', href: '/merveilles', icon: Sparkles },
   { label: 'Agenda', href: '/evenements', icon: CalendarDays },
   { label: 'Culture', href: '/culture', icon: BookOpenText },
+  { label: 'Ethnies', href: '/ethnies', icon: HeartHandshake },
 ]
 
 const mobileItems = [
