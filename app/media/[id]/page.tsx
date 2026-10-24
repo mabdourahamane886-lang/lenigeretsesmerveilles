@@ -46,9 +46,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!item) return { title: 'Média introuvable | Le Niger et ses Merveilles' }
   return {
     title: `${item.title} | Photothèque du Niger`,
+    alternates: { canonical: `/media/${id}` },
     description: item.description || `Média documentaire du Niger : ${item.title}.`,
     openGraph: {
       title: item.title,
+      url: `https://lenigeretsesmerveilles-ngr.vercel.app/media/${id}`,
       description: item.description || `Média documentaire du Niger : ${item.title}.`,
       type: item.media_type === 'video' ? 'video.other' : 'article',
       images: item.media_type === 'video' ? undefined : [{ url: item.url, alt: item.title }],
