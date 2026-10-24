@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://lenigeretsesmerveilles-ngr.vercel.app'),
   title: {
     default: 'Le Niger et ses Merveilles 🇳🇪',
     template: '%s | Le Niger et ses Merveilles',
@@ -28,7 +29,6 @@ export const metadata: Metadata = {
   creator: 'Le Niger et ses Merveilles',
   publisher: 'Le Niger et ses Merveilles',
   category: 'culture',
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
