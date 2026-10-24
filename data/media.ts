@@ -21,10 +21,10 @@ export const nigerMedia: Record<string, NigerMedia> = {
     alt: 'Dunes du désert du Ténéré, Niger',
   },
   gastronomie: {
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Plat_%C3%A0_base_de_feuilles_de_moringa_dans_la_ville_de_Niamey_au_Niger.jpg?width=1400',
-    source: 'Wikimedia Commons', author: 'Voir la fiche de la photographie', license: 'Vérifier les conditions sur la fiche source',
-    sourceUrl: 'https://commons.wikimedia.org/wiki/Category:Cuisine_of_Niger',
-    alt: 'Plat nigérien à base de feuilles de moringa, cuisine traditionnelle de Niamey',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Riz_brabousco.jpg?width=1400',
+    source: 'Wikimedia Commons', author: 'Tawaye', license: 'CC BY-SA 4.0',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Riz_brabousco.jpg',
+    alt: 'Riz brabousco, plat traditionnel des Béribéri du Niger',
   },
   niamey: {
     image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Niger_River_%C3%A0_Niamey.jpg?width=1800',
