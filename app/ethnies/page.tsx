@@ -20,8 +20,8 @@ const communities = [
     name: 'Haoussa',
     aliases: 'Hausa',
     description: 'Une communauté majeure du sud du Niger, avec une riche tradition de textile, de broderie, de musique et de commerce.',
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hausa%20traditional%20attire.jpg?width=1000',
-    credit: 'Bembety · Wikimedia Commons · CC0',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Hausa_traditional_wedding_and_dress_07.jpg',
+    credit: 'Photographie de tenue traditionnelle haoussa · Wikimedia Commons (vérifier la licence sur la fiche du fichier)',
   },
   {
     name: 'Zarma-Songhaï',
@@ -34,8 +34,8 @@ const communities = [
     name: 'Touareg',
     aliases: 'Kel Tamasheq',
     description: 'Des communautés sahariennes et sahéliennes connues entre autres pour leurs langues, leur poésie, leur artisanat et leurs vêtements traditionnels.',
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Les%20Filles%20de%20Illighadad%20%2848764373888%29.jpg?width=1000',
-    credit: 'Les Filles de Illighadad · Wikimedia Commons',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Mariage_Touareg_Niger3.jpg',
+    credit: 'Mariage touareg au Niger · Wikimedia Commons (vérifier la licence sur la fiche du fichier)',
   },
   {
     name: 'Peul / Fulbé',
@@ -48,8 +48,8 @@ const communities = [
     name: 'Kanouri',
     aliases: 'Kanuri',
     description: 'Communautés historiquement liées à la région du lac Tchad, présentes notamment dans l’est du Niger. Les traditions vestimentaires varient selon les lieux et les familles.',
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Kanuri%20girl%20with%20traditional%20clothes.jpg?width=1000',
-    credit: 'Ishaku Ajeje · Wikimedia Commons · CC BY-SA 4.0 · photo prise au Nigeria',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/0/02/A_typical_kanuri_woman.jpg',
+    credit: 'Photographie d’une femme kanouri · Wikimedia Commons (photo non confirmée comme prise au Niger ; vérifier la licence sur la fiche du fichier)',
   },
   {
     name: 'Toubou',
@@ -69,8 +69,8 @@ const communities = [
     name: 'Communautés arabes',
     aliases: 'Groupes arabophones du Niger',
     description: 'Plusieurs communautés arabophones vivent au Niger. Leurs histoires, leurs dialectes et leurs traditions ne se résument pas à une seule identité.',
-    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Agadez-Market-1991.jpg?width=1000',
-    credit: 'Photographie documentaire du marché d’Agadez (1991)',
+    image: 'https://www.101lasttribes.com/logo_tribes/Diffa.jpg',
+    credit: 'Photographie de référence sur les Arabes de Diffa · 101 Last Tribes (droits de réutilisation à confirmer)',
   },
 ]
 
