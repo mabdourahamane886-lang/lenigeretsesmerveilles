@@ -7,7 +7,7 @@ import Footer from '../../../components/site/footer'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import { JsonLd } from '../../../components/site/pro-meta'
-import { createClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,7 +29,7 @@ function formatDate(value?: string | null) {
 }
 
 async function getMedia(id: string) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   if (!supabase) return null
   const { data } = await supabase
     .from('niger_media')
@@ -64,7 +64,7 @@ export default async function MediaDetail({ params }: { params: Promise<{ id: st
   const isVideo = item.media_type === 'video'
   const date = formatDate(item.created_at)
   const category = categoryLabels[item.media_category || ''] || item.media_category || 'Média'
-  const detailUrl = `https://lenigeretsesmerveilles.vercel.app/media/${id}`
+  const detailUrl = `https://lenigeretsesmerveilles-ngr.vercel.app/media/${id}`
   const structuredType = isVideo ? 'VideoObject' : 'ImageObject'
 
   return (
