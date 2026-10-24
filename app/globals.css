@@ -2807,3 +2807,37 @@ img{max-width:100%}
 .proSectionIntro.proSectionIntroLight .kicker {
   color: #fff !important;
 }
+
+
+/* Pied de page : adaptation mobile et tablettes */
+.siteFooter{width:100%;overflow:hidden}
+.siteFooterTop{display:grid;grid-template-columns:minmax(0,1.55fr) repeat(2,minmax(0,.75fr)) minmax(0,1.2fr);gap:30px;align-items:start}
+.siteFooterBrand,.siteFooterColumn,.siteFooterFeatured{min-width:0}
+.siteFooterBrandLink{max-width:100%;align-items:flex-start}
+.siteFooterBrandLink .siteBrandCopy strong{white-space:normal;line-height:1.35}
+.siteFooterBrand p,.siteFooterFeatured p{line-height:1.7;overflow-wrap:anywhere}
+.siteFooterColumn a{display:flex;align-items:center;gap:7px;line-height:1.5;overflow-wrap:anywhere}
+.siteFooterBottom{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footerMade{display:inline-flex;align-items:center;gap:8px}
+@media(max-width:900px){
+  .siteFooterTop{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
+  .siteFooterBrand{grid-column:1/-1}
+  .siteFooterFeatured{grid-column:1/-1}
+}
+@media(max-width:600px){
+  .siteFooter{padding:36px 0 20px}
+  .siteFooterTop{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}
+  .siteFooterBrand,.siteFooterFeatured{grid-column:1/-1}
+  .siteFooterBrandLink{gap:9px}
+  .siteFooterBrandLink .siteBrandMark{width:38px;height:38px;border-radius:12px}
+  .siteFooterBrandLink .siteBrandCopy strong{font-size:13px}
+  .siteFooterBrandLink .siteBrandCopy small{font-size:8px;letter-spacing:.04em}
+  .siteFooterBrand p{font-size:13px;margin:14px 0}
+  .siteFooterContribution{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 13px}
+  .siteFooterColumn h3{font-size:14px;margin:0 0 10px}
+  .siteFooterColumn a{font-size:12px;margin:9px 0;align-items:flex-start}
+  .siteFooterFeatured h3{font-size:17px;line-height:1.4}
+  .siteFooterFeatured p{font-size:12px}
+  .siteFooterBottom{align-items:flex-start;flex-direction:column;gap:12px;margin-top:24px;padding-top:18px;font-size:11px}
+  .siteFooterBottom>*{max-width:100%;overflow-wrap:anywhere}
+}
