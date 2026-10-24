@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, CalendarDays, MapPin, Send } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
-import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 import { nigerMedia } from '../../data/media'
 
 export const dynamic = 'force-dynamic'
@@ -13,7 +13,7 @@ function formatEventDate(value?: string | null) {
 }
 
 export default async function EvenementsPage() {
-  const supabase=await createClient()
+  const supabase=createAdminClient()
   const {data}=supabase
     ? await supabase.from('niger_events').select('id,name,slug,city,starts_at,ends_at,description,location,image_url,published').eq('published',true).order('starts_at',{ascending:true})
     : {data:[]}
