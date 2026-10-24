@@ -20,8 +20,8 @@ const communities = [
     name: 'Haoussa',
     aliases: 'Hausa',
     description: 'Une communauté majeure du sud du Niger, avec une riche tradition de textile, de broderie, de musique et de commerce.',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Hausa_traditional_wedding_and_dress_07.jpg',
-    credit: 'Photographie de tenue traditionnelle haoussa · Wikimedia Commons (vérifier la licence sur la fiche du fichier)',
+    image: 'https://assets.irinnews.org/s3fs-public/images/201104050821220219.jpg',
+    credit: 'Femmes haoussa vendant du lait au Niger, mars 2011 · The New Humanitarian / IRIN (droits de réutilisation à vérifier avant republication)',
   },
   {
     name: 'Zarma-Songhaï',
@@ -69,8 +69,8 @@ const communities = [
     name: 'Communautés arabes',
     aliases: 'Groupes arabophones du Niger',
     description: 'Plusieurs communautés arabophones vivent au Niger. Leurs histoires, leurs dialectes et leurs traditions ne se résument pas à une seule identité.',
-    image: 'https://www.101lasttribes.com/logo_tribes/Diffa.jpg',
-    credit: 'Photographie de référence sur les Arabes de Diffa · 101 Last Tribes (droits de réutilisation à confirmer)',
+    image: 'https://www.101lasttribes.com/logo_tribes/Diffa.jpg?community=diffa-arab',
+    credit: 'Image identifiée comme référence pour la communauté arabe de Diffa · 101 Last Tribes (vérifier que la photo représente bien cette communauté et obtenir l’autorisation de réutilisation)',
   },
 ]
 
