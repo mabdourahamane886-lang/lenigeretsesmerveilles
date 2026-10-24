@@ -2841,3 +2841,39 @@ img{max-width:100%}
   .siteFooterBottom{align-items:flex-start;flex-direction:column;gap:12px;margin-top:24px;padding-top:18px;font-size:11px}
   .siteFooterBottom>*{max-width:100%;overflow-wrap:anywhere}
 }
+
+
+/* Corrections finales du pied de page mobile et du drapeau du Niger */
+.proNigerFlag::after{
+  content:"";
+  position:absolute;
+  width:38%;
+  aspect-ratio:1;
+  left:50%;
+  top:33.333%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:#e6812b;
+  z-index:2;
+}
+.siteFooterFeatured p{color:rgba(255,255,255,.88)!important}
+.siteFooterBottom{row-gap:12px}
+@media(max-width:600px){
+  .siteFooter{padding:30px 0 16px}
+  .siteFooterTop{gap:22px 14px;padding-bottom:26px}
+  .siteFooterBrand p{font-size:12px;line-height:1.6;margin:12px 0}
+  .siteFooterColumn{gap:8px}
+  .siteFooterColumn h3{font-size:12px;letter-spacing:.12em;margin-bottom:7px}
+  .siteFooterColumn a{font-size:12px;line-height:1.45;margin:2px 0;overflow-wrap:anywhere}
+  .siteFooterFeatured{padding-top:20px}
+  .siteFooterFeatured h3{font-size:18px;line-height:1.35;margin:8px 0 10px}
+  .siteFooterFeatured p{font-size:12px;line-height:1.6;margin:0}
+  .siteFooterBottom{display:flex;flex-direction:column;align-items:flex-start;gap:11px;margin-top:18px;padding-top:16px;font-size:10px}
+  .siteFooterBottom>*{max-width:100%;overflow-wrap:anywhere}
+  .footerMade{line-height:1.5;flex-wrap:wrap}
+}
+@media(max-width:360px){
+  .siteFooterTop{column-gap:10px}
+  .siteFooterColumn a{font-size:11px}
+  .siteFooterFeatured h3{font-size:16px}
+}
