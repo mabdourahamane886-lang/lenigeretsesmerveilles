@@ -320,7 +320,6 @@ export default async function Home() {
                 <Link href={`/regions/${region.slug}`} className="proRegionCard" key={region.slug}>
                   <span className="proRegionNumber">{String(index + 1).padStart(2, '0')}</span>
                   <div className="proRegionName">{region.name}</div>
-                  <p>{region.description || 'Découvrir le patrimoine et les cultures de cette région.'}</p>
                   <span className="proRegionArrow"><ArrowRight size={16} /></span>
                 </Link>
               ))}
