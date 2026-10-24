@@ -2877,3 +2877,46 @@ img{max-width:100%}
   .siteFooterColumn a{font-size:11px}
   .siteFooterFeatured h3{font-size:16px}
 }
+
+
+/* Ajustement final du pied de page sur petits écrans */
+.siteFooter{width:100%;max-width:100%;overflow-x:clip}
+.siteFooter .container{min-width:0}
+.siteFooterTop{grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,.8fr)) minmax(0,1fr);align-items:start}
+.siteFooterBrand,.siteFooterColumn,.siteFooterFeatured{min-width:0;max-width:100%}
+.siteFooterBrandLink,.siteFooterBrandLink .siteBrandCopy{min-width:0}
+.siteFooterBrandLink .siteBrandCopy strong{display:block;overflow-wrap:anywhere}
+.siteFooterColumn a{min-width:0;overflow-wrap:anywhere}
+.siteFooterBottom{min-width:0}
+@media(max-width:900px){
+  .siteFooterTop{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 22px}
+  .siteFooterBrand,.siteFooterFeatured{grid-column:1/-1}
+  .siteFooterFeatured{padding-left:0;border-left:0;border-top:1px solid rgba(255,255,255,.14);padding-top:22px}
+}
+@media(max-width:600px){
+  .siteFooter{padding:30px 0 18px}
+  .siteFooterTop{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px;padding-bottom:24px}
+  .siteFooterBrand,.siteFooterFeatured{grid-column:1/-1}
+  .siteFooterBrandLink{align-items:center;gap:10px}
+  .siteFooterBrandLink .siteBrandMark{flex:0 0 38px;width:38px;height:38px}
+  .siteFooterBrandLink .siteBrandCopy{flex:1}
+  .siteFooterBrandLink .siteBrandCopy strong{font-size:13px;line-height:1.35}
+  .siteFooterBrandLink .siteBrandCopy small{font-size:9px;white-space:normal;line-height:1.4}
+  .siteFooterBrand p{max-width:100%;font-size:12px;line-height:1.65;margin:13px 0}
+  .siteFooterColumn{gap:9px}
+  .siteFooterColumn h3{font-size:12px;line-height:1.4;margin:0 0 4px}
+  .siteFooterColumn a{font-size:12px;line-height:1.5;margin:0;align-items:flex-start}
+  .siteFooterColumn a svg{flex:0 0 auto;margin-top:2px}
+  .siteFooterFeatured{padding:20px 0 0}
+  .siteFooterFeatured h3{font-size:17px;line-height:1.4;margin:8px 0}
+  .siteFooterFeatured p{font-size:12px;line-height:1.65}
+  .siteFooterBottom{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:18px;padding-top:16px;font-size:11px}
+  .siteFooterBottom>*{max-width:100%;overflow-wrap:anywhere}
+  .footerMade{display:flex;align-items:center;flex-wrap:wrap;line-height:1.5}
+}
+@media(max-width:380px){
+  .siteFooterTop{grid-template-columns:minmax(0,1fr);gap:20px}
+  .siteFooterBrand,.siteFooterFeatured{grid-column:1}
+  .siteFooterColumn{padding-top:2px}
+  .siteFooterFeatured{padding-top:18px}
+}
