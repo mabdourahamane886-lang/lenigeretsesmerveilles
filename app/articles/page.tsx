@@ -2,12 +2,12 @@ import Link from 'next/link'
 import { ArrowRight, BookOpenText } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
-import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ArticlesPage() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data } = supabase
     ? await supabase.from('niger_articles').select('id,title,slug,category,excerpt,cover_url,author_name,published_at').eq('published', true).order('published_at', { ascending: false })
     : { data: [] }
