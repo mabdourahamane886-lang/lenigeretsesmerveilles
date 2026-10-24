@@ -2920,3 +2920,36 @@ img{max-width:100%}
   .siteFooterColumn{padding-top:2px}
   .siteFooterFeatured{padding-top:18px}
 }
+
+
+/* Pied de page mobile : espacement régulier, colonnes lisibles et carte mission sans débordement */
+@media(max-width:600px){
+  .siteFooter{padding:28px 0 22px}
+  .siteFooter .container{width:calc(100% - 36px);margin-inline:auto}
+  .siteFooterTop{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 18px;padding-bottom:24px}
+  .siteFooterBrand,.siteFooterFeatured{grid-column:1/-1}
+  .siteFooterBrandLink{display:flex;align-items:center;gap:10px}
+  .siteFooterBrandLink .siteBrandCopy{min-width:0}
+  .siteFooterBrandLink .siteBrandCopy strong{font-size:13px;line-height:1.35;overflow-wrap:normal}
+  .siteFooterBrandLink .siteBrandCopy small{font-size:8px;letter-spacing:.06em}
+  .siteFooterBrand p{max-width:100%;font-size:12px;line-height:1.65;margin:14px 0}
+  .siteFooterContribution{min-height:42px;font-size:11px}
+  .siteFooterColumn{min-width:0;gap:12px}
+  .siteFooterColumn h3{font-size:12px;line-height:1.4;letter-spacing:.12em;margin:0 0 4px}
+  .siteFooterColumn a{font-size:12px;line-height:1.5;margin:0;align-items:flex-start;overflow-wrap:anywhere}
+  .siteFooterColumn a svg{flex:0 0 auto;margin-top:2px}
+  .siteFooterFeatured{border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:20px 18px 22px!important;margin-top:2px;background:rgba(255,255,255,.025)}
+  .siteFooterFeatured .siteFooterKicker{display:block;color:#e6812b;font-size:11px;font-weight:900;letter-spacing:.1em}
+  .siteFooterFeatured h3{font-size:18px;line-height:1.38;margin:12px 0 14px;overflow-wrap:normal}
+  .siteFooterFeatured p{font-size:12px;line-height:1.65;margin:0;color:rgba(255,255,255,.78)!important}
+  .siteFooterBottom{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:22px;padding-top:18px;font-size:11px;line-height:1.5}
+  .siteFooterBottom>*{max-width:100%;overflow-wrap:anywhere}
+  .footerMade{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+}
+@media(max-width:380px){
+  .siteFooter .container{width:calc(100% - 32px)}
+  .siteFooterTop{column-gap:12px}
+  .siteFooterColumn a{font-size:11px}
+  .siteFooterFeatured{padding-inline:15px!important}
+  .siteFooterFeatured h3{font-size:16px}
+}
