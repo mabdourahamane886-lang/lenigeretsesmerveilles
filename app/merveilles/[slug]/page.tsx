@@ -6,13 +6,13 @@ import Footer from '../../../components/site/footer'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import {JsonLd,VerifiedBadge} from '../../../components/site/pro-meta'
-import {createClient} from '../../../lib/supabase/server'
+import {createAdminClient} from '../../../lib/supabase/admin'
 
 export const dynamic='force-dynamic'
 export default async function WonderPage({params}:{params:Promise<{slug:string}>}){
- const {slug}=await params; const supabase=await createClient(); if(!supabase) notFound()
+ const {slug}=await params; const supabase=createAdminClient(); if(!supabase) notFound()
  const {data:item}=await supabase.from('niger_wonders').select('*').eq('slug',slug).eq('published',true).maybeSingle(); if(!item) notFound()
- const json:Record<string,unknown>={'@context':'https://schema.org','@type':'TouristAttraction','name':item.name,'description':item.description||item.short_description,'image':item.cover_url,'address':{'@type':'PostalAddress','addressCountry':'NE'},'url':'https://lenigeretsesmerveilles.vercel.app/merveilles/'+slug}
+ const json:Record<string,unknown>={'@context':'https://schema.org','@type':'TouristAttraction','name':item.name,'description':item.description||item.short_description,'image':item.cover_url,'address':{'@type':'PostalAddress','addressCountry':'NE'},'url':'https://lenigeretsesmerveilles-ngr.vercel.app/merveilles/'+slug}
  return <><Header/><main className="page"><div className="container narrowEvent"><Breadcrumbs items={[{label:'Merveilles',href:'/merveilles'},{label:item.name}]}/><JsonLd data={json}/>
  {item.cover_url&&<div className="proArticleHero" style={{backgroundImage:'linear-gradient(180deg,rgba(4,39,27,.05),rgba(4,39,27,.90)),url('+item.cover_url+')'}}><VerifiedBadge/><h1>{item.name}</h1></div>}
  {!item.cover_url&&<><span className="kicker">Patrimoine du Niger</span><h1>{item.name}</h1></>}
