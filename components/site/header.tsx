@@ -36,11 +36,7 @@ export default async function Header() {
     <>
       <header className="siteHeader">
         <div className="container siteHeaderInner">
-          <div className="siteHeaderMobileLeft">
-            <Link className="siteSearchButton" href="/recherche" aria-label="Rechercher sur le site">
-              <Search size={18} />
-            </Link>
-          </div>
+          <div className="siteHeaderMobileLeft" aria-hidden="true" />
 
           {/* Un seul drapeau du Niger dans l’en-tête. */}
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
@@ -68,9 +64,6 @@ export default async function Header() {
           </nav>
 
           <div className="siteHeaderActions">
-            <Link className="siteSearchButton siteDesktopSearch" href="/recherche" aria-label="Rechercher sur le site">
-              <Search size={18} />
-            </Link>
             <Link className="siteContributeButton" href="/contribution">
               <Send size={14} />
               Contribuer
