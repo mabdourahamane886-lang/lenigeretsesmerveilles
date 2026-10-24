@@ -3,7 +3,7 @@ import { ArrowRight, Camera, Film, Image as ImageIcon } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { JsonLd } from '../../components/site/pro-meta'
-import { createClient } from '../../lib/supabase/server'
+import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +25,7 @@ function formatDate(value?: string | null) {
 }
 
 export default async function MediaPage() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data: media } = supabase
     ? await supabase
         .from('niger_media')
@@ -41,7 +41,7 @@ export default async function MediaPage() {
     name: item.title,
     description: item.description || 'Média documentaire du Niger.',
     contentUrl: item.url,
-    url: `https://lenigeretsesmerveilles.vercel.app/media/${item.id}`,
+    url: `https://lenigeretsesmerveilles-ngr.vercel.app/media/${item.id}`,
     creditText: item.credit || undefined,
     dateCreated: item.created_at || undefined,
   }))
