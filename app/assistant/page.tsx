@@ -2,7 +2,7 @@
 import './niger-ai.css'
 import Link from 'next/link'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, LoaderCircle, Compass, Landmark, Utensils, Languages, PanelLeftOpen } from 'lucide-react'
+import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check } from 'lucide-react'
 type Message = { role: 'user' | 'model'; content: string }
 type Chat = { id: string; title: string; messages: Message[]; updatedAt: number }
 const KEY = 'niger-ia-chats-v1'
@@ -42,6 +42,7 @@ export default function AssistantPage() {
  const [sidebar,setSidebar] = useState(true)
  const [panel,setPanel] = useState<'history'|'library'|'projects'>('history')
  const [library,setLibrary] = useState<string[]>([])
+ const [copiedId,setCopiedId] = useState('')
  const area = useRef<HTMLTextAreaElement>(null)
  const end = useRef<HTMLDivElement>(null)
  const active = chats.find(c=>c.id===activeId)
@@ -65,6 +66,7 @@ export default function AssistantPage() {
   try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:next})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:cleanAnswer(d.answer || '')}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)])}
   catch(e){setError(e instanceof Error?e.message:'Impossible de contacter Niger IA.')}finally{setLoading(false);setTimeout(()=>end.current?.scrollIntoView({behavior:'smooth',block:'end'}),80)}
  }
+ async function copyText(text:string,id:string){try{await navigator.clipboard.writeText(text);setCopiedId(id);window.setTimeout(()=>setCopiedId(v=>v===id?'':v),1800)}catch{setError('La copie automatique est indisponible sur ce navigateur.')}}
  function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();void send(input)}
  function removeChat(id:string){const rest=chats.filter(c=>c.id!==id);if(rest.length){setChats(rest);if(id===activeId)setActiveId(rest[0].id)}else{const c=fresh();setChats([c]);setActiveId(c.id)}}
  return <main className={'nigerAiShell '+(!sidebar?'nigerAiSidebarClosed':'')}>
@@ -80,7 +82,7 @@ export default function AssistantPage() {
   <section className="nigerAiWorkspace">
    <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div><Link href="/" className="nigerAiBack">Retour au site</Link></header>
    <div className="nigerAiMessages" key={activeId}>
-    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='user'?'Message':'Niger IA'}</div><div className="nigerAiMessageText">{m.content}</div>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</article>)}{loading&&<div className="nigerAiThinking"><span className="nigerAiDots"><i/><i/><i/></span><span>{thinking}</span></div>}<div ref={end}/></div>}
+    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{m.content}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}><{copiedId===`${activeId}-${i}`?'Check':'Copy'} size={14}/>{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</article>)}{loading&&<div className="nigerAiThinking"><span className="nigerAiDots"><i/><i/><i/></span><span>{thinking}</span></div>}<div ref={end}/></div>}
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
    </div>
    <form className="nigerAiComposer" onSubmit={submit}><textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="submit" aria-label="Envoyer le message" disabled={!input.trim()||loading}><ArrowUp size={19}/></button><small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
