@@ -2,7 +2,7 @@
 import './niger-ai.css'
 import Link from 'next/link'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check } from 'lucide-react'
+import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp } from 'lucide-react'
 type Message = { role: 'user' | 'model'; content: string }
 type Chat = { id: string; title: string; messages: Message[]; updatedAt: number }
 const KEY = 'niger-ia-chats-v1'
@@ -11,6 +11,10 @@ const suggestions = [
  { icon: Landmark, title: 'Histoire et patrimoine', prompt: 'Quelles sont les grandes richesses historiques et patrimoniales du Niger ?' },
  { icon: Utensils, title: 'Gastronomie nigérienne', prompt: 'Présente-moi les plats traditionnels du Niger, notamment ceux à base de moringa.' },
  { icon: Languages, title: 'Langues et cultures', prompt: 'Quelles langues sont parlées au Niger et quelles sont leurs particularités ?' },
+ { icon: MapPinned, title: 'Préparer une découverte', prompt: 'Propose-moi un itinéraire culturel pour découvrir le Niger et indique les informations pratiques à vérifier avant de voyager.' },
+ { icon: BookOpen, title: 'Cure Salée', prompt: 'Explique l’origine et l’importance culturelle de la Cure Salée au Niger. Distingue les faits établis des informations qui doivent être vérifiées.' },
+ { icon: GraduationCap, title: 'Quiz sur le Niger', prompt: 'Prépare un quiz de 10 questions sur l’histoire, la géographie et la culture du Niger. Pose une question à la fois et explique chaque réponse.' },
+ { icon: CircleHelp, title: 'Faits et sources', prompt: 'Comment vérifier la fiabilité d’une information sur l’histoire ou le patrimoine du Niger ? Donne-moi des sources fiables.' },
 ]
 const fresh = (): Chat => ({ id: String(Date.now()) + Math.random().toString(36).slice(2), title: 'Nouvelle discussion', messages: [], updatedAt: Date.now() })
 const titleOf = (s: string) => s.replace(/\s+/g, ' ').slice(0, 45) || 'Nouvelle discussion'
