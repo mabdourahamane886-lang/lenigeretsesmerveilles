@@ -52,11 +52,11 @@ export async function POST(request: Request) {
   const lastQuestion = messages[messages.length - 1]?.content || ''
   const knowledgeEntries = findNigerKnowledge(lastQuestion)
   const knowledgeContext = knowledgeEntries.length
-    ? '\\n\\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base de démarrage, pas une recherche en direct) :\\n' +
+    ? '\n\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base de démarrage, pas une recherche en direct) :\n' +
       knowledgeEntries.map((entry, index) =>
-        (index + 1) + '. ' + entry.title + '\\n' + entry.content + '\\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
-      ).join('\\n\\n')
-    : '\\n\\nAucune fiche de la base documentaire locale ne correspond clairement à cette question. Ne prétends pas que la base contient une réponse vérifiée.'
+        (index + 1) + '. ' + entry.title + '\n' + entry.content + '\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
+      ).join('\n\n')
+    : '\n\nAucune fiche de la base documentaire locale ne correspond clairement à cette question. Ne prétends pas que la base contient une réponse vérifiée.'
   const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext
 
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
