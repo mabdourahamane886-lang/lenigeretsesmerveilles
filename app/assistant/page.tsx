@@ -14,6 +14,21 @@ const suggestions = [
 ]
 const fresh = (): Chat => ({ id: String(Date.now()) + Math.random().toString(36).slice(2), title: 'Nouvelle discussion', messages: [], updatedAt: Date.now() })
 const titleOf = (s: string) => s.replace(/\s+/g, ' ').slice(0, 45) || 'Nouvelle discussion'
+const cleanAnswer = (s: string) => s
+ .replace(/^\s{0,3}#{1,6}\s*/gm, '')
+ .replace(/\*\*(.*?)\*\*/g, '$1')
+ .replace(/__(.*?)__/g, '$1')
+ .replace(/^\s*[-*]\s+/gm, '• ')
+ .replace(/^\s*---+\s*$/gm, '')
+ .replace(/\n{3,}/g, '\n\n')
+ .trim()
+const thinkingSteps = [
+ 'Je réfléchis à votre question…',
+ 'Je rassemble les informations utiles…',
+ 'J’organise les explications pour qu’elles soient claires…',
+ 'Je vérifie la cohérence de la réponse…',
+ 'Je termine la rédaction de la réponse…',
+]
 const thinkingOf = (s: string) => /histoire|siècle|date|empire/i.test(s) ? 'Je rassemble les repères historiques…' : /langue|tradu|haoussa|zarma/i.test(s) ? 'Je prépare une réponse dans votre langue…' : /plat|cuisine|moringa|gastronomie/i.test(s) ? 'J’explore les traditions culinaires du Niger…' : /région|tourisme|visiter|voyage|patrimoine/i.test(s) ? 'Je parcours les informations sur le Niger…' : /pourquoi|comment|analyse|compare/i.test(s) ? 'J’analyse votre question…' : 'Je réfléchis à votre question…'
 
 export default function AssistantPage() {
@@ -35,13 +50,19 @@ export default function AssistantPage() {
  useEffect(()=>{if(chats.length)localStorage.setItem(KEY,JSON.stringify(chats))},[chats])
  useEffect(()=>{localStorage.setItem('niger-ia-library-v1',JSON.stringify(library))},[library])
  useEffect(()=>{if(messages.length)end.current?.scrollIntoView({behavior:'smooth',block:'end'})},[messages.length,loading])
+ useEffect(()=>{
+  if(!loading)return
+  let index=0
+  const timer=window.setInterval(()=>{index=(index+1)%thinkingSteps.length;setThinking(thinkingSteps[index])},2200)
+  return ()=>window.clearInterval(timer)
+ },[loading])
  function newChat(){const c=fresh();setChats(v=>[c,...v]);setActiveId(c.id);setInput('');setError('');setPanel('history');if(innerWidth<760)setSidebar(false);area.current?.focus()}
  async function send(value:string){
   const q=value.trim(); if(!q||loading)return
   const old=active||fresh(); const next=[...old.messages,{role:'user' as const,content:q}]
   const updated={...old,title:old.messages.length?old.title:titleOf(q),messages:next,updatedAt:Date.now()}
   setChats(v=>[updated,...v.filter(c=>c.id!==old.id)]);setActiveId(old.id);setInput('');setError('');setLoading(true);setThinking(thinkingOf(q));if(area.current)area.current.style.height='auto'
-  try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:next})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:d.answer}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)])}
+  try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:next})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:cleanAnswer(d.answer || '')}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)])}
   catch(e){setError(e instanceof Error?e.message:'Impossible de contacter Niger IA.')}finally{setLoading(false);setTimeout(()=>end.current?.scrollIntoView({behavior:'smooth',block:'end'}),80)}
  }
  function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();void send(input)}
