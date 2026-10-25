@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { findNigerKnowledge } from '@/lib/niger-knowledge'
+import { findNigerKnowledge } from '../../../lib/niger-knowledge'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
