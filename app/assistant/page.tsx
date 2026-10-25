@@ -1,4 +1,5 @@
 'use client'
+import './niger-ai.css'
 import Link from 'next/link'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, LoaderCircle, Compass, Landmark, Utensils, Languages, PanelLeftOpen } from 'lucide-react'
