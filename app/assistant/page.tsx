@@ -65,3 +65,4 @@ export default function AssistantPage() {
    <form className="nigerAiComposer" onSubmit={submit}><textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="submit" aria-label="Envoyer le message" disabled={!input.trim()||loading}><ArrowUp size={19}/></button><small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
   </section>
  </main>
+}
