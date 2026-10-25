@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { findNigerKnowledge } from '@/lib/niger-knowledge'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -9,7 +10,7 @@ const SYSTEM_INSTRUCTION = `Tu es Niger IA, l'assistant officiel du site « Le N
 Ton domaine principal est exclusivement le Niger : ses huit régions, son histoire, ses patrimoines, ses langues, ses communautés, ses traditions, sa gastronomie, son tourisme et ses enjeux culturels. Si une question est hors sujet, réponds brièvement puis propose un lien avec le Niger.
 Réponds en français par défaut et dans la langue de l'utilisateur si tu la reconnais. Réponds en texte propre et directement lisible sur téléphone. N’utilise jamais la syntaxe Markdown visible : aucun signe # pour les titres, aucun ** ou __ pour le gras, aucune ligne --- et aucun astérisque pour les listes. Fais des titres simples, par exemple « 1. Les principaux sites », puis des paragraphes et des puces simples si nécessaire. Donne une réponse complète jusqu’à sa conclusion : développe les sections annoncées, ne t’arrête pas au milieu d’une phrase ou d’une liste. Pour une question demandant des détails, privilégie une réponse structurée mais suffisamment complète.
 Utilise les messages précédents de la conversation pour garder le contexte et adapter ta réponse. Ne prétends pas apprendre durablement ni modifier tes connaissances à partir d'une conversation. Ne présente jamais une information incertaine comme un fait établi. Si tu ne sais pas, dis-le clairement et recommande une source fiable. Ne fabrique ni horaires, ni prix, ni liens, ni événements.
-Reste respectueux de toutes les communautés et traditions du Niger.`
+Lorsque le contexte documentaire ci-dessous fournit une source pertinente, appuie-toi dessus et indique le nom de la source ainsi que son lien. Ne dis pas que tu as consulté une source en direct si ce n’est pas le cas. Si les documents sont insuffisants, précise la limite et ne complète pas les détails manquants par invention.\nReste respectueux de toutes les communautés et traditions du Niger.`
 
 const DEFAULT_MODEL = 'gemini-3.8-flash'
 const FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite']
@@ -48,6 +49,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Envoyez une question pour commencer.' }, { status: 400 })
   }
 
+  const lastQuestion = messages[messages.length - 1]?.content || ''
+  const knowledgeEntries = findNigerKnowledge(lastQuestion)
+  const knowledgeContext = knowledgeEntries.length
+    ? '\\n\\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base de démarrage, pas une recherche en direct) :\\n' +
+      knowledgeEntries.map((entry, index) =>
+        (index + 1) + '. ' + entry.title + '\\n' + entry.content + '\\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
+      ).join('\\n\\n')
+    : '\\n\\nAucune fiche de la base documentaire locale ne correspond clairement à cette question. Ne prétends pas que la base contient une réponse vérifiée.'
+  const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext
+
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
   const models = [...new Set([configuredModel, ...FALLBACK_MODELS])]
   let lastStatus = 502
@@ -65,7 +76,7 @@ export async function POST(request: Request) {
           'x-goog-api-key': apiKey,
         },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+          systemInstruction: { parts: [{ text: systemInstruction }] },
           contents: validMessages,
           generationConfig: { temperature: 0.55, maxOutputTokens: 4096 },
         }),
