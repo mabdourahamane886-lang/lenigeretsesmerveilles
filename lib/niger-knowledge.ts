@@ -92,8 +92,7 @@ export const NIGER_KNOWLEDGE: NigerKnowledgeEntry[] = [
     content: 'Les actualités, dates de festivals, horaires, prix, conditions d’accès et informations de sécurité sont des données susceptibles de changer. Ne pas répondre comme si une information était actuelle sans consulter une source récente. Afficher la date de vérification et citer la source lorsqu’une recherche en direct est disponible.',
     sourceLabel: 'Règle de fraîcheur des informations',
     sourceUrl: 'https://www.gouv.ne/',
-  },,
-
+  },
   {
     id: 'history-niger',
     title: 'Histoire du Niger',
