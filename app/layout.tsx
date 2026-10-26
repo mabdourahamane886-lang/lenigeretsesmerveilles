@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import Header from '../components/site/header'
+import Footer from '../components/site/footer'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://lenigeretsesmerveilles-ngr.vercel.app'),
@@ -68,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body>{children}</body>
+      <body><Header /><div className="siteGlobalContent">{children}</div><Footer /></body>
     </html>
   )
 }
