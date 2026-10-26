@@ -143,6 +143,29 @@ const rawEntries: Omit<NigerDictionaryEntry, 'id'>[] = [
     ['كيف حالك؟', 'Comment vas-tu ?', 'Salutation'],
     ['أنا بخير', 'Je vais bien', 'Salutation'],
   ].map(([word, french, category]) => ({ language: 'Arabe standard moderne', languageCode: 'ar', community: 'Communautés arabophones', word, french, category, sourceLabel: 'Arabe standard moderne — expressions de base', sourceUrl: 'https://www.britannica.com/topic/Arabic-language', note: 'Arabe standard ; la formulation locale peut différer.' })),
+
+  ...[
+    ['صباح الخير', 'Bonjour (le matin)', 'Salutation'],
+    ['مساء الخير', 'Bonsoir', 'Salutation'],
+    ['أهلاً وسهلاً', 'Bienvenue', 'Salutation'],
+    ['كيف اسمك؟', 'Comment t’appelles-tu ?', 'Présentation'],
+    ['اسمي ...', 'Je m’appelle ...', 'Présentation'],
+    ['أين ...؟', 'Où se trouve ... ?', 'Question'],
+    ['كم السعر؟', 'Quel est le prix ?', 'Commerce'],
+    ['أنا لا أفهم', 'Je ne comprends pas', 'Communication'],
+    ['هل تتكلم الفرنسية؟', 'Parles-tu français ?', 'Communication'],
+    ['إلى اللقاء', 'Au revoir', 'Au revoir'],
+    ['بيت', 'Maison', 'Vie quotidienne'],
+    ['ماء', 'Eau', 'Vie quotidienne'],
+    ['طعام', 'Nourriture', 'Vie quotidienne'],
+    ['كتاب', 'Livre', 'École'],
+    ['مدرسة', 'École', 'École'],
+    ['صديق', 'Ami', 'Personnes'],
+    ['عائلة', 'Famille', 'Personnes'],
+    ['اليوم', 'Aujourd’hui', 'Temps'],
+    ['غداً', 'Demain', 'Temps'],
+    ['أمس', 'Hier', 'Temps'],
+  ].map(([word, french, category]) => ({ language: 'Arabe standard moderne', languageCode: 'ar', community: 'Communautés arabophones', word, french, category, sourceLabel: 'Arabe standard moderne — expressions de base', sourceUrl: 'https://www.britannica.com/topic/Arabic-language', note: 'Arabe standard ; les formulations locales peuvent différer.' })),
 ]
 
 export const NIGER_DICTIONARY: NigerDictionaryEntry[] = rawEntries.map((entry, index) => ({ ...entry, id: entry.languageCode + '-' + index }))
