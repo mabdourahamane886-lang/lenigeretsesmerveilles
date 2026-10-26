@@ -1,1 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 180" role="img" aria-labelledby="title"><title>Symbole Le Niger et ses Merveilles</title><g stroke-linejoin="round"><path fill="#ff7900" d="M18 128a92 92 0 0 1 184 0Z"/><path fill="#138b38" d="M10 151 61 116 92 127 115 95 145 125 173 112 210 151Z"/><path fill="#075e35" d="M25 151 78 128 100 134 112 25 126 7 140 25 159 151Z"/><path fill="#22b83b" d="M112 25 126 7 140 25 159 151 112 151Z"/><path fill="#075e35" d="M115 49h9v7h-9zm-2 22h9v7h-9zm-2 22h9v7h-9zm-2 22h9v7h-9zm-2 22h9v7h-9z"/><path fill="#22b83b" d="M150 129q9-28 20-9 12-14 22 2l18 29h-61Z"/><path fill="#075e35" d="M181 130q-4-21-21-25 18-2 23 14 8-19 22-17-14 8-17 25 15-9 24-1-18 0-27 15Z"/><path fill="#075e35" d="M9 154h202l-13 5H23Z"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 445" role="img" aria-labelledby="title">
+<title>Symbole original du Niger et ses Merveilles</title>
+<g stroke-linejoin="round">
+<!-- Soleil orange derrière le monument -->
+<path fill="#ff7900" d="M105 300 A270 250 0 0 1 645 300 L105 300Z"/>
+<!-- Reliefs verts du paysage -->
+<path fill="#138b38" d="M18 388 115 333 168 315 219 335 278 356 324 388Z"/>
+<path fill="#22a83b" d="M28 388 127 343 170 326 221 344 274 365 324 388Z"/>
+<path fill="#075e35" d="M390 388 443 321 478 321 503 343 532 328 562 350 591 339 628 365 667 388Z"/>
+<!-- Minaret central, silhouette et façade lumineuse -->
+<path fill="#075e35" d="M286 388 319 105 337 79 352 40 369 79 386 105 426 388Z"/>
+<path fill="#22b83b" d="M352 40 369 79 386 105 426 388 352 388Z"/>
+<!-- Crénelures traditionnelles du minaret -->
+<path fill="#075e35" d="M312 143 302 136 311 126 313 112 324 105 327 90 340 83 346 73 352 40 356 73 365 83 372 98 384 105 389 121 400 128 398 140 411 148 406 160 418 169 411 181 424 191 416 202 429 213 418 224 432 236 421 247 434 260 421 271 435 285 423 296 438 313 425 325 440 342 427 354 442 388 405 388 397 352 387 322 381 290 375 256 369 221 364 188 359 155 352 123 346 155 340 188 335 221 329 256 323 290 317 322 309 352 301 388 266 388 280 354 270 342 283 325 272 312 286 296 275 283 289 269 278 256 292 244 281 231 295 219 284 206 298 194 288 182 301 170 291 158Z" opacity=".7"/>
+<!-- Fenêtres du minaret -->
+<g fill="#08733b">
+<path d="M351 120h13l-2 17h-13Z"/><path d="M344 158h13l-2 17h-13Z"/><path d="M369 158h13l-2 17h-13Z"/>
+<path d="M338 198h13l-2 17h-13Z"/><path d="M364 198h13l-2 17h-13Z"/>
+<path d="M333 238h13l-2 17h-13Z"/><path d="M359 238h13l-2 17h-13Z"/>
+<path d="M328 278h13l-2 17h-13Z"/><path d="M354 278h13l-2 17h-13Z"/>
+<path d="M322 319h13l-2 17h-13Z"/><path d="M348 319h13l-2 17h-13Z"/>
+</g>
+<!-- Palmiers à droite -->
+<path fill="#075e35" d="M567 382 574 320 580 320 576 382Z"/>
+<path fill="#138b38" d="M577 324Q541 290 526 310Q548 308 565 332Q525 321 520 339Q550 335 573 344Q541 350 542 365Q561 350 579 350Q596 367 614 358Q600 340 584 342Q613 328 630 339Q622 316 591 327Q614 301 606 286Q585 300 577 324Z"/>
+<!-- Base du paysage -->
+<path fill="#075e35" d="M15 388 240 381 444 381 674 389 712 402 40 402Z"/>
+</g></svg>
