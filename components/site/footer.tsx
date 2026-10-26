@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowUpRight, Camera, Compass, Send } from 'lucide-react'
 
 export default function Footer() {
@@ -8,9 +9,9 @@ export default function Footer() {
         <div className="siteFooterTop">
           <div className="siteFooterBrand">
             <Link className="siteBrand siteFooterBrandLink" href="/">
-              <span className="siteBrandMark" aria-hidden="true"><span /><span /><span /></span>
+              <Image className="siteBrandLogo siteFooterLogo" src="/images/niger-merveilles-mark.svg" alt="" width={58} height={48} />
               <span className="siteBrandCopy">
-                <span className="footerBrandFlag proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span><strong>Le Niger et ses Merveilles</strong>
+                <strong>Le Niger et ses Merveilles</strong>
                 <small>Explorer · Comprendre · Préserver</small>
               </span>
             </Link>
@@ -47,7 +48,7 @@ export default function Footer() {
 
         <div className="siteFooterBottom">
           <span>© 2026 Le Niger et ses Merveilles</span>
-          <span className="footerMade"><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span> Fait pour raconter le Niger.</span>
+          <span className="footerMade">Fait pour raconter le Niger.</span>
           <Link href="/recherche">Rechercher <ArrowUpRight size={13} /></Link>
         </div>
       </div>
