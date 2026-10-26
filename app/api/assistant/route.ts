@@ -50,9 +50,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Envoyez une question pour commencer.' }, { status: 400 })
   }
 
-  const lastQuestion = messages[messages.length - 1]?.content || ''
-  const knowledgeEntries = findNigerKnowledge(lastQuestion)
-  const dictionaryEntries = findNigerDictionary(lastQuestion, 14)
+  const lastQuestion = validMessages[validMessages.length - 1]?.parts?.[0]?.text || ''
+  // Pour les questions de suivi (« et pourquoi ? », « combien ? », « développe »),
+  // réutiliser les derniers messages utilisateur afin que la recherche locale
+  // conserve le sujet de la discussion, comme le fait le contexte du chat.
+  const recentUserQuestions = validMessages
+    .filter((item) => item.role === 'user')
+    .slice(-4)
+    .map((item) => item.parts[0].text)
+  const isFollowUp = lastQuestion.trim().split(/\\s+/).length <= 9 ||
+    /^(et|alors|pourquoi|comment|lesquels|lesquelles|laquelle|lequel|leur|ça|cela|ceci|continue|développe|explique davantage|et ensuite)\\b/i.test(lastQuestion.trim())
+  const retrievalQuestion = isFollowUp
+    ? [...recentUserQuestions.slice(0, -1), lastQuestion].join('\\n')
+    : lastQuestion
+  const knowledgeEntries = findNigerKnowledge(retrievalQuestion, 5)
+  const dictionaryEntries = findNigerDictionary(retrievalQuestion, 14)
   const knowledgeContext = knowledgeEntries.length
     ? '\n\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base de démarrage, pas une recherche en direct) :\n' +
       knowledgeEntries.map((entry, index) =>
