@@ -13,8 +13,6 @@ import {
   Sparkles,
   Utensils,
 } from 'lucide-react'
-import Header from '../components/site/header'
-import Footer from '../components/site/footer'
 import wonders from '../data/wonders'
 import { nigerMedia } from '../data/media'
 import { regions as fallbackRegions } from '../data/regions'
@@ -161,7 +159,6 @@ export default async function Home() {
 
   return (
     <>
-      <Header />
 
       <main>
         <section className="proHero">
@@ -443,7 +440,6 @@ export default async function Home() {
         </section>
       </main>
 
-      <Footer />
     </>
   )
 }
