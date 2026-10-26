@@ -59,7 +59,7 @@ export default async function Header() {
             <Link href="/articles"><BookOpenText size={15} />Articles</Link>
             <Link href="/publications"><BookOpenText size={15} />Publications</Link>
             <Link href="/carte"><Compass size={15} />Carte</Link>
-            <Link href="/assistant"><Sparkles size={15} />Merveilles IA</Link>
+            <Link href="/assistant"><Sparkles size={15} />Merveilles IA</Link>\n            <Link href="/dictionnaire"><Languages size={15} />Dictionnaire</Link>
           </nav>
 
           <div className="siteHeaderActions">
@@ -81,7 +81,7 @@ export default async function Header() {
                   <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
                   <Link href="/publications"><BookOpenText size={17} /><span>Publications</span></Link>
                   <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
-                  <Link href="/assistant"><Sparkles size={17} /><span>Merveilles IA</span></Link>
+                  <Link href="/assistant"><Sparkles size={17} /><span>Merveilles IA</span></Link>\n                  <Link href="/dictionnaire"><Languages size={17} /><span>Dictionnaire des langues</span></Link>
                   <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
                   <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
                   {isAdmin && (
