@@ -42,6 +42,8 @@ const hausa = 'LinguaCommons — Haoussa pour les francophones'
 const hausaUrl = 'https://www.linguacommons.com/language-learning/guides/hausa-from-french'
 const zarma = 'Peace Corps — Zarma Language Lessons'
 const zarmaUrl = 'https://www.fsi-language-courses.org/peace-corps-zarma-language-lessons/2-greetings-vocabulary/'
+const fulfulde = 'Polyglot Club — Central-Eastern Niger Fulfulde greetings'
+const fulfuldeUrl = 'https://polyglotclub.com/wiki/Language/Central-eastern-niger-fulfulde/Vocabulary/How-to-Say-Hello-and-Greetings'
 const tamahaq = 'Maidjanad — Tamahaq lexique'
 const tamahaqUrl = 'https://www.maidjanad.com/tamahaq-lexique/'
 
@@ -108,6 +110,19 @@ const rawEntries: Omit<NigerDictionaryEntry, 'id'>[] = [
     ['Tekabart', 'Maison', 'Vie quotidienne'],
     ['Aden', 'Homme', 'Personnes'],
   ].map(([word, french, category]) => ({ language: 'Tamahaq (variété touareg)', languageCode: 'tmh', community: 'Touareg', word, french, category, sourceLabel: tamahaq, sourceUrl: tamahaqUrl })),
+  ...[
+    ['Foma', 'Salutation générale adressée à une personne', 'Salutation'],
+    ['Foma, foma', 'Salutation générale à une personne', 'Salutation'],
+    ['Fomon', 'Salutation adressée à un groupe', 'Salutation'],
+    ['Engido', 'Réponse à « Foma » ou « Fomon »', 'Salutation'],
+    ['A walli jam?', 'Bonjour le matin ? (à une personne)', 'Salutation'],
+    ['On balli jam?', 'Bonjour le matin ? (à un groupe)', 'Salutation'],
+    ['A nyalli jam?', 'Salutation de l’après-midi (à une personne)', 'Salutation'],
+    ['A hiri jam?', 'Salutation du soir (à une personne)', 'Salutation'],
+    ['A jamo?', 'Comment vas-tu ?', 'Salutation'],
+    ['On yambe?', 'Comment allez-vous ? (à un groupe)', 'Salutation'],
+    ['Jam pelem', 'Réponse de paix / bonne santé à une salutation', 'Salutation'],
+  ].map(([word, french, category]) => ({ language: 'Fulfulde (variété du centre-est du Niger)', languageCode: 'fuv', community: 'Peul / Fulbé', word, french, category, sourceLabel: fulfulde, sourceUrl: fulfuldeUrl })),
   ...[
     ['Saléfagna', 'Salut / salutation neutre', 'Salutation'],
     ['ndawatou', 'Salutation du matin (une personne)', 'Salutation'],
