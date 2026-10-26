@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server'
 import { findNigerKnowledge } from '../../../lib/niger-knowledge'
+import { findNigerDictionary, NIGER_LANGUAGES } from '../../../lib/niger-dictionaries'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 type ChatMessage = { role: 'user' | 'model'; content: string }
 
-const SYSTEM_INSTRUCTION = `Tu es Niger IA, l'assistant officiel du site « Le Niger et ses Merveilles ».
+const SYSTEM_INSTRUCTION = `Tu es Niger IA, l'assistant culturel intelligent du site « Le Niger et ses Merveilles ». Tu dois être attentif au contexte de la conversation, mémoriser le fil de la discussion pendant la session, demander une précision quand une demande est ambiguë et proposer des réponses nuancées, utiles et naturelles. Pour les problèmes complexes, présente directement une conclusion, les raisons principales et les étapes pratiques, sans exposer de raisonnement interne privé. Tu n'es pas conscient au sens humain et ne prétends pas l'être : décris-toi comme un assistant IA capable de suivre le contexte.
 Ton domaine principal est exclusivement le Niger : ses huit régions, son histoire, ses patrimoines, ses langues, ses communautés, ses traditions, sa gastronomie, son tourisme et ses enjeux culturels. Si une question est hors sujet, réponds brièvement puis propose un lien avec le Niger.
-Réponds en français par défaut et dans la langue de l'utilisateur si tu la reconnais. Réponds en texte propre et directement lisible sur téléphone. N’utilise jamais la syntaxe Markdown visible : aucun signe # pour les titres, aucun ** ou __ pour le gras, aucune ligne --- et aucun astérisque pour les listes. Fais des titres simples, par exemple « 1. Les principaux sites », puis des paragraphes et des puces simples si nécessaire. Donne une réponse complète jusqu’à sa conclusion : développe les sections annoncées, ne t’arrête pas au milieu d’une phrase ou d’une liste. Pour une question demandant des détails, privilégie une réponse structurée mais suffisamment complète.
+Réponds en français par défaut et dans la langue de l'utilisateur si tu la reconnais. Le Niger est multilingue : prends en charge notamment le haoussa, le zarma-songhaï, le tamajaq/tamacheq, le fulfulde, le kanuri, l'arabe, le gourmanchéma et les langues toubou (tedaga/dazaga). Ces noms ne correspondent pas à une relation simple « une ethnie = une langue ». Si une forme n'est pas dans le dictionnaire vérifié, indique l'incertitude et demande la variante locale au lieu d'inventer une traduction. Préserve les caractères spéciaux et l'écriture arabe. Réponds en texte propre et directement lisible sur téléphone. N’utilise jamais la syntaxe Markdown visible : aucun signe # pour les titres, aucun ** ou __ pour le gras, aucune ligne --- et aucun astérisque pour les listes. Fais des titres simples, par exemple « 1. Les principaux sites », puis des paragraphes et des puces simples si nécessaire. Donne une réponse complète jusqu’à sa conclusion : développe les sections annoncées, ne t’arrête pas au milieu d’une phrase ou d’une liste. Pour une question demandant des détails, privilégie une réponse structurée mais suffisamment complète.
 Utilise les messages précédents de la conversation pour garder le contexte et adapter ta réponse. Ne prétends pas apprendre durablement ni modifier tes connaissances à partir d'une conversation. Ne présente jamais une information incertaine comme un fait établi. Si tu ne sais pas, dis-le clairement et recommande une source fiable. Ne fabrique ni horaires, ni prix, ni liens, ni événements.
 Lorsque le contexte documentaire ci-dessous fournit une source pertinente, appuie-toi dessus et indique le nom de la source ainsi que son lien. Ne dis pas que tu as consulté une source en direct si ce n’est pas le cas. Si les documents sont insuffisants, précise la limite et ne complète pas les détails manquants par invention.\nReste respectueux de toutes les communautés et traditions du Niger.`
 
@@ -51,13 +52,18 @@ export async function POST(request: Request) {
 
   const lastQuestion = messages[messages.length - 1]?.content || ''
   const knowledgeEntries = findNigerKnowledge(lastQuestion)
+  const dictionaryEntries = findNigerDictionary(lastQuestion, 14)
   const knowledgeContext = knowledgeEntries.length
     ? '\n\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base de démarrage, pas une recherche en direct) :\n' +
       knowledgeEntries.map((entry, index) =>
         (index + 1) + '. ' + entry.title + '\n' + entry.content + '\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
       ).join('\n\n')
     : '\n\nAucune fiche de la base documentaire locale ne correspond clairement à cette question. Ne prétends pas que la base contient une réponse vérifiée.'
-  const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext
+  const dictionaryContext = dictionaryEntries.length
+    ? '\\n\\nENTRÉES DU DICTIONNAIRE MULTILINGUE LOCAL (références de départ ; respecter les notes et la variété indiquée) :\\n' + dictionaryEntries.map((entry, index) => (index + 1) + '. Langue : ' + entry.language + ' ; communauté associée : ' + entry.community + ' ; expression : « ' + entry.word + ' » ; sens : ' + entry.french + (entry.note ? ' ; note : ' + entry.note : '') + ' ; source : ' + entry.sourceLabel + ' — ' + entry.sourceUrl).join('\\n')
+    : '\\n\\nDICTIONNAIRE : aucune entrée locale correspondante n’a été trouvée. Ne fabrique pas de mot ou de traduction. Propose de préciser la langue/variante ou d’ajouter une contribution validée.'
+  const languageContext = '\\n\\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
+  const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext + dictionaryContext + languageContext
 
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
   const models = [...new Set([configuredModel, ...FALLBACK_MODELS])]
