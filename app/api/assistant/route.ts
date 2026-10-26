@@ -60,9 +60,9 @@ export async function POST(request: Request) {
       ).join('\n\n')
     : '\n\nAucune fiche de la base documentaire locale ne correspond clairement à cette question. Ne prétends pas que la base contient une réponse vérifiée.'
   const dictionaryContext = dictionaryEntries.length
-    ? '\\n\\nENTRÉES DU DICTIONNAIRE MULTILINGUE LOCAL (références de départ ; respecter les notes et la variété indiquée) :\\n' + dictionaryEntries.map((entry, index) => (index + 1) + '. Langue : ' + entry.language + ' ; communauté associée : ' + entry.community + ' ; expression : « ' + entry.word + ' » ; sens : ' + entry.french + (entry.note ? ' ; note : ' + entry.note : '') + ' ; source : ' + entry.sourceLabel + ' — ' + entry.sourceUrl).join('\\n')
-    : '\\n\\nDICTIONNAIRE : aucune entrée locale correspondante n’a été trouvée. Ne fabrique pas de mot ou de traduction. Propose de préciser la langue/variante ou d’ajouter une contribution validée.'
-  const languageContext = '\\n\\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
+    ? '\n\nENTRÉES DU DICTIONNAIRE MULTILINGUE LOCAL (références de départ ; respecter les notes et la variété indiquée) :\n' + dictionaryEntries.map((entry, index) => (index + 1) + '. Langue : ' + entry.language + ' ; communauté associée : ' + entry.community + ' ; expression : « ' + entry.word + ' » ; sens : ' + entry.french + (entry.note ? ' ; note : ' + entry.note : '') + ' ; source : ' + entry.sourceLabel + ' — ' + entry.sourceUrl).join('\n')
+    : '\n\nDICTIONNAIRE : aucune entrée locale correspondante n’a été trouvée. Ne fabrique pas de mot ou de traduction. Propose de préciser la langue/variante ou d’ajouter une contribution validée.'
+  const languageContext = '\n\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
   const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext + dictionaryContext + languageContext
 
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
