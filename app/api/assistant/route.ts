@@ -16,7 +16,7 @@ type SupabaseKnowledgeEntry = {
 }
 
 async function findSupabaseKnowledge(question: string, limit = 5): Promise<SupabaseKnowledgeEntry[]> {
-  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\\/$/, '')
+  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '')
   // Only use server-side secret keys here. Never expose these variables to browser code.
   const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return []
@@ -35,13 +35,13 @@ async function findSupabaseKnowledge(question: string, limit = 5): Promise<Supab
       return []
     }
     const rows = await response.json() as SupabaseKnowledgeEntry[]
-    const terms = question.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').split(/[^a-z0-9]+/).filter((term) => term.length > 2)
+    const terms = question.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter((term) => term.length > 2)
     if (!terms.length) return []
     return rows
       .map((row) => {
         const searchable = [row.category, row.title, ...(row.keywords || []), row.content]
-          .join(' ').toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
-        const score = terms.reduce((sum, term) => sum + (searchable.includes(term) ? (row.keywords || []).some((keyword) => keyword.toLowerCase().includes(term)) ? 3 : 1 : 0), 0)
+          .join(' ').toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        const score = terms.reduce((sum, term) => sum + (searchable.includes(term) ? ((row.keywords || []).some((keyword) => keyword.toLowerCase().includes(term)) ? 3 : 1) : 0), 0)
         return { row, score }
       })
       .filter((item) => item.score > 0)
