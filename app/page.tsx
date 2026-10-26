@@ -327,8 +327,7 @@ export default async function Home() {
           </div>
         </section>
 
-        {(events.length > 0 || articles.length > 0) && (
-          <section className="section proSection proTintSection">
+        <section className="section proSection proTintSection">
             <div className="container">
               <div className="proEditorialLayout">
                 <div className="proEditorialCopy">
@@ -368,9 +367,34 @@ export default async function Home() {
                   ))}
                 </div>
               )}
+              {!events.length && !articles.length && (
+                <div
+                  className="proEmptyEditorial"
+                  style={{
+                    marginTop: '28px',
+                    padding: 'clamp(22px, 4vw, 36px)',
+                    border: '1px solid rgba(11, 93, 59, .14)',
+                    borderRadius: '20px',
+                    background: '#fff',
+                  }}
+                >
+                  <span className="proMiniLabel">La plateforme évolue</span>
+                  <h3 style={{ margin: '10px 0 8px', fontSize: 'clamp(20px, 3vw, 28px)' }}>
+                    Les prochaines histoires du Niger se préparent.
+                  </h3>
+                  <p style={{ maxWidth: '680px', margin: '0 0 18px', lineHeight: 1.7 }}>
+                    En attendant les prochains articles et événements vérifiés, explorez les régions,
+                    découvrez les traditions ou posez vos questions à Merveilles IA.
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    <Link className="proButton proButtonPrimary" href="/culture">Explorer la culture <ArrowRight size={16} /></Link>
+                    <Link className="proButton proButtonDark" href="/assistant">Découvrir Merveilles IA <Sparkles size={16} /></Link>
+                    <Link className="proButton proButtonGhost" href="/contribution">Proposer un contenu <Send size={16} /></Link>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
-        )}
 
         {publications.length > 0 && (
           <section className="section proSection">
