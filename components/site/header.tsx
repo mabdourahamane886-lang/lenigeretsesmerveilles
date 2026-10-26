@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   BookOpenText,
   Languages,
@@ -37,13 +38,8 @@ export default async function Header() {
         <div className="container siteHeaderInner">
           <div className="siteHeaderMobileLeft" aria-hidden="true" />
 
-          {/* Un seul drapeau du Niger dans l’en-tête. */}
           <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
-            <span className="siteBrandMark" aria-label="Drapeau du Niger" role="img">
-              <span aria-hidden="true" />
-              <span aria-hidden="true" />
-              <span aria-hidden="true" />
-            </span>
+            <Image className="siteBrandLogo" src="/images/niger-merveilles-mark.svg" alt="" width={58} height={48} priority />
             <span className="siteBrandCopy">
               <strong>Le Niger et ses Merveilles</strong>
               <small>Explorer · Comprendre · Préserver</small>
