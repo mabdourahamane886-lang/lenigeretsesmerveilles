@@ -2977,3 +2977,17 @@ img{max-width:100%}
 .siteBrandLogo{display:block;width:58px;height:48px;object-fit:contain;flex:0 0 auto;background:transparent}
 .siteFooterLogo{width:62px;height:52px}
 @media(max-width:640px){.siteBrandLogo{width:46px;height:42px}.siteFooterLogo{width:52px;height:46px}}
+
+
+/* Page-level banners are hidden on every route except the home page. */
+body:not(.home-page) .hero,
+body:not(.home-page) .eventHero,
+body:not(.home-page) .articleHero,
+body:not(.home-page) .proHero,
+body:not(.home-page) .detailHero,
+body:not(.home-page) .cultureHero,
+body:not(.home-page) .foodHero,
+body:not(.home-page) .proDetailHero,
+body:not(.home-page) .proArticleHero {
+  display: none !important;
+}
