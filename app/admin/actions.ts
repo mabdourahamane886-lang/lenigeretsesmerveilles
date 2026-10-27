@@ -101,7 +101,16 @@ export async function createMedia(f:FormData){
 export async function createArticle(f:FormData){
  const s=await db(),title=String(f.get('title')||'').trim(),content=String(f.get('content')||'').trim();if(!title||!content)throw new Error('Le titre et le contenu sont obligatoires.')
  const base=slugify(title)||`publication-${Date.now()}`,{data:old}=await s.from('niger_articles').select('id').eq('slug',base).maybeSingle(),slug=old?`${base}-${Date.now().toString().slice(-6)}`:base
- const published=on(f,'published');const {error}=await s.from('niger_articles').insert({title,slug,excerpt:t(f,'excerpt')||'',content,category:t(f,'category')||'culture',region_id:t(f,'region_id'),cover_url:t(f,'cover_url'),author_name:t(f,'author_name')||'Le Niger et ses Merveilles',published,published_at:published?new Date().toISOString():null})
+ let coverUrl=t(f,'cover_url')
+ const coverFile=f.get('cover_file')
+ if(coverFile instanceof File&&coverFile.size>0){
+  if(!coverFile.type.startsWith('image/'))throw new Error('La couverture doit être une image.')
+  if(coverFile.size>10*1024*1024)throw new Error('La couverture ne doit pas dépasser 10 Mo.')
+  const ext=coverFile.name.split('.').pop()?.toLowerCase()||'jpg'
+  const uploaded=await uploadToSupabaseStorage(s,coverFile,`articles/${new Date().getUTCFullYear()}/${Date.now()}-${slug}.${ext}`)
+  coverUrl=uploaded.url
+ }
+ const published=on(f,'published');const {error}=await s.from('niger_articles').insert({title,slug,excerpt:t(f,'excerpt')||'',content,category:t(f,'category')||'culture',region_id:t(f,'region_id'),cover_url:coverUrl,author_name:t(f,'author_name')||'Le Niger et ses Merveilles',published,published_at:published?new Date().toISOString():null})
  if(error)throw new Error(`Impossible d’enregistrer la publication : ${error.message}`);refresh('/admin/articles','/articles','/');return{slug}
 }
 
