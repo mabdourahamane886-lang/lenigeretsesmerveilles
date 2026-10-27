@@ -27,6 +27,30 @@ const cleanAnswer = (s: string) => s
  .replace(/^\s*---+\s*$/gm, '')
  .replace(/\n{3,}/g, '\n\n')
  .trim()
+function renderMessageContent(text: string) {
+ const urlPattern = /https?:\\/\\/[^\\s<>()]+/g
+ const parts: Array<string | { url: string; label: string }> = []
+ let lastIndex = 0
+ for (const match of text.matchAll(urlPattern)) {
+  const raw = match[0]
+  const start = match.index ?? 0
+  const trailing = raw.match(/[.,!?;:，。！？；：]+$/)?.[0] ?? ''
+  const candidate = trailing ? raw.slice(0, -trailing.length) : raw
+  if (start > lastIndex) parts.push(text.slice(lastIndex, start))
+  try {
+   const parsed = new URL(candidate)
+   if (parsed.protocol === 'https:' || parsed.protocol === 'http:') parts.push({ url: parsed.href, label: candidate })
+   else parts.push(candidate)
+  } catch { parts.push(candidate) }
+  if (trailing) parts.push(trailing)
+  lastIndex = start + raw.length
+ }
+ if (lastIndex < text.length) parts.push(text.slice(lastIndex))
+ return parts.map((part, index) => typeof part === 'string'
+  ? <span key={index} style={{ whiteSpace: 'pre-wrap' }}>{part}</span>
+  : <a key={index} href={part.url} target="_blank" rel="noopener noreferrer" className="nigerAiAnswerLink">{part.label}</a>)
+}
+
 const thinkingSteps = [
  'Je réfléchis à votre question…',
  'Je rassemble les informations utiles…',
@@ -89,7 +113,7 @@ export default function AssistantPage() {
   <section className="nigerAiWorkspace">
    <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div><Link href="/" className="nigerAiBack">Retour au site</Link></header>
    <div className="nigerAiMessages" key={activeId}>
-    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{m.content}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking"><span className="nigerAiDots"><i/><i/><i/></span><span>{thinking}</span></div>}<div ref={end}/></div>}
+    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking"><span className="nigerAiDots"><i/><i/><i/></span><span>{thinking}</span></div>}<div ref={end}/></div>}
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
    </div>
    <form className="nigerAiComposer" onSubmit={submit}><textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="submit" aria-label="Envoyer le message" disabled={!input.trim()||loading}><ArrowUp size={19}/></button><small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
