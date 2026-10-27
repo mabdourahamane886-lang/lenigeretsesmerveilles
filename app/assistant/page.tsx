@@ -28,7 +28,7 @@ const cleanAnswer = (s: string) => s
  .replace(/\n{3,}/g, '\n\n')
  .trim()
 function renderMessageContent(text: string) {
- const urlPattern = /https?:\\/\\/[^\\s<>()]+/g
+ const urlPattern = /https?:\/\/[^\s<>()]+/g
  const parts: Array<string | { url: string; label: string }> = []
  let lastIndex = 0
  for (const match of text.matchAll(urlPattern)) {
