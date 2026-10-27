@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, BookOpenText, CalendarDays, UserRound } from 'lucide-react'
 import Header from '../../../components/site/header'
@@ -7,6 +8,21 @@ import ShareButton from '../../../components/site/share-button'
 import { createClient } from '../../../lib/supabase/server'
 
 export const dynamic='force-dynamic'
+
+const SITE_URL = 'https://lenigeretsesmerveilles-ngr.vercel.app'
+
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
+  const {slug}=await params
+  const supabase=await createClient()
+  if(!supabase) return {title:'Publication | Le Niger et ses Merveilles'}
+  const {data:article}=await supabase.from('niger_articles').select('title,excerpt,cover_url,category,published').eq('slug',slug).eq('published',true).maybeSingle()
+  if(!article) return {title:'Publication introuvable | Le Niger et ses Merveilles'}
+  const title=article.title+' | Le Niger et ses Merveilles'
+  const description=article.excerpt || 'Découvrez les merveilles, la culture et le patrimoine du Niger.'
+  const url=SITE_URL+'/articles/'+slug
+  const images=article.cover_url ? [{url:article.cover_url,alt:article.title}] : [{url:SITE_URL+'/opengraph-image.png',alt:'Le Niger et ses Merveilles'}]
+  return {title,description,alternates:{canonical:url},openGraph:{type:'article',url,siteName:'Le Niger et ses Merveilles',title,description,images},twitter:{card:'summary_large_image',title,description,images:images.map(image=>image.url)}}
+}
 
 export default async function ArticleDetailPage({params}:{params:Promise<{slug:string}>}){
   const {slug}=await params
