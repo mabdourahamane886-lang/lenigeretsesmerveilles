@@ -6,3 +6,9 @@
 /* Niger AI: masquer l'en-tête global du site sur cette page uniquement. */
 body:has(.nigerAiShell) > header, body:has(.nigerAiShell) > footer{display:none!important}
 body:has(.nigerAiShell) .siteGlobalContent{margin:0!important;padding:0!important}
+
+
+/* Liens cliquables dans les réponses de Niger IA */
+.nigerAiAnswerLink { color: #1769aa; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.nigerAiAnswerLink:hover { color: #0b477b; }
+.nigerAiAnswerLink:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
