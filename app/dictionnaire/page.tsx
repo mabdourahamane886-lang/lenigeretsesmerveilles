@@ -36,13 +36,6 @@ export default function DictionnairePage() {
         <Link href="/assistant" className="dictionaryBack"><ArrowLeft size={17}/> Retour à Niger IA</Link>
         <span className="dictionaryBrand"><span className="dictionaryMark">N</span> Le Niger et ses Merveilles</span>
       </header>
-      <section className="dictionaryHero">
-        <span className="dictionaryEyebrow"><Languages size={16}/> MÉMOIRE LINGUISTIQUE DU NIGER</span>
-        <h1>Les langues du Niger, mot après mot.</h1>
-        <p>Un dictionnaire de départ pour découvrir les mots, les salutations et les expressions de plusieurs communautés du Niger. Les entrées indiquent leurs sources et les limites de chaque variété linguistique.</p>
-        <div className="dictionaryStats"><span><strong>{NIGER_DICTIONARY.length}</strong> entrées documentées</span><span><strong>{NIGER_LANGUAGES.length}</strong> langues ou groupes linguistiques</span></div>
-      </section>
-
       <section className="dictionaryContent">
         <div className="dictionaryControls">
           <label className="dictionarySearch"><Search size={18}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Chercher un mot, une traduction ou une langue…" /></label>
