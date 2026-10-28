@@ -1,5 +1,4 @@
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 import wonders from '../../data/wonders'
 
@@ -47,7 +46,7 @@ export default async function MerveillesPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
