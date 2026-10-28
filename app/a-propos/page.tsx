@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, Heart, ShieldCheck } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
-
 export const metadata = {
   title: 'À propos',
   description: 'Découvrez la mission, la vision et la démarche éditoriale de Le Niger et ses Merveilles.',
@@ -35,7 +33,7 @@ export default function AProposPage() {
           </section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
