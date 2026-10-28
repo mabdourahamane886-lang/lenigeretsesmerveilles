@@ -2,7 +2,6 @@ import {notFound} from 'next/navigation'
 import Link from 'next/link'
 import {ArrowLeft,BookOpenText} from 'lucide-react'
 import Header from '../../../components/site/header'
-import Footer from '../../../components/site/footer'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import {JsonLd,VerifiedBadge} from '../../../components/site/pro-meta'
@@ -17,5 +16,5 @@ export default async function CultureDetail({params}:{params:Promise<{slug:strin
  <aside className="articleStandfirst"><BookOpenText size={19}/><div><span>Fiche culturelle</span><p>{item.language||'Patrimoine culturel du Niger'}</p></div></aside>
  <article className="proseCard articleProse"><div className="prose">{item.history&&<><h2>Histoire</h2><p>{item.history}</p></>}{item.traditions&&<><h2>Traditions</h2><p>{item.traditions}</p></>}</div><div className="articleShare"><ShareButton title={item.title}/></div></article>
  <Link className="proBack" href="/culture"><ArrowLeft size={15}/> Retour à la culture</Link>
- </div></main><Footer/></>
+ </div></main></>
 }
