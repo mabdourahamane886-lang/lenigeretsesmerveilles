@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, MapPin } from 'lucide-react'
-import Header from '../../../components/site/header'
+import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import { createAdminClient } from '../../../lib/supabase/admin'
@@ -97,7 +95,6 @@ export default async function PublicationDetailPage({
 
   return (
     <>
-      <Header />
       <main className="page">
         <div className="container narrowEvent">
           <Breadcrumbs items={[
@@ -157,10 +154,6 @@ export default async function PublicationDetailPage({
               <ShareButton title={title} />
             </div>
           </article>
-
-          <Link className="proBack" href="/publications" style={{ position: 'relative', top: -10 }}>
-            <ArrowLeft size={15} /> Retour à toutes les publications
-          </Link>
         </div>
       </main>
       
