@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Share2 } from 'lucide-react'
 import Header from '../../../components/site/header'
-import Footer from '../../../components/site/footer'
 import { createClient } from '../../../lib/supabase/server'
 import { nigerMedia } from '../../../data/media'
 import ShareButton from '../../../components/site/share-button'
@@ -41,7 +40,7 @@ export default async function EventDetailPage({params}:{params:Promise<{slug:str
           {event.program && <section className="proseCard"><span className="kicker">Programme</span><h2>Le programme</h2><div className="prose">{event.program}</div></section>}
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
