@@ -11,7 +11,7 @@ import { createAdminClient } from '../../../lib/supabase/admin'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const baseUrl = 'https://lenigeretsesmerveilles.vercel.app'
+const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
 async function getPublicPublication(id: string) {
   const supabase = createAdminClient()
