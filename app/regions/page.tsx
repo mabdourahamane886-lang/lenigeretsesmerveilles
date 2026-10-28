@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
 import { regions as fallbackRegions } from '../../data/regions'
 
@@ -63,7 +62,7 @@ export default async function RegionsPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
