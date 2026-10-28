@@ -62,18 +62,19 @@ async function findSupabaseDictionary(question: string, limit = 8): Promise<Supa
   const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return []
   try {
-    const response = await fetch(url + '/rest/v1/merveilles_ai_dictionary?select=language_code,term,translation,target_language_code,pronunciation,source_name,source_url,verification_status,example,notes&limit=500', {
+    const response = await fetch(url + '/rest/v1/merveilles_ai_dictionary?select=language_code,term,translation,target_language_code,pronunciation,source_name,source_url,verification_status,example,notes&verification_status=neq.rejected&limit=200', {
       headers: { apikey: key, Authorization: 'Bearer ' + key }, cache: 'no-store', signal: AbortSignal.timeout(3500),
     })
     if (!response.ok) { console.error('Supabase dictionary query failed:', response.status); return [] }
     const rows = await response.json() as SupabaseDictionaryEntry[]
     const normalize = (value: string) => value.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     const terms = normalize(question).split(/[^a-z0-9\u0600-\u06ff]+/).filter((term) => term.length > 1)
-    return rows.map((row) => {
+    return rows.filter((row) => row.verification_status !== 'rejected').map((row) => {
       const searchable = normalize(row.term + ' ' + row.translation)
       const score = terms.reduce((sum, term) => sum + (searchable.includes(term) ? (normalize(row.term).includes(term) ? 3 : 1) : 0), 0)
-      return { row, score }
-    }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score).slice(0, limit).map((item) => item.row)
+      const validationRank = row.verification_status === 'verified' ? 3 : row.verification_status === 'reviewed' ? 2 : 1
+      return { row, score, validationRank }
+    }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score || b.validationRank - a.validationRank).slice(0, limit).map((item) => item.row)
   } catch (error) {
     console.error('Supabase dictionary lookup unavailable:', error instanceof Error ? error.message : 'unknown error')
     return []
@@ -112,12 +113,20 @@ export async function POST(request: Request) {
     )
   }
 
+  const contentLength = Number(request.headers.get('content-length') || 0)
+  if (contentLength > 100_000) {
+    return NextResponse.json({ error: 'La demande est trop volumineuse. Réduisez la longueur du message.' }, { status: 413 })
+  }
   const body = await request.json().catch(() => null)
-  const messages: ChatMessage[] = Array.isArray(body?.messages) ? body.messages : []
+  const messages: unknown[] = Array.isArray(body?.messages) ? body.messages : []
+  if (messages.length > 40) {
+    return NextResponse.json({ error: 'La conversation contient trop de messages. Commencez une nouvelle discussion.' }, { status: 400 })
+  }
   const validMessages = messages
-    .filter((item): item is ChatMessage => item && (item.role === 'user' || item.role === 'model') && typeof item.content === 'string')
+    .filter((item): item is ChatMessage => Boolean(item) && typeof item === 'object' && ((item as ChatMessage).role === 'user' || (item as ChatMessage).role === 'model') && typeof (item as ChatMessage).content === 'string')
     .slice(-12)
-    .map((item) => ({ role: item.role, parts: [{ text: item.content.slice(0, 6000) }] }))
+    .map((item) => ({ role: item.role, parts: [{ text: item.content.trim().slice(0, 6000) }] }))
+    .filter((item) => item.parts[0].text.length > 0)
 
   if (!validMessages.length || validMessages[validMessages.length - 1].role !== 'user') {
     return NextResponse.json({ error: 'Envoyez une question pour commencer.' }, { status: 400 })
