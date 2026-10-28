@@ -141,7 +141,7 @@ export async function POST(request: Request) {
     .slice(-4)
     .map((item) => item.parts[0].text)
   const isFollowUp = lastQuestion.trim().split(/\s+/).length <= 9 ||
-    /^(et|alors|pourquoi|comment|lesquels|lesquelles|laquelle|lequel|leur|ça|cela|ceci|continue|développe|explique davantage|et ensuite)\\b/i.test(lastQuestion.trim())
+    /^(et|alors|pourquoi|comment|lesquels|lesquelles|laquelle|lequel|leur|ça|cela|ceci|continue|développe|explique davantage|et ensuite)\b/i.test(lastQuestion.trim())
   const retrievalQuestion = isFollowUp
     ? [...recentUserQuestions.slice(0, -1), lastQuestion].join('\n')
     : lastQuestion
@@ -153,18 +153,18 @@ export async function POST(request: Request) {
   const dictionaryEntries = findNigerDictionary(retrievalQuestion, 14)
   const localKnowledgeContext = localKnowledgeEntries.length
     ? localKnowledgeEntries.map((entry, index) =>
-        (index + 1) + '. ' + entry.title + '\\n' + entry.content + '\\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
-      ).join('\\n\\n')
+        (index + 1) + '. ' + entry.title + '\n' + entry.content + '\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
+      ).join('\n\n')
     : ''
   const supabaseKnowledgeContext = supabaseKnowledgeEntries.length
     ? supabaseKnowledgeEntries.map((entry, index) =>
-        (index + 1) + '. [' + entry.category + '] ' + entry.title + '\\n' + entry.content
-      ).join('\\n\\n')
+        (index + 1) + '. [' + entry.category + '] ' + entry.title + '\n' + entry.content
+      ).join('\n\n')
     : ''
-  const combinedKnowledgeContext = [localKnowledgeContext, supabaseKnowledgeContext].filter(Boolean).join('\\n\\n')
+  const combinedKnowledgeContext = [localKnowledgeContext, supabaseKnowledgeContext].filter(Boolean).join('\n\n')
   const knowledgeContext = combinedKnowledgeContext
-    ? '\\n\\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base locale et, si configurée, base Supabase) :\\n' + combinedKnowledgeContext
-    : '\\n\\nAucune fiche documentaire locale ou Supabase correspondante n’a été trouvée. Ne prétends pas que la base contient une réponse vérifiée.'
+    ? '\n\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base locale et, si configurée, base Supabase) :\n' + combinedKnowledgeContext
+    : '\n\nAucune fiche documentaire locale ou Supabase correspondante n’a été trouvée. Ne prétends pas que la base contient une réponse vérifiée.'
   const dictionaryContext = dictionaryEntries.length
     ? '\n\nENTRÉES DU DICTIONNAIRE MULTILINGUE LOCAL (références de départ ; respecter les notes et la variété indiquée) :\n' + dictionaryEntries.map((entry, index) => (index + 1) + '. Langue : ' + entry.language + ' ; communauté associée : ' + entry.community + ' ; expression : « ' + entry.word + ' » ; sens : ' + entry.french + (entry.note ? ' ; note : ' + entry.note : '') + ' ; source : ' + entry.sourceLabel + ' — ' + entry.sourceUrl).join('\n')
     : '\n\nDICTIONNAIRE : aucune entrée locale correspondante n’a été trouvée. Ne fabrique pas de mot ou de traduction. Propose de préciser la langue/variante ou d’ajouter une contribution validée.'
