@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, MapPin } from 'lucide-react'
 import Header from '../../../components/site/header'
-import Footer from '../../../components/site/footer'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import { createAdminClient } from '../../../lib/supabase/admin'
@@ -164,7 +163,7 @@ export default async function PublicationDetailPage({
           </Link>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
