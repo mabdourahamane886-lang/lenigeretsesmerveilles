@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, ChefHat, Search, Sparkles, UsersRound } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -167,7 +166,7 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
           )}
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
