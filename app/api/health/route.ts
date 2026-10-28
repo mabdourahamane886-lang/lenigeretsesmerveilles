@@ -8,7 +8,7 @@ export async function GET() {
 
   if (!supabase) {
     return NextResponse.json(
-      { ok: false, app: true, supabase: false, reason: 'Supabase server credentials are not configured.' },
+      { ok: false, app: true, supabase: false, reason: 'Service temporarily unavailable.' },
       { status: 503 },
     )
   }
@@ -17,7 +17,7 @@ export async function GET() {
 
   if (error) {
     return NextResponse.json(
-      { ok: false, app: true, supabase: false, reason: error.message },
+      { ok: false, app: true, supabase: false, reason: 'Service temporarily unavailable.' },
       { status: 503 },
     )
   }
