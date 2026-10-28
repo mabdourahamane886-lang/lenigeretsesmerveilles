@@ -3,8 +3,6 @@ import { ArrowRight, BookOpenText, CalendarDays, ChefHat, MapPin, Search, Sparkl
 import { createClient } from '../../lib/supabase/server'
 import { regions as fallbackRegions } from '../../data/regions'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
-
 export const dynamic = 'force-dynamic'
 
 type Result = { id: string; title: string; text: string; href: string; category: string }
@@ -116,7 +114,7 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
           )}
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
