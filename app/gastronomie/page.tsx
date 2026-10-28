@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, ChefHat, History, Utensils } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
 import { nigerMedia } from '../../data/media'
 
@@ -27,7 +26,7 @@ export default async function GastronomiePage() {
           <section className="regionContribution foodContribution"><div className="regionContributionIcon"><Utensils size={20}/></div><div><span className="proMiniLabel">Mémoire culinaire</span><h2>Une recette familiale mérite aussi d’être documentée.</h2><p>Partagez une spécialité, son histoire ou sa préparation traditionnelle.</p></div><Link className="proButton proButtonDark" href="/contribution">Partager <ArrowRight size={15}/></Link></section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
