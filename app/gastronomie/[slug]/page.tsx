@@ -2,7 +2,6 @@ import {notFound} from 'next/navigation'
 import Link from 'next/link'
 import {ArrowLeft,ChefHat,Utensils} from 'lucide-react'
 import Header from '../../../components/site/header'
-import Footer from '../../../components/site/footer'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
 import {JsonLd,VerifiedBadge} from '../../../components/site/pro-meta'
@@ -16,5 +15,5 @@ export default async function FoodDetail({params}:{params:Promise<{slug:string}>
  {!item.image_url&&<><span className="kicker">Gastronomie nigérienne</span><h1>{item.name}</h1></>}
  <article className="proseCard articleProse"><div className="prose"><p>{item.description}</p>{item.history&&<><h2>Histoire</h2><p>{item.history}</p></>}{item.ingredients&&<><h2><ChefHat size={18}/> Ingrédients</h2><p>{item.ingredients}</p></>}{item.preparation&&<><h2><Utensils size={18}/> Préparation</h2><p>{item.preparation}</p></>}</div><div className="articleShare"><ShareButton title={item.name}/></div></article>
  <Link className="proBack" href="/gastronomie"><ArrowLeft size={15}/> Retour à la gastronomie</Link>
- </div></main><Footer/></>
+ </div></main></>
 }
