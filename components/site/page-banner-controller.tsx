@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
-/** Keep the main landing-page banner on home and hide the global site header on the dictionary page. */
+/** Keep the site banner/header on the homepage only. */
 export default function PageBannerController() {
   const pathname = usePathname()
 
@@ -19,7 +19,7 @@ export default function PageBannerController() {
 
   return (
     <style>{`
-      body.dictionary-page .siteHeader {
+      body:not(.home-page) .siteHeader {
         display: none !important;
       }
     `}</style>
