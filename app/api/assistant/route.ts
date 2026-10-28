@@ -62,18 +62,19 @@ async function findSupabaseDictionary(question: string, limit = 8): Promise<Supa
   const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return []
   try {
-    const response = await fetch(url + '/rest/v1/merveilles_ai_dictionary?select=language_code,term,translation,target_language_code,pronunciation,source_name,source_url,verification_status,example,notes&limit=500', {
+    const response = await fetch(url + '/rest/v1/merveilles_ai_dictionary?select=language_code,term,translation,target_language_code,pronunciation,source_name,source_url,verification_status,example,notes&verification_status=neq.rejected&limit=200', {
       headers: { apikey: key, Authorization: 'Bearer ' + key }, cache: 'no-store', signal: AbortSignal.timeout(3500),
     })
     if (!response.ok) { console.error('Supabase dictionary query failed:', response.status); return [] }
     const rows = await response.json() as SupabaseDictionaryEntry[]
     const normalize = (value: string) => value.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     const terms = normalize(question).split(/[^a-z0-9\u0600-\u06ff]+/).filter((term) => term.length > 1)
-    return rows.map((row) => {
+    return rows.filter((row) => row.verification_status !== 'rejected').map((row) => {
       const searchable = normalize(row.term + ' ' + row.translation)
       const score = terms.reduce((sum, term) => sum + (searchable.includes(term) ? (normalize(row.term).includes(term) ? 3 : 1) : 0), 0)
-      return { row, score }
-    }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score).slice(0, limit).map((item) => item.row)
+      const validationRank = row.verification_status === 'verified' ? 3 : row.verification_status === 'reviewed' ? 2 : 1
+      return { row, score, validationRank }
+    }).filter((item) => item.score > 0).sort((a, b) => b.score - a.score || b.validationRank - a.validationRank).slice(0, limit).map((item) => item.row)
   } catch (error) {
     console.error('Supabase dictionary lookup unavailable:', error instanceof Error ? error.message : 'unknown error')
     return []
@@ -112,12 +113,20 @@ export async function POST(request: Request) {
     )
   }
 
+  const contentLength = Number(request.headers.get('content-length') || 0)
+  if (contentLength > 100_000) {
+    return NextResponse.json({ error: 'La demande est trop volumineuse. Réduisez la longueur du message.' }, { status: 413 })
+  }
   const body = await request.json().catch(() => null)
-  const messages: ChatMessage[] = Array.isArray(body?.messages) ? body.messages : []
+  const messages: unknown[] = Array.isArray(body?.messages) ? body.messages : []
+  if (messages.length > 40) {
+    return NextResponse.json({ error: 'La conversation contient trop de messages. Commencez une nouvelle discussion.' }, { status: 400 })
+  }
   const validMessages = messages
-    .filter((item): item is ChatMessage => item && (item.role === 'user' || item.role === 'model') && typeof item.content === 'string')
+    .filter((item): item is ChatMessage => Boolean(item) && typeof item === 'object' && ((item as ChatMessage).role === 'user' || (item as ChatMessage).role === 'model') && typeof (item as ChatMessage).content === 'string')
     .slice(-12)
-    .map((item) => ({ role: item.role, parts: [{ text: item.content.slice(0, 6000) }] }))
+    .map((item) => ({ role: item.role, parts: [{ text: item.content.trim().slice(0, 6000) }] }))
+    .filter((item) => item.parts[0].text.length > 0)
 
   if (!validMessages.length || validMessages[validMessages.length - 1].role !== 'user') {
     return NextResponse.json({ error: 'Envoyez une question pour commencer.' }, { status: 400 })
@@ -132,7 +141,7 @@ export async function POST(request: Request) {
     .slice(-4)
     .map((item) => item.parts[0].text)
   const isFollowUp = lastQuestion.trim().split(/\s+/).length <= 9 ||
-    /^(et|alors|pourquoi|comment|lesquels|lesquelles|laquelle|lequel|leur|ça|cela|ceci|continue|développe|explique davantage|et ensuite)\\b/i.test(lastQuestion.trim())
+    /^(et|alors|pourquoi|comment|lesquels|lesquelles|laquelle|lequel|leur|ça|cela|ceci|continue|développe|explique davantage|et ensuite)\b/i.test(lastQuestion.trim())
   const retrievalQuestion = isFollowUp
     ? [...recentUserQuestions.slice(0, -1), lastQuestion].join('\n')
     : lastQuestion
@@ -144,18 +153,18 @@ export async function POST(request: Request) {
   const dictionaryEntries = findNigerDictionary(retrievalQuestion, 14)
   const localKnowledgeContext = localKnowledgeEntries.length
     ? localKnowledgeEntries.map((entry, index) =>
-        (index + 1) + '. ' + entry.title + '\\n' + entry.content + '\\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
-      ).join('\\n\\n')
+        (index + 1) + '. ' + entry.title + '\n' + entry.content + '\nSource : ' + entry.sourceLabel + ' — ' + entry.sourceUrl
+      ).join('\n\n')
     : ''
   const supabaseKnowledgeContext = supabaseKnowledgeEntries.length
     ? supabaseKnowledgeEntries.map((entry, index) =>
-        (index + 1) + '. [' + entry.category + '] ' + entry.title + '\\n' + entry.content
-      ).join('\\n\\n')
+        (index + 1) + '. [' + entry.category + '] ' + entry.title + '\n' + entry.content
+      ).join('\n\n')
     : ''
-  const combinedKnowledgeContext = [localKnowledgeContext, supabaseKnowledgeContext].filter(Boolean).join('\\n\\n')
+  const combinedKnowledgeContext = [localKnowledgeContext, supabaseKnowledgeContext].filter(Boolean).join('\n\n')
   const knowledgeContext = combinedKnowledgeContext
-    ? '\\n\\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base locale et, si configurée, base Supabase) :\\n' + combinedKnowledgeContext
-    : '\\n\\nAucune fiche documentaire locale ou Supabase correspondante n’a été trouvée. Ne prétends pas que la base contient une réponse vérifiée.'
+    ? '\n\nCONNAISSANCES DOCUMENTAIRES DISPONIBLES (base locale et, si configurée, base Supabase) :\n' + combinedKnowledgeContext
+    : '\n\nAucune fiche documentaire locale ou Supabase correspondante n’a été trouvée. Ne prétends pas que la base contient une réponse vérifiée.'
   const dictionaryContext = dictionaryEntries.length
     ? '\n\nENTRÉES DU DICTIONNAIRE MULTILINGUE LOCAL (références de départ ; respecter les notes et la variété indiquée) :\n' + dictionaryEntries.map((entry, index) => (index + 1) + '. Langue : ' + entry.language + ' ; communauté associée : ' + entry.community + ' ; expression : « ' + entry.word + ' » ; sens : ' + entry.french + (entry.note ? ' ; note : ' + entry.note : '') + ' ; source : ' + entry.sourceLabel + ' — ' + entry.sourceUrl).join('\n')
     : '\n\nDICTIONNAIRE : aucune entrée locale correspondante n’a été trouvée. Ne fabrique pas de mot ou de traduction. Propose de préciser la langue/variante ou d’ajouter une contribution validée.'
