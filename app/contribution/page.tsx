@@ -1,5 +1,4 @@
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { submitContribution } from './actions'
 
 type SearchParams = Promise<{ sent?: string; error?: string }>
@@ -32,7 +31,7 @@ export default async function ContributionPage({ searchParams }: { searchParams:
           </form>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
