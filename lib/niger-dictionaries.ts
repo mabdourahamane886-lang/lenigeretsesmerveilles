@@ -34,8 +34,8 @@ export const NIGER_LANGUAGES: NigerLanguage[] = [
   { id: 'fulfulde', name: 'Fulfulde', community: 'Peul / Fulbé', code: 'fuv', status: 'Corpus à enrichir', description: 'Les formes varient fortement selon les variétés régionales. Les entrées doivent être relues par un locuteur du Niger.', sourceLabel: 'ERIC — Dictionnaire de Fulfulde préparé pour le Niger', sourceUrl: 'https://eric.ed.gov/?id=ED403752' },
   { id: 'kanuri', name: 'Kanuri / Kanouri', community: 'Kanouri', code: 'knc', status: 'Expressions initiales', description: 'Quelques salutations et nombres issus d’un jeu de données socioculturel. Vérification locale souhaitable.', sourceLabel: 'Mozilla Data Collective — A Kanuri Sociocultural Dataset', sourceUrl: 'https://mozilladatacollective.com/datasets/cmrxj3m5q0021o907tnm6c9jp' },
   { id: 'arabic', name: 'Arabe', community: 'Communautés arabophones', code: 'ar', status: 'Expressions standard uniquement', description: 'Les entrées de départ sont en arabe standard moderne, pas une description de toutes les variétés arabes parlées au Niger.', sourceLabel: 'Référentiel de langue — arabe standard moderne', sourceUrl: 'https://www.britannica.com/topic/Arabic-language' },
-  { id: 'gourmanchema', name: 'Gourmanchéma', community: 'Gourmantché', code: 'gux', status: 'Lexique à collecter', description: 'La base fournit un point de départ documentaire, mais aucune traduction non vérifiée n’est ajoutée ici.', sourceLabel: 'ASJP — Wordlist Gourmanchema', sourceUrl: 'https://asjp.clld.org/languages/GOURMANCHEMA' },
-  { id: 'toubou', name: 'Tedaga / Dazaga (langues toubou)', community: 'Toubou', code: 'tuq', status: 'Lexique à valider avec des locuteurs', description: 'Les variétés Tedaga et Dazaga doivent être distinguées. Ce projet n’invente pas de mots lorsque les formes ne sont pas vérifiées.', sourceLabel: 'Glottolog — ressources linguistiques à compléter', sourceUrl: 'https://glottolog.org/' },
+  { id: 'gourmanchema', name: 'Gourmanchéma / Gulmancéma', community: 'Gourmantché', code: 'gux', status: 'Salutations de départ ; validation locale nécessaire', description: 'Quelques formules de salutation sont ajoutées à titre de point de départ à partir de ressources linguistiques publiques. Les variantes locales et le contexte d’emploi doivent être confirmés par des locuteurs du Niger.', sourceLabel: 'Ressources publiques Gourmanchéma ; à valider avec des locuteurs', sourceUrl: 'https://asjp.clld.org/languages/GOURMANCHEMA' },
+  { id: 'toubou', name: 'Tedaga / Dazaga (langues toubou)', community: 'Toubou', code: 'tuq', status: 'Premières entrées documentées ; salutations à enrichir', description: 'Les variétés Tedaga et Dazaga doivent être distinguées. Les premières entrées proviennent du Dictionnaire multilingue Tudaga (Toubou–français–anglais–arabe), 5e édition, 2016. Les expressions naturelles de salutation doivent être validées avec des locuteurs du Niger.', sourceLabel: 'Mosko Hanadii / Centre de Culture et Formation de Bardaï — Dictionnaire multilingue Tudaga', sourceUrl: 'https://moskohanadii.org/fileadmin/Kitaba/pdf/Dictionnaire_Multilingue_Tudaga_PDF.pdf' },
 ]
 
 const hausa = 'LinguaCommons — Haoussa pour les francophones'
@@ -134,6 +134,20 @@ const rawEntries: Omit<NigerDictionaryEntry, 'id'>[] = [
     ['Dio', 'Quatre', 'Nombre'],
   ].map(([word, french, category]) => ({ language: 'Kanuri / Kanouri', languageCode: 'knc', community: 'Kanouri', word, french, category, sourceLabel: 'Mozilla Data Collective — A Kanuri Sociocultural Dataset', sourceUrl: 'https://mozilladatacollective.com/datasets/cmrxj3m5q0021o907tnm6c9jp' })),
   ...[
+    ["N'fanda", "Salutation générale (forme rapportée dans une ressource de salutations ; validation locale recommandée)", "Salutation"],
+    ["Din tè", "Formule de salutation (sens précis et contexte à confirmer localement)", "Salutation"],
+    ["Lafia", "Réponse rapportée à « Din tè » (à confirmer avec des locuteurs)", "Salutation"],
+    ["Biali biala", "Formule de bienvenue (forme rapportée ; validation locale recommandée)", "Accueil"],
+    ["Npoo", "Réponse rapportée à « Biali biala » (à confirmer avec des locuteurs)", "Accueil"],
+  ].map(([word, french, category]) => ({ language: 'Gourmanchéma / Gulmancéma', languageCode: 'gux', community: 'Gourmantché', word, french, category, sourceLabel: 'Ressource publique de salutations Gourmanchéma ; entrée provisoire', sourceUrl: 'https://users.elite.net/runner/jennifers/Greetings%20G.htm', note: 'Entrée préliminaire : faire valider la forme, le sens exact et la variante par un locuteur du Niger avant de la présenter comme confirmée.' })),
+  ...[
+    ['lahadi', 'Saluer (verbe ; ce n’est pas une formule de bonjour à lui seul)', 'Salutation'],
+    ['hôi', 'Oui (réponse)', 'Réponse'],
+    ['ũu', 'Oui', 'Réponse'],
+    ['ũ-ú', 'Non', 'Réponse'],
+    ['gôhuro', 'Pardon / excuse (nom)', 'Politesse'],
+    ['samahadi', 'Pardonner / excuser', 'Politesse'],
+  ].map(([word, french, category]) => ({ language: 'Tudaga / Tedaga (Toubou)', languageCode: 'tuq', community: 'Toubou', word, french, category, sourceLabel: 'Mosko Hanadii / Centre de Culture et Formation de Bardaï — Dictionnaire multilingue Tudaga, 5e édition (2016)', sourceUrl: 'https://moskohanadii.org/fileadmin/Kitaba/pdf/Dictionnaire_Multilingue_Tudaga_PDF.pdf', note: 'Entrée extraite du dictionnaire Tudaga. La variété locale et la formulation complète des salutations doivent être confirmées avec un locuteur du Niger.' })),
     ['السلام عليكم', 'Que la paix soit sur vous (salutation)', 'Salutation'],
     ['وعليكم السلام', 'Et que la paix soit sur vous aussi (réponse)', 'Salutation'],
     ['شكراً', 'Merci', 'Politesse'],
