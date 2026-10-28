@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
-import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 
@@ -82,7 +81,6 @@ export default async function PublicationsPage() {
 
   return (
     <>
-      <Header />
       <main className="page">
         <div className="container">
           <section style={{padding:'36px 0 24px'}}>
