@@ -1,5 +1,4 @@
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import SignalForm from './signal-form'
 
 export default function SignalerPage() {
@@ -14,7 +13,7 @@ export default function SignalerPage() {
           <SignalForm />
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
