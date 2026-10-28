@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, Drum, HandHeart, Languages, HeartHandshake } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createClient } from '../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -147,7 +146,7 @@ export default async function CulturePage() {
           <section className="notice proNotice"><strong>Une plateforme nourrie par la communauté.</strong><p>Vous pouvez proposer une tradition, un récit, une langue, un artisanat ou une source documentaire. Chaque contenu est vérifié avant publication.</p><Link className="textlink" href="/contribution">Contribuer <ArrowRight size={15}/></Link></section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
