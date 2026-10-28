@@ -158,7 +158,7 @@ export default async function PublicationDetailPage({
             </div>
           </article>
 
-          <Link className="proBack" href="/publications">
+          <Link className="proBack" href="/publications" style={{ position: 'relative', top: -10 }}>
             <ArrowLeft size={15} /> Retour à toutes les publications
           </Link>
         </div>
