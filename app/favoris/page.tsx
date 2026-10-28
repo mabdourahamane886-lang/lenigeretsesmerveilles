@@ -1,5 +1,4 @@
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import FavoritesList from './favorites-list'
 
 export default function FavoritesPage() {
@@ -14,7 +13,7 @@ export default function FavoritesPage() {
           <FavoritesList />
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
