@@ -148,6 +148,7 @@ const rawEntries: Omit<NigerDictionaryEntry, 'id'>[] = [
     ['gôhuro', 'Pardon / excuse (nom)', 'Politesse'],
     ['samahadi', 'Pardonner / excuser', 'Politesse'],
   ].map(([word, french, category]) => ({ language: 'Tudaga / Tedaga (Toubou)', languageCode: 'tuq', community: 'Toubou', word, french, category, sourceLabel: 'Mosko Hanadii / Centre de Culture et Formation de Bardaï — Dictionnaire multilingue Tudaga, 5e édition (2016)', sourceUrl: 'https://moskohanadii.org/fileadmin/Kitaba/pdf/Dictionnaire_Multilingue_Tudaga_PDF.pdf', note: 'Entrée extraite du dictionnaire Tudaga. La variété locale et la formulation complète des salutations doivent être confirmées avec un locuteur du Niger.' })),
+  ...[
     ['السلام عليكم', 'Que la paix soit sur vous (salutation)', 'Salutation'],
     ['وعليكم السلام', 'Et que la paix soit sur vous aussi (réponse)', 'Salutation'],
     ['شكراً', 'Merci', 'Politesse'],
@@ -156,30 +157,8 @@ const rawEntries: Omit<NigerDictionaryEntry, 'id'>[] = [
     ['لا', 'Non', 'Réponse'],
     ['كيف حالك؟', 'Comment vas-tu ?', 'Salutation'],
     ['أنا بخير', 'Je vais bien', 'Salutation'],
-  ].map(([word, french, category]) => ({ language: 'Arabe standard moderne', languageCode: 'ar', community: 'Communautés arabophones', word, french, category, sourceLabel: 'Arabe standard moderne — expressions de base', sourceUrl: 'https://www.britannica.com/topic/Arabic-language', note: 'Arabe standard ; la formulation locale peut différer.' })),
-
-  ...[
-    ['صباح الخير', 'Bonjour (le matin)', 'Salutation'],
-    ['مساء الخير', 'Bonsoir', 'Salutation'],
-    ['أهلاً وسهلاً', 'Bienvenue', 'Salutation'],
-    ['كيف اسمك؟', 'Comment t’appelles-tu ?', 'Présentation'],
-    ['اسمي ...', 'Je m’appelle ...', 'Présentation'],
-    ['أين ...؟', 'Où se trouve ... ?', 'Question'],
-    ['كم السعر؟', 'Quel est le prix ?', 'Commerce'],
-    ['أنا لا أفهم', 'Je ne comprends pas', 'Communication'],
-    ['هل تتكلم الفرنسية؟', 'Parles-tu français ?', 'Communication'],
-    ['إلى اللقاء', 'Au revoir', 'Au revoir'],
-    ['بيت', 'Maison', 'Vie quotidienne'],
-    ['ماء', 'Eau', 'Vie quotidienne'],
-    ['طعام', 'Nourriture', 'Vie quotidienne'],
-    ['كتاب', 'Livre', 'École'],
-    ['مدرسة', 'École', 'École'],
-    ['صديق', 'Ami', 'Personnes'],
-    ['عائلة', 'Famille', 'Personnes'],
-    ['اليوم', 'Aujourd’hui', 'Temps'],
-    ['غداً', 'Demain', 'Temps'],
-    ['أمس', 'Hier', 'Temps'],
   ].map(([word, french, category]) => ({ language: 'Arabe standard moderne', languageCode: 'ar', community: 'Communautés arabophones', word, french, category, sourceLabel: 'Arabe standard moderne — expressions de base', sourceUrl: 'https://www.britannica.com/topic/Arabic-language', note: 'Arabe standard ; les formulations locales peuvent différer.' })),
+
 ]
 
 export const NIGER_DICTIONARY: NigerDictionaryEntry[] = rawEntries.map((entry, index) => ({ ...entry, id: entry.languageCode + '-' + index }))
