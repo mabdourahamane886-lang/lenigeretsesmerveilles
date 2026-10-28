@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowRight, CalendarDays, Camera, MapPin, Sparkles, UsersRound } from 'lucide-react'
 import Header from '../../../components/site/header'
-import Footer from '../../../components/site/footer'
 import { createClient } from '../../../lib/supabase/server'
 import { regions as fallbackRegions } from '../../../data/regions'
 
@@ -160,7 +159,7 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
           </section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
