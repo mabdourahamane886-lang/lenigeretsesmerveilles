@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2, FileSearch, Image, Scale } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
-
 export const metadata = {
   title: 'Méthodologie éditoriale',
   description: 'Comment les contenus de Le Niger et ses Merveilles sont proposés, vérifiés, crédités et publiés.',
@@ -45,7 +43,7 @@ export default function MethodologiePage() {
           <div className="mt-10 rounded-2xl border border-[#e2e5e0] bg-white p-6"><div className="flex items-center gap-2 font-semibold"><CheckCircle2 size={18} className="text-[#0b6a43]"/> Une correction ou une source à proposer ?</div><Link href="/contribution" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#0b6a43]">Contribuer <ArrowRight size={15}/></Link></div>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
