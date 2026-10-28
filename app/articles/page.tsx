@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, BookOpenText } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
@@ -62,7 +61,7 @@ export default async function ArticlesPage() {
           )}
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
