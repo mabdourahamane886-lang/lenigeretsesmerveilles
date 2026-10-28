@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, CalendarDays, MapPin, Send } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { nigerMedia } from '../../data/media'
 
@@ -56,7 +55,7 @@ export default async function EvenementsPage() {
           <section className="proPhotoNotice"><MapPin size={20}/><div><strong>Un événement manque à l’agenda ?</strong><p>Partagez les informations. Une vérification est effectuée avant publication.</p></div><Link href="/contribution" className="textlink">Proposer <ArrowRight size={14}/></Link></section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
