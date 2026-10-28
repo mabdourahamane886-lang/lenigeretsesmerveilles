@@ -157,7 +157,7 @@ export const NIGER_KNOWLEDGE: NigerKnowledgeEntry[] = [
     sourceLabel: 'Règle éditoriale de Merveilles IA',
     sourceUrl: 'https://www.gouv.ne/',
   },
-  ,{
+  {
     id: 'region-agadez',
     title: 'Région d’Agadez',
     keywords: ['région agadez', 'agadez région', 'aïr', 'air', 'ténéré', 'tenere', 'sahara', 'agadez historique'],
