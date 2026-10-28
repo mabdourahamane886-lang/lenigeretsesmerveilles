@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, Camera, Film, Image as ImageIcon } from 'lucide-react'
 import Header from '../../components/site/header'
-import Footer from '../../components/site/footer'
 import { JsonLd } from '../../components/site/pro-meta'
 import { createAdminClient } from '../../lib/supabase/admin'
 
@@ -118,7 +117,7 @@ export default async function MediaPage() {
           <section className="proPhotoNotice"><Camera size={21} /><div><strong>Une image n’est jamais sans contexte.</strong><p>La plateforme conserve les crédits et les informations de licence pour les médias référencés.</p></div><Link className="textlink" href="/contribution">Proposer une image <ArrowRight size={15} /></Link></section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
