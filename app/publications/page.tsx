@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
-import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
 
 export const metadata: Metadata = {
@@ -149,7 +148,7 @@ export default async function PublicationsPage() {
           </section>
         </div>
       </main>
-      <Footer />
+      
     </>
   )
 }
