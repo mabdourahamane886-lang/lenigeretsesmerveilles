@@ -1,8 +1,28 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
 import Header from '../../components/site/header'
 import Footer from '../../components/site/footer'
 import { createAdminClient } from '../../lib/supabase/admin'
+
+export const metadata: Metadata = {
+  title: 'Publications',
+  description: 'Découvrez les publications, photos et récits de Le Niger et ses Merveilles : paysages, culture et patrimoine du Niger.',
+  alternates: { canonical: 'https://lenigeretsesmerveilles-ngr.vercel.app/publications' },
+  openGraph: {
+    type: 'website',
+    url: 'https://lenigeretsesmerveilles-ngr.vercel.app/publications',
+    siteName: 'Le Niger et ses Merveilles',
+    locale: 'fr_FR',
+    title: 'Publications | Le Niger et ses Merveilles',
+    description: 'Photos, récits et découvertes pour explorer les paysages, les cultures et le patrimoine du Niger.',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Publications | Le Niger et ses Merveilles',
+    description: 'Photos, récits et découvertes pour explorer le Niger.',
+  },
+}
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
