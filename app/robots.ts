@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: '*', allow: '/', disallow: ['/admin', '/admin-login', '/api/'] },
       { userAgent: 'Googlebot', allow: '/', disallow: ['/admin', '/admin-login', '/api/'] },
     ],
-    sitemap: 'https://lenigeretsesmerveilles.vercel.app/sitemap.xml',
-    host: 'https://lenigeretsesmerveilles.vercel.app',
+    sitemap: 'https://lenigeretsesmerveilles-ngr.vercel.app/sitemap.xml',
+    host: 'https://lenigeretsesmerveilles-ngr.vercel.app',
   }
 }
