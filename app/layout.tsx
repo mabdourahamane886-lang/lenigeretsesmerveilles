@@ -3,7 +3,6 @@ import './globals.css'
 import Header from '../components/site/header'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'
-import BackButton from '../components/site/back-button'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://lenigeretsesmerveilles-ngr.vercel.app'),
@@ -72,7 +71,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body><PageBannerController /><Header /><div className="siteGlobalContent"><BackButton />{children}</div><Footer /></body>
+      <body><PageBannerController /><Header /><div className="siteGlobalContent">{children}</div><Footer /></body>
     </html>
   )
 }
