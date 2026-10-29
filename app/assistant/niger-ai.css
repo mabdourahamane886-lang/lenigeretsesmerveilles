@@ -18,31 +18,3 @@ body:has(.nigerAiShell) .siteGlobalContent{margin:0!important;padding:0!importan
 .nigerAiHistoryGroup{display:grid;gap:2px;margin-bottom:10px;min-width:0}
 .nigerAiHistoryGroup>small{display:block;margin:8px 7px 6px;color:#7c897f;font-size:9px;font-weight:850;letter-spacing:.12em}
 .nigerAiHistoryGroup .nigerAiHistoryItem>button:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-
-/* Interface de préparation claire, accessible et responsive de Niger IA. */
-.nigerAiReflection{width:min(790px,100%);margin:8px auto 16px;padding:18px 19px;border:1px solid #dce7dc;border-radius:18px;background:linear-gradient(145deg,#fff 0%,#f6faf4 100%);box-shadow:0 12px 34px rgba(24,56,37,.07);color:#234b35;animation:nigerAiReflectionIn .28s ease-out}
-.nigerAiReflectionHead{display:flex;align-items:center;gap:11px}
-.nigerAiReflectionIcon{display:grid;place-items:center;width:38px;height:38px;flex:none;border-radius:13px;background:#e5f0e2;color:#17613e}
-.nigerAiReflectionHead>div{display:grid;gap:4px;min-width:0;flex:1}
-.nigerAiReflectionHead strong{font-size:13px;font-weight:850}
-.nigerAiReflectionHead>div>span{font-size:10px;color:#78897b}
-.nigerAiReflectionPulse{display:flex;gap:4px;align-items:center;padding:8px}
-.nigerAiReflectionPulse i{width:5px;height:5px;border-radius:50%;background:#c68135;animation:nigerAiPulse 1.1s infinite ease-in-out}
-.nigerAiReflectionPulse i:nth-child(2){animation-delay:.15s}.nigerAiReflectionPulse i:nth-child(3){animation-delay:.3s}
-.nigerAiReflectionCurrent{margin:17px 0 10px;color:#536e5b;font-size:12px;line-height:1.6}
-.nigerAiReflectionTrack{height:4px;border-radius:999px;overflow:hidden;background:#e6ece3}
-.nigerAiReflectionTrack span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#0b5d3b,#d8ab52);transition:width .5s ease}
-.nigerAiReflectionStages{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0 12px;padding:0}
-.nigerAiReflectionStages li{display:flex;align-items:flex-start;gap:7px;min-width:0;opacity:.58}
-.nigerAiReflectionStages li.current,.nigerAiReflectionStages li.passed{opacity:1}
-.nigerAiReflectionStep{display:grid;place-items:center;width:23px;height:23px;flex:none;border:1px solid #d6e0d4;border-radius:50%;background:#fff;color:#64796a;font-size:10px;font-weight:800}
-.nigerAiReflectionStages li.current .nigerAiReflectionStep{border-color:#0b5d3b;background:#0b5d3b;color:#fff;box-shadow:0 0 0 4px #0b5d3b14}
-.nigerAiReflectionStages li.passed .nigerAiReflectionStep{border-color:#c6ddc5;background:#e6f1e3;color:#185f3b}
-.nigerAiReflectionStages li>span:last-child{display:grid;gap:4px;min-width:0}
-.nigerAiReflectionStages strong{font-size:10px;color:#234b35}
-.nigerAiReflectionStages small{font-size:9px;line-height:1.45;color:#7a897d}
-.nigerAiReflectionNote{display:block;padding-top:10px;border-top:1px solid #e5ebe2;color:#879287;font-size:9px;line-height:1.5}
-@keyframes nigerAiReflectionIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:760px){.nigerAiReflection{padding:14px;border-radius:15px}.nigerAiReflectionHead strong{font-size:12px}.nigerAiReflectionHead>div>span{font-size:9px}.nigerAiReflectionStages{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.nigerAiReflectionStages small{font-size:10px}.nigerAiReflectionCurrent{font-size:11px}}
-@media(prefers-reduced-motion:reduce){.nigerAiReflection,.nigerAiReflectionPulse i{animation:none}.nigerAiReflectionTrack span{transition:none}}
