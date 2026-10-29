@@ -220,7 +220,7 @@ export const NIGER_KNOWLEDGE: NigerKnowledgeEntry[] = [
     content: 'Niamey est la capitale du Niger et possède un statut administratif particulier parmi les huit régions. La ville se situe dans le sud-ouest du pays, près du fleuve Niger, et concentre des institutions nationales ainsi que des activités économiques, culturelles et éducatives. Les horaires, services et événements locaux doivent être vérifiés auprès de sources récentes.',
     sourceLabel: 'Encyclopaedia Britannica — Niger',
     sourceUrl: 'https://www.britannica.com/place/Niger',
-  },,
+  },
   {
     id: 'heritage-air-tenere',
     title: 'Réserves naturelles de l’Aïr et du Ténéré',
