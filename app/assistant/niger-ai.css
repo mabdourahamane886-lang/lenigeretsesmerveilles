@@ -12,3 +12,9 @@ body:has(.nigerAiShell) .siteGlobalContent{margin:0!important;padding:0!importan
 .nigerAiAnswerLink { color: #1769aa; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .nigerAiAnswerLink:hover { color: #0b477b; }
 .nigerAiAnswerLink:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
+
+
+/* Historique des conversations groupé par période, à la manière d'un assistant conversationnel. */
+.nigerAiHistoryGroup{display:grid;gap:2px;margin-bottom:10px;min-width:0}
+.nigerAiHistoryGroup>small{display:block;margin:8px 7px 6px;color:#7c897f;font-size:9px;font-weight:850;letter-spacing:.12em}
+.nigerAiHistoryGroup .nigerAiHistoryItem>button:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
