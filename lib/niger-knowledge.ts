@@ -220,7 +220,47 @@ export const NIGER_KNOWLEDGE: NigerKnowledgeEntry[] = [
     content: 'Niamey est la capitale du Niger et possède un statut administratif particulier parmi les huit régions. La ville se situe dans le sud-ouest du pays, près du fleuve Niger, et concentre des institutions nationales ainsi que des activités économiques, culturelles et éducatives. Les horaires, services et événements locaux doivent être vérifiés auprès de sources récentes.',
     sourceLabel: 'Encyclopaedia Britannica — Niger',
     sourceUrl: 'https://www.britannica.com/place/Niger',
+  },,
+  {
+    id: 'heritage-air-tenere',
+    title: 'Réserves naturelles de l’Aïr et du Ténéré',
+    keywords: ['réserves naturelles air ténéré', 'aïr et ténéré', 'tenere unesco', 'biodiversité sahara', 'massif de l’air'],
+    content: 'Les réserves naturelles de l’Aïr et du Ténéré forment un vaste ensemble naturel du Sahara nigérien, reconnu par l’UNESCO pour ses paysages et sa biodiversité. Les descriptions de la faune, de la flore et des limites du site doivent s’appuyer sur la fiche officielle. Les conditions d’accès et de sécurité peuvent changer et doivent être vérifiées avant tout déplacement.',
+    sourceLabel: 'UNESCO — Réserves naturelles de l’Aïr et du Ténéré',
+    sourceUrl: 'https://whc.unesco.org/en/list/573/',
   },
+  {
+    id: 'heritage-agadez-detail',
+    title: 'Agadez : architecture et patrimoine vivant',
+    keywords: ['architecture agadez', 'minaret agadez', 'ville historique agadez', 'patrimoine agadez'],
+    content: 'Le centre historique d’Agadez témoigne de traditions urbaines et architecturales sahariennes. Son minaret en terre est un repère emblématique de la ville. Pour décrire les matériaux, les techniques de construction et l’inscription au patrimoine mondial, utiliser la documentation de l’UNESCO et éviter de généraliser une pratique à toutes les communautés du Niger.',
+    sourceLabel: 'UNESCO — Centre historique d’Agadez',
+    sourceUrl: 'https://whc.unesco.org/en/list/1268/',
+  },
+  {
+    id: 'heritage-w-arly-pendjari',
+    title: 'Le complexe W-Arly-Pendjari et la biodiversité',
+    keywords: ['w arly pendjari', 'biodiversité niger', 'parc w unesco', 'faune ouest africaine'],
+    content: 'Le complexe W-Arly-Pendjari est un site naturel transnational partagé par plusieurs pays d’Afrique de l’Ouest et inscrit au patrimoine mondial. Il protège des habitats importants pour de nombreuses espèces. Pour les espèces présentes, leur état de conservation ou les possibilités de visite, consulter les données officielles les plus récentes et ne pas présenter une observation ancienne comme actuelle.',
+    sourceLabel: 'UNESCO — Complexe W-Arly-Pendjari',
+    sourceUrl: 'https://whc.unesco.org/en/list/749/',
+  },
+  {
+    id: 'patrimoine-culturel-immateriel',
+    title: 'Patrimoine culturel immatériel du Niger',
+    keywords: ['patrimoine immatériel', 'traditions orales', 'savoir faire', 'pratiques culturelles', 'unesco culture'],
+    content: 'Le patrimoine culturel immatériel comprend des pratiques, expressions, connaissances et savoir-faire transmis entre générations. Pour documenter une tradition nigérienne, préciser la communauté concernée, le contexte régional, les personnes qui la transmettent et les changements dans le temps. Éviter de présenter une pratique comme identique ou universelle pour toutes les communautés.',
+    sourceLabel: 'UNESCO — Patrimoine culturel immatériel',
+    sourceUrl: 'https://ich.unesco.org/',
+  },
+  {
+    id: 'methode-histoire-orale',
+    title: 'Comment documenter l’histoire et les traditions locales',
+    keywords: ['histoire orale', 'témoignage', 'mémoire locale', 'tradition locale', 'recherche historique'],
+    content: 'Pour documenter l’histoire locale, croiser les archives, les publications de chercheurs, les sources institutionnelles et les témoignages oraux. Indiquer qui témoigne, la date de collecte et le lieu, distinguer les souvenirs des faits corroborés et signaler les divergences entre récits. Demander l’autorisation avant de publier des témoignages ou des informations personnelles.',
+    sourceLabel: 'Méthode éditoriale — à appliquer avec des sources historiques et communautaires',
+    sourceUrl: 'https://ich.unesco.org/',
+  }
 ]
 
 const normalize = (value: string) =>
