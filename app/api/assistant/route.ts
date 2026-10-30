@@ -133,6 +133,32 @@ export async function POST(request: Request) {
   }
 
   const lastQuestion = validMessages[validMessages.length - 1]?.parts?.[0]?.text || ''
+
+  // Détection explicite des demandes de traduction vers les langues du Niger.
+  const translationTargets = [
+    { label: 'haoussa', aliases: ['haoussa', 'hausa'] },
+    { label: 'zarma / zarma-songhaï', aliases: ['zarma', 'songhai', 'songhaï', 'zarma-songhai', 'zarma-songhaï'] },
+    { label: 'tamajaq / tamacheq', aliases: ['tamajaq', 'tamacheq', 'tamasheq', 'tamahaq', 'touareg'] },
+    { label: 'fulfulde', aliases: ['fulfulde', 'peul', 'pulaar'] },
+    { label: 'kanouri / kanuri', aliases: ['kanouri', 'kanuri'] },
+    { label: 'gourmanchéma / gulmancéma', aliases: ['gourmanchema', 'gourmanchéma', 'gulmancema', 'gulmancéma', 'gourmantchema'] },
+    { label: 'tedaga', aliases: ['tedaga', 'tudaga'] },
+    { label: 'dazaga', aliases: ['dazaga'] },
+    { label: 'arabe', aliases: ['arabe', 'arabic'] },
+    { label: 'toubou (variété à préciser)', aliases: ['toubou'] },
+    { label: 'buduma', aliases: ['buduma', 'yédina', 'yedina'] },
+  ]
+  const normalizedTranslationQuestion = lastQuestion.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+  const asksForTranslation = /\\b(traduis|traduire|traduit|traduction|comment dire|dis[- ]moi en|ecris en|écris en)\\b/i.test(lastQuestion)
+  const requestedTranslationTarget = asksForTranslation
+    ? translationTargets.find((target) => target.aliases.some((alias) => normalizedTranslationQuestion.includes(alias.normalize('NFD').replace(/[\\u0300-\\u036f]/g, ''))))
+    : undefined
+  const translationInstruction = asksForTranslation
+    ? '\\n\\nMODE TRADUCTION ACTIVÉ : l’utilisateur demande une traduction. ' +
+      (requestedTranslationTarget ? 'Langue cible demandée : ' + requestedTranslationTarget.label + '. ' : 'Déduis la langue cible uniquement si elle est explicitement indiquée ; sinon demande-la. ') +
+      'Traite le texte fourni comme le contenu à traduire, même s’il est court. Réponds d’abord par la traduction, puis ajoute si utile une prononciation approximative et une brève note sur la variante régionale. Ne réponds pas par une simple description de la langue. ' +
+      'N’invente jamais une traduction. Utilise les entrées documentaires fournies comme références, sans étendre abusivement leur portée. Si tu ne peux pas établir une forme fiable, dis clairement « traduction à vérifier avec un locuteur natif » et propose une formulation prudente ou demande la variante locale. Distingue impérativement Tedaga et Dazaga ; pour le tamajaq, précise la variété si elle est connue. Les formes du dictionnaire marquées comme provisoires ou non vérifiées ne doivent pas être présentées comme certaines. Préserve le texte source, le sens, le ton et les noms propres. Pour une phrase longue ou complexe dans une langue peu documentée, signale que la traduction doit être relue par un locuteur natif. '
+    : ''
   // Pour les questions de suivi (« et pourquoi ? », « combien ? », « développe »),
   // réutiliser les derniers messages utilisateur afin que la recherche locale
   // conserve le sujet de la discussion, comme le fait le contexte du chat.
@@ -179,7 +205,7 @@ export async function POST(request: Request) {
       ).join('\n')
     : '\n\nAucune entrée correspondante n’a été trouvée dans le dictionnaire Supabase. Ne fabrique pas de traduction.'
   const languageContext = '\n\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
-  const systemInstruction = SYSTEM_INSTRUCTION + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext
+  const systemInstruction = SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext
 
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
   const models = [...new Set([configuredModel, ...FALLBACK_MODELS])]
