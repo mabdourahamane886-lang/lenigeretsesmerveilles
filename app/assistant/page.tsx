@@ -3,7 +3,7 @@ import './niger-ai.css'
 import Link from 'next/link'
 import { NIGER_DICTIONARY, NIGER_LANGUAGES } from '../../lib/niger-dictionaries'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp, Sparkles } from 'lucide-react'
+import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp } from 'lucide-react'
 type Message = { role: 'user' | 'model'; content: string }
 type Chat = { id: string; title: string; messages: Message[]; updatedAt: number }
 const KEY = 'niger-ia-chats-v1'
@@ -62,28 +62,12 @@ function renderMessageContent(text: string) {
   : <a key={index} href={part.url} target="_blank" rel="noopener noreferrer" className="nigerAiAnswerLink">{part.label}</a>)
 }
 
-const thinkingSteps = [
- 'Je comprends votre demande…',
- 'Je rassemble les informations pertinentes…',
- 'J’organise une réponse claire et utile…',
- 'Je vérifie la cohérence et les nuances…',
- 'Je finalise la réponse…',
-]
-const reflectionStages = [
- { title: 'Comprendre', description: 'Identifier votre objectif et le contexte.' },
- { title: 'Documenter', description: 'Mobiliser les connaissances pertinentes sur le Niger.' },
- { title: 'Structurer', description: 'Organiser les explications et les exemples.' },
- { title: 'Vérifier', description: 'Signaler les limites et éviter les certitudes injustifiées.' },
-]
-const thinkingOf = (s: string) => /histoire|siècle|date|empire/i.test(s) ? 'Je rassemble les repères historiques…' : /langue|tradu|haoussa|zarma/i.test(s) ? 'Je prépare une réponse dans votre langue…' : /plat|cuisine|moringa|gastronomie/i.test(s) ? 'J’explore les traditions culinaires du Niger…' : /région|tourisme|visiter|voyage|patrimoine/i.test(s) ? 'Je parcours les informations sur le Niger…' : /pourquoi|comment|analyse|compare/i.test(s) ? 'J’analyse votre question…' : 'Je réfléchis à votre question…'
 
 export default function AssistantPage() {
  const [chats,setChats] = useState<Chat[]>([])
  const [activeId,setActiveId] = useState('')
  const [input,setInput] = useState('')
  const [loading,setLoading] = useState(false)
- const [thinking,setThinking] = useState('Je comprends votre demande…')
- const [thinkingIndex,setThinkingIndex] = useState(0)
  const [error,setError] = useState('')
  const [search,setSearch] = useState('')
  const [sidebar,setSidebar] = useState(true)
@@ -100,18 +84,12 @@ export default function AssistantPage() {
  useEffect(()=>{if(chats.length)localStorage.setItem(KEY,JSON.stringify(chats))},[chats])
  useEffect(()=>{localStorage.setItem('niger-ia-library-v1',JSON.stringify(library))},[library])
  useEffect(()=>{if(messages.length)end.current?.scrollIntoView({behavior:'smooth',block:'end'})},[messages.length,loading])
- useEffect(()=>{
-  if(!loading)return
-  let index=0
-  const timer=window.setInterval(()=>{index=Math.min(index+1,thinkingSteps.length-1);setThinkingIndex(index);setThinking(thinkingSteps[index])},2200)
-  return ()=>window.clearInterval(timer)
- },[loading])
  function newChat(){const c=fresh();setChats(v=>[c,...v]);setActiveId(c.id);setInput('');setError('');setPanel('history');if(innerWidth<760)setSidebar(false);area.current?.focus()}
  async function send(value:string){
   const q=value.trim(); if(!q||loading)return
   const old=active||fresh(); const next=[...old.messages,{role:'user' as const,content:q}]
   const updated={...old,title:old.messages.length?old.title:titleOf(q),messages:next,updatedAt:Date.now()}
-  setChats(v=>[updated,...v.filter(c=>c.id!==old.id)]);setActiveId(old.id);setInput('');setError('');setLoading(true);setThinkingIndex(0);setThinking(thinkingOf(q));if(area.current)area.current.style.height='auto'
+  setChats(v=>[updated,...v.filter(c=>c.id!==old.id)]);setActiveId(old.id);setInput('');setError('');setLoading(true);if(area.current)area.current.style.height='auto'
   try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:next})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:cleanAnswer(d.answer || '')}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)])}
   catch(e){setError(e instanceof Error?e.message:'Impossible de contacter Niger IA.')}finally{setLoading(false);setTimeout(()=>end.current?.scrollIntoView({behavior:'smooth',block:'end'}),80)}
  }
@@ -133,7 +111,7 @@ export default function AssistantPage() {
   <section className="nigerAiWorkspace">
    <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div><Link href="/" className="nigerAiBack">Retour au site</Link></header>
    <div className="nigerAiMessages" key={activeId}>
-    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<section className="nigerAiReflection" role="status" aria-live="polite"><div className="nigerAiReflectionHead"><span className="nigerAiReflectionIcon"><Sparkles size={17}/></span><div><strong>Niger IA prépare sa réponse</strong><span>Analyse structurée • connaissances du Niger</span></div><span className="nigerAiReflectionPulse"><i/><i/><i/></span></div><p className="nigerAiReflectionCurrent">{thinking}</p><div className="nigerAiReflectionTrack" aria-hidden="true"><span style={{width: `${Math.min(100, ((thinkingIndex+1)/thinkingSteps.length)*100)}%`}}/></div><ol className="nigerAiReflectionStages">{reflectionStages.map((stage,index)=><li key={stage.title} className={index===Math.min(thinkingIndex,reflectionStages.length-1)?'current':index<Math.min(thinkingIndex,reflectionStages.length-1)?'passed':''}><span className="nigerAiReflectionStep">{index<Math.min(thinkingIndex,reflectionStages.length-1)?<Check size={12}/>:index+1}</span><span><strong>{stage.title}</strong><small>{stage.description}</small></span></li>)}</ol><small className="nigerAiReflectionNote">Étapes indicatives de préparation — pas une transcription du raisonnement interne.</small></section>}<div ref={end}/></div>}
+    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking" role="status" aria-live="polite"><span className="nigerAiDots" aria-hidden="true"><i/><i/><i/></span><span>Niger IA réfléchit…</span></div>}<div ref={end}/></div>}
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
    </div>
    <form className="nigerAiComposer" onSubmit={submit}><textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="submit" aria-label="Envoyer le message" disabled={!input.trim()||loading}><ArrowUp size={19}/></button><small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
