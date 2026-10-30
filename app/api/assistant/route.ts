@@ -148,13 +148,13 @@ export async function POST(request: Request) {
     { label: 'toubou (variété à préciser)', aliases: ['toubou'] },
     { label: 'buduma', aliases: ['buduma', 'yédina', 'yedina'] },
   ]
-  const normalizedTranslationQuestion = lastQuestion.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
-  const asksForTranslation = /\\b(traduis|traduire|traduit|traduction|comment dire|dis[- ]moi en|ecris en|écris en)\\b/i.test(lastQuestion)
+  const normalizedTranslationQuestion = lastQuestion.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  const asksForTranslation = /\b(traduis|traduire|traduit|traduction|comment dire|dis[- ]moi en|ecris en|écris en)\b/i.test(lastQuestion)
   const requestedTranslationTarget = asksForTranslation
-    ? translationTargets.find((target) => target.aliases.some((alias) => normalizedTranslationQuestion.includes(alias.normalize('NFD').replace(/[\\u0300-\\u036f]/g, ''))))
+    ? translationTargets.find((target) => target.aliases.some((alias) => normalizedTranslationQuestion.includes(alias.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))))
     : undefined
   const translationInstruction = asksForTranslation
-    ? '\\n\\nMODE TRADUCTION ACTIVÉ : l’utilisateur demande une traduction. ' +
+    ? '\n\nMODE TRADUCTION ACTIVÉ : l’utilisateur demande une traduction. ' +
       (requestedTranslationTarget ? 'Langue cible demandée : ' + requestedTranslationTarget.label + '. ' : 'Déduis la langue cible uniquement si elle est explicitement indiquée ; sinon demande-la. ') +
       'Traite le texte fourni comme le contenu à traduire, même s’il est court. Réponds d’abord par la traduction, puis ajoute si utile une prononciation approximative et une brève note sur la variante régionale. Ne réponds pas par une simple description de la langue. ' +
       'N’invente jamais une traduction. Utilise les entrées documentaires fournies comme références, sans étendre abusivement leur portée. Si tu ne peux pas établir une forme fiable, dis clairement « traduction à vérifier avec un locuteur natif » et propose une formulation prudente ou demande la variante locale. Distingue impérativement Tedaga et Dazaga ; pour le tamajaq, précise la variété si elle est connue. Les formes du dictionnaire marquées comme provisoires ou non vérifiées ne doivent pas être présentées comme certaines. Préserve le texte source, le sens, le ton et les noms propres. Pour une phrase longue ou complexe dans une langue peu documentée, signale que la traduction doit être relue par un locuteur natif. '
