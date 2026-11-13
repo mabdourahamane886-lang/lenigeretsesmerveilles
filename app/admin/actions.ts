@@ -14,10 +14,10 @@ const dt=(f:FormData,n:string)=>{const v=t(f,n);return v?new Date(v).toISOString
 async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexion administrateur requise.');const s=createAdminClient();if(!s)throw new Error('La connexion sécurisée à la base de données n’est pas configurée.');return s}
 function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
-async function uploadToSupabaseStorage(s:SupabaseClient,file:File,path:string){
- const bucket='niger-media'
+async function uploadToSupabaseStorage(s:SupabaseClient,file:File,path:string,bucket='niger-media'){
  const {error}=await s.storage.from(bucket).upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false,cacheControl:'31536000'})
  if(error) throw new Error(error.message)
+ if(bucket==='niger-private-media') return {url:`private://${bucket}/${path}`}
  const {data}=s.storage.from(bucket).getPublicUrl(path)
  if(!data?.publicUrl) throw new Error('Aucune URL publique n’a été générée.')
  return {url:data.publicUrl}
@@ -145,13 +145,13 @@ export async function createPublication(f:FormData){
    if(!mediaFile.type.startsWith('image/') && !mediaFile.type.startsWith('video/')) throw new Error('Le média doit être une image ou une vidéo.')
    mediaType=mediaFile.type.startsWith('video/')?'video':'photo'
    const ext=mediaFile.name.split('.').pop()?.toLowerCase()||(mediaType==='video'?'mp4':'jpg')
-   mediaUrl=(await uploadToSupabaseStorage(s,mediaFile,`publications/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(mediaFile.name)}.${ext}`)).url
+   mediaUrl=(await uploadToSupabaseStorage(s,mediaFile,`publications/${mediaType}/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(mediaFile.name)}.${ext}`,visibility==='private'?'niger-private-media':'niger-media')).url
  }
  if(musicFile instanceof File && musicFile.size>0){
    if(musicFile.size>25*1024*1024) throw new Error('Le fichier audio ne doit pas dépasser 25 Mo.')
    if(!musicFile.type.startsWith('audio/')) throw new Error('Le fichier Musique doit être un fichier audio.')
    const ext=musicFile.name.split('.').pop()?.toLowerCase()||'mp3'
-   musicUrl=(await uploadToSupabaseStorage(s,musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`)).url
+   musicUrl=(await uploadToSupabaseStorage(s,musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`,visibility==='private'?'niger-private-media':'niger-media')).url
  }
  const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
  const {data:publication,error}=await s.from('niger_publications').insert({
