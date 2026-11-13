@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { createAdminClient } from '../../../lib/supabase/admin'
+import { createClient as createServerClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -11,7 +11,7 @@ export const revalidate = 0
 const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
 async function getPublicPublication(id: string) {
-  const supabase = createAdminClient()
+  const supabase = await createServerClient()
   if (!supabase) return null
 
   const { data, error } = await supabase
