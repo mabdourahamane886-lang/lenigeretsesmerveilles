@@ -9,11 +9,25 @@ export default async function AdminPublications() {
   // The admin page must use the server-side service client: the public RLS
   // policy intentionally hides drafts and private publications from anon users.
   const s = createAdminClient()
-  const { data: publications } = s
+  const { data: rows } = s
     ? await s.from('niger_publications')
         .select('id,content,media_url,media_type,location,mood,activity,published,visibility,published_at,created_at')
         .order('created_at', { ascending: false })
     : { data: [] }
+  const publications = await Promise.all((rows || []).map(async (p) => {
+    const resolvePrivate = async (value: string | null) => {
+      if (!value?.startsWith('private://') || !s) return value
+      const [, bucket, ...parts] = value.split('/')
+      const path = parts.join('/')
+      const { data, error } = await s.storage.from(bucket).createSignedUrl(path, 60 * 30)
+      if (error) {
+        console.error('[admin/publications] Signed URL error:', error.message)
+        return null
+      }
+      return data.signedUrl
+    }
+    return { ...p, media_url: await resolvePrivate(p.media_url) }
+  }))
 
   return (
     <main className="section">
