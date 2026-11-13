@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
-import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -60,7 +59,7 @@ const categories = [
 export default async function PublicationsPage() {
   // Prefer the server-only admin client, but fall back to the public server client
   // so published posts remain visible when the service-role secret is not configured.
-  const supabase = createAdminClient() ?? await createServerClient()
+  const supabase = await createServerClient()
   let publications: Publication[] = []
   let loadError = false
 
