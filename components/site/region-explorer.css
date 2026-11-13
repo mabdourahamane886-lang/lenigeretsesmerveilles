@@ -1,0 +1,40 @@
+.regionDirectoryPage{padding-bottom:clamp(64px,9vw,112px);background:var(--cream)}
+.regionDirectoryIntro{padding:clamp(38px,7vw,78px) 0 clamp(34px,5vw,58px);max-width:900px}
+.regionDirectoryIntro h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;color:#104632;font-size:clamp(2.45rem,6.5vw,5rem);line-height:.99;letter-spacing:-.045em;margin:18px 0 18px;max-width:880px}
+.regionDirectoryIntro>p{max-width:680px;color:#64736b;font-size:clamp(15px,1.6vw,18px);line-height:1.8;margin:0}
+.regionIntroLink{display:inline-flex;align-items:center;gap:12px;margin-top:23px;color:#104632;font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:13px}
+.regionIntroLink span{font-size:22px;transition:transform .2s ease}
+.regionIntroLink:hover span{transform:translate(3px,3px)}
+.regionDirectoryList{scroll-margin-top:100px}
+.regionExplorerTools{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 22px}
+.regionSearch{display:flex;align-items:center;gap:11px;width:min(100%,440px);min-height:52px;padding:0 15px;border:1px solid #e3e6df;border-radius:15px;background:#fff;color:#547064;box-shadow:0 7px 24px rgba(13,52,38,.045)}
+.regionSearch input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#183b2d;font:inherit;font-size:14px}
+.regionSearch input::placeholder{color:#89958e}
+.regionSearchCount{flex:none;border-radius:999px;background:#edf4ef;color:#225a43;padding:5px 9px;font-size:11px;font-weight:900}
+.regionExplorerHint{margin:0;color:#7a8780;font-size:12px;font-weight:650}
+.regionShowcaseGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.regionShowcaseCard{min-width:0;border-radius:23px;overflow:hidden;background:#fff;border:1px solid rgba(18,61,44,.09);box-shadow:0 12px 34px rgba(16,45,34,.07);transition:transform .25s ease,box-shadow .25s ease}
+.regionShowcaseCard:hover{transform:translateY(-5px);box-shadow:0 20px 48px rgba(16,45,34,.14)}
+.regionShowcaseLink{display:block;color:inherit}
+.regionShowcaseVisual{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:4/4.45;background:linear-gradient(145deg,#d8e4d9,#8da995)}
+.regionShowcaseVisual>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-2;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.regionShowcaseCard:hover .regionShowcaseVisual>img{transform:scale(1.055)}
+.regionShowcaseFallback{position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 75% 20%,#d8b879,transparent 30%),linear-gradient(145deg,#315f4b,#0b3326)}
+.regionShowcaseShade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,28,20,.12) 0%,rgba(5,28,20,.04) 34%,rgba(5,28,20,.86) 100%)}
+.regionShowcaseNumber{position:absolute;top:18px;left:18px;display:flex;align-items:center;gap:9px;color:#fff;font-size:11px;font-weight:900;letter-spacing:.12em;text-shadow:0 1px 8px #0006}
+.regionShowcaseNumber i{display:block;width:28px;height:1px;background:#ffffffa8}
+.regionShowcaseLocation{position:absolute;right:16px;top:16px;display:flex;align-items:center;gap:5px;color:#fff;font-size:10px;font-weight:750;text-shadow:0 1px 8px #0008}
+.regionShowcaseArrow{position:absolute;right:17px;bottom:19px;width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#f3f8f2;color:#14583e;transition:background .2s ease,transform .2s ease}
+.regionShowcaseCard:hover .regionShowcaseArrow{background:#e9bd68;transform:rotate(45deg)}
+.regionShowcaseCopy{position:absolute;left:22px;right:65px;bottom:22px;color:#fff}
+.regionShowcaseEyebrow{display:block;margin-bottom:8px;color:#e8c47b;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.15em}
+.regionShowcaseCopy h2{margin:0 0 8px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(27px,3vw,38px);font-weight:500;line-height:1.02;letter-spacing:-.025em}
+.regionShowcaseCopy p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:0;color:#f0f4ef;font-size:12px;line-height:1.6;opacity:.92}
+.regionShowcaseFooter{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px 15px;color:#194b37;font-size:12px;font-weight:900}
+.regionShowcaseFooterArrow{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#eef5ef;color:#17553d}
+.regionNoResults{display:grid;justify-items:center;gap:9px;padding:48px 20px;border:1px dashed #cbd8ce;border-radius:20px;background:#fff;color:#244c39;text-align:center}
+.regionNoResults span{color:#748178;font-size:13px}
+.regionNoResults button{margin-top:7px;border:0;border-radius:999px;background:#145c43;color:#fff;padding:10px 16px;font-weight:800}
+@media(max-width:900px){.regionShowcaseGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.regionShowcaseVisual{aspect-ratio:4/4.6}}
+@media(max-width:600px){.regionDirectoryIntro{padding-top:38px}.regionDirectoryIntro h1{font-size:clamp(2.45rem,10vw,3.45rem)}.regionExplorerTools{align-items:stretch;flex-direction:column;gap:9px}.regionSearch{width:100%}.regionExplorerHint{padding-left:2px}.regionShowcaseGrid{grid-template-columns:1fr;gap:16px}.regionShowcaseVisual{aspect-ratio:4/3.65}.regionShowcaseCopy{left:20px;bottom:20px}.regionShowcaseCopy h2{font-size:34px}.regionShowcaseCopy p{font-size:12px;-webkit-line-clamp:2}.regionShowcaseLocation{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.regionShowcaseCard,.regionShowcaseVisual>img,.regionShowcaseArrow,.regionIntroLink span{transition:none}}
