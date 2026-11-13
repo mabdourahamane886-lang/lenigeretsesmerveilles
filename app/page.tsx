@@ -17,6 +17,7 @@ import wonders from '../data/wonders'
 import { nigerMedia } from '../data/media'
 import { regions as fallbackRegions } from '../data/regions'
 import { createAdminClient } from '../lib/supabase/admin'
+import { createClient as createServerClient } from '../lib/supabase/server'
 
 type HomeWonder = {
   id: string
@@ -88,6 +89,7 @@ const explorerCards: ExplorerCard[] = [
 
 async function getHomeData() {
   const supabase = createAdminClient()
+  const publicSupabase = await createServerClient()
   if (!supabase) {
     return {
       wonders: staticWonders,
@@ -120,7 +122,7 @@ async function getHomeData() {
       .eq('published', true)
       .order('published_at', { ascending: false })
       .limit(3),
-    supabase
+    (publicSupabase ?? supabase)
       .from('niger_publications')
       .select('id,author_name,content,media_url,media_type,location,published_at')
       .eq('published', true)
