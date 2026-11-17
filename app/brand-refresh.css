@@ -221,3 +221,20 @@ img{max-width:100%}
  html{scroll-behavior:auto}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Menu secondaire et recherche, présents sur toutes les tailles d'écran */
+.siteSearchButton{display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--brand-line);border-radius:50%;color:var(--brand-forest);text-decoration:none}
+.siteSearchButton:hover{background:#f2ead9;color:#8a6120}
+.siteMobileMenu{display:block}
+.siteMobileMenu>summary{width:40px;height:40px}
+.siteMobilePanel{z-index:1100}
+@media(min-width:1101px){
+ .siteHeaderInner{grid-template-columns:minmax(245px,1fr) auto auto;gap:clamp(16px,2.3vw,34px)}
+ .siteNav{gap:clamp(12px,1.5vw,23px)}
+ .siteNav a{font-size:11px}
+ .siteMobilePanel{width:310px}
+}
+@media(max-width:760px){
+ .siteHeaderActions{gap:8px}
+ .siteSearchButton{width:38px;height:38px}
+}
