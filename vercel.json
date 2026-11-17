@@ -4,5 +4,11 @@
   "buildCommand": "pnpm run build",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "devCommand": "pnpm run dev",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "crons": [
+    {
+      "path": "/api/cron/niger-media",
+      "schedule": "* * * * *"
+    }
+  ]
 }
