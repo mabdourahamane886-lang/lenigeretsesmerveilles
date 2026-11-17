@@ -154,12 +154,28 @@ export async function createPublication(f:FormData){
    musicUrl=(await uploadToSupabaseStorage(s,musicFile,`publications/music/${new Date().getUTCFullYear()}/${Date.now()}-${slugify(musicFile.name)}.${ext}`)).url
  }
  const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
+ const allowedTargets=['facebook','instagram','tiktok','whatsapp'] as const
+ const targets=allowedTargets.filter((platform)=>on(f,`target_${platform}`))
+ const scheduledInput=t(f,'scheduled_at')
+ const scheduledAt=scheduledInput?new Date(scheduledInput):null
+ if(scheduledAt && (!Number.isFinite(scheduledAt.getTime()) || scheduledAt.getTime()<=Date.now())) throw new Error('Choisis une date et une heure futures pour la programmation.')
+ const isScheduled=Boolean(scheduledAt)
  const {data:publication,error}=await s.from('niger_publications').insert({
    author_name:'Le Niger et ses Merveilles NE', content:contentText, media_url:mediaUrl, media_type:mediaType, music_url:musicUrl,
    tagged_people:tagged, location:t(f,'location'), mood:t(f,'mood'), activity:t(f,'activity'), allow_messages:on(f,'allow_messages'),
-   visibility, published:true, published_at:new Date().toISOString(),
+   visibility, published:!isScheduled, published_at:isScheduled?null:new Date().toISOString(),
+   scheduled_at:scheduledAt?scheduledAt.toISOString():null,
+   distribution_targets:targets,
+   automation_status:isScheduled?'scheduled':'published',
  }).select('id').single()
- if(error || !publication) throw new Error('Impossible de publier : '+(error?.message||'identifiant de publication absent'))
+ if(error || !publication) throw new Error('Impossible d’enregistrer la publication : '+(error?.message||'identifiant de publication absent'))
+ if(targets.length){
+   const {error:queueError}=await s.from('niger_publication_deliveries').insert(targets.map((platform)=>({
+     publication_id:publication.id, platform, status:'pending',
+     scheduled_at:scheduledAt?scheduledAt.toISOString():new Date().toISOString(),
+   })))
+   if(queueError) throw new Error('Publication enregistrée sur le site, mais la file de diffusion sociale n’a pas pu être créée : '+queueError.message)
+ }
  refresh('/admin/publications','/publications','/')
- return { id: String(publication.id) }
+ return { id: String(publication.id), scheduled: isScheduled, targets }
 }
