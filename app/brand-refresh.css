@@ -301,3 +301,8 @@ img{max-width:100%}
  .editorialGrid{grid-template-columns:1fr;gap:14px}
  .editorialCardImage{height:220px}
 }
+
+/* Accueil : couverture panoramique du fleuve Niger, sans carte latérale */
+.proHeroGrid{grid-template-columns:minmax(0,1fr)}
+.proHeroCopy{max-width:820px}
+.proHeroBackdrop{background-position:center 48%}
