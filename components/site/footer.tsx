@@ -36,12 +36,6 @@ export default function Footer() {
             <Link href="/media"><Camera size={14} /> Photothèque</Link>
             <Link href="/assistant">Merveilles IA</Link>
           </div>
-
-          <div className="siteFooterColumn siteFooterFeatured">
-            <span className="siteFooterKicker">Notre engagement</span>
-            <h3>Faire connaître le Niger, transmettre ses richesses et préserver sa mémoire.</h3>
-            <p>Un espace éditorial consacré à la diversité des régions, aux savoir-faire et aux patrimoines nigériens.</p>
-          </div>
         </div>
 
         <div className="siteFooterBottom">
