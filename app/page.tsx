@@ -95,10 +95,11 @@ async function getHomeData() {
       events: [] as HomeEvent[],
       articles: [] as HomeArticle[],
       publications: [] as HomePublication[],
+      articlesCount: 0,
     }
   }
 
-  const [{ data: publishedWonders }, { data: regions }, { data: events }, { data: articles }, { data: publications }] = await Promise.all([
+  const [{ data: publishedWonders }, { data: regions }, { data: events }, { data: articles }, { data: publications }, { count: articlesCount }] = await Promise.all([
     supabase
       .from('niger_wonders')
       .select('id,name,short_description,description,cover_url,published,featured')
@@ -127,6 +128,7 @@ async function getHomeData() {
       .eq('visibility', 'public')
       .order('published_at', { ascending: false })
       .limit(3),
+    supabase.from('niger_articles').select('*', { count: 'exact', head: true }).eq('published', true),
   ])
 
   const homeWonders: HomeWonder[] = publishedWonders?.length
@@ -145,6 +147,7 @@ async function getHomeData() {
     events: events || [],
     articles: articles || [],
     publications: publications || [],
+    articlesCount: articlesCount ?? 0,
   }
 }
 
@@ -154,7 +157,7 @@ function formatDate(value?: string | null) {
 }
 
 export default async function Home() {
-  const { wonders: homeWonders, regions, events, articles, publications } = await getHomeData()
+  const { wonders: homeWonders, regions, events, articles, publications, articlesCount } = await getHomeData()
   const featuredWonder = homeWonders[0]
 
   return (
@@ -212,7 +215,7 @@ export default async function Home() {
           <div><strong>08</strong><span>régions</span></div>
           <div><strong>{homeWonders.length}+</strong><span>merveilles de départ</span></div>
           <div><strong>{events.length || 0}</strong><span>rendez-vous à venir</span></div>
-          <div><strong>{articles.length || 0}</strong><span>articles publiés</span></div>
+          <div><strong>{articlesCount}</strong><span>articles publiés</span></div>
         </section>
 
         <section className="section proSection">
@@ -336,7 +339,7 @@ export default async function Home() {
                   </p>
                   <div className="proEditorialLinks">
                     <Link href="/evenements" className="proEditorialLink"><CalendarDays size={18} /><span><b>Agenda</b><small>{events.length ? `${events.length} rendez-vous à venir` : 'Les événements arrivent bientôt'}</small></span><ArrowRight size={17} /></Link>
-                    <Link href="/articles" className="proEditorialLink"><BookOpenText size={18} /><span><b>Articles</b><small>{articles.length ? `${articles.length} publications récentes` : 'La rédaction prépare les premiers contenus'}</small></span><ArrowRight size={17} /></Link>
+                    <Link href="/articles" className="proEditorialLink"><BookOpenText size={18} /><span><b>Articles</b><small>{articlesCount ? `${articlesCount} articles publiés` : 'La rédaction prépare les premiers contenus'}</small></span><ArrowRight size={17} /></Link>
                   </div>
                 </div>
 
