@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import './brand-refresh.css'
 import Header from '../components/site/header'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0b5d3b',
+  themeColor: '#073b2b',
   colorScheme: 'light',
 }
 
