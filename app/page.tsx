@@ -196,13 +196,6 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="container proStatBar" aria-label="Repères de la plateforme">
-          <div><strong>08</strong><span>régions</span></div>
-          <div><strong>{homeWonders.length}+</strong><span>merveilles de départ</span></div>
-          <div><strong>{events.length || 0}</strong><span>rendez-vous à venir</span></div>
-          <div><strong>{articlesCount}</strong><span>articles publiés</span></div>
-        </section>
-
         <section className="section proSection">
           <div className="container">
             <div className="proSectionIntro">
