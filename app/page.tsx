@@ -165,7 +165,7 @@ export default async function Home() {
 
       <main>
         <section className="proHero">
-          <div className="proHeroBackdrop" style={{ backgroundImage: `url(${nigerMedia.agadez.image})` }} />
+          <div className="proHeroBackdrop" style={{ backgroundImage: `url(${nigerMedia.niamey.image})` }} />
           <div className="proHeroShade" />
           <div className="container proHeroGrid">
             <div className="proHeroCopy">
@@ -193,21 +193,6 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="proHeroPanel">
-              <div className="proHeroPanelImage" style={{ backgroundImage: `url(${nigerMedia.niamey.image})` }}>
-                <span className="proHeroPanelBadge">À découvrir</span>
-                <span className="proHeroPanelPlace">Niamey · Fleuve Niger</span>
-              </div>
-              <div className="proHeroPanelBody">
-                <div>
-                  <span className="proMiniLabel">Le Niger en une minute</span>
-                  <h2>Un territoire, des cultures, mille visages.</h2>
-                </div>
-                <Link className="proRoundLink" href="/culture" aria-label="Découvrir la culture du Niger">
-                  <ArrowRight size={18} />
-                </Link>
-              </div>
-            </div>
           </div>
         </section>
 
