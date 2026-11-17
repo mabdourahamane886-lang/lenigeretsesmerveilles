@@ -268,7 +268,7 @@ export default async function Home() {
               </article>
 
               <div className="proWonderSide">
-                {homeWonders.slice(1, 3).map((wonder) => (
+                {homeWonders.slice(2, 3).map((wonder) => (
                   <article className="proMiniStory" key={wonder.id}>
                     <div className="proMiniStoryImage" style={wonder.image ? { backgroundImage: `url(${wonder.image})` } : undefined} />
                     <div>
