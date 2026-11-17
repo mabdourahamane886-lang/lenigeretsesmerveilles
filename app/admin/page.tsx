@@ -49,7 +49,7 @@ const modules = [
   { icon: FileText, title: 'Articles', href: '/admin/articles', description: 'Publications et contenus éditoriaux.' },
   { icon: Camera, title: 'Médias', href: '/admin/medias', description: 'Photos, vidéos, sources et crédits.' },
   { icon: Megaphone, title: 'Publicités', href: '/admin/publicites', description: 'Campagnes, annonces et programmation.' },
-  { icon: MessageSquareText, title: 'Publications', href: '/admin/publications', description: 'Publier comme un fil social : texte, photos, vidéos, musique et lieu.' },
+  { icon: MessageSquareText, title: 'NIGER MEDIA AUTOMATION', href: '/admin/publications', description: 'Publier sur le site, programmer et préparer la diffusion vers les réseaux sociaux.' },
   { icon: MessageSquareText, title: 'Contributions', href: '/admin/contributions', description: 'Modérer les contenus proposés par la communauté.' },
 ]
 
