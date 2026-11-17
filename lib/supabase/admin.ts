@@ -8,9 +8,13 @@ import { createClient } from '@supabase/supabase-js'
  */
 export function createAdminClient() {
   const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)?.trim()
+
+  // Préférer la clé legacy service_role lorsqu'elle est configurée :
+  // certains projets possèdent une ancienne SUPABASE_SECRET_KEY obsolète.
+  // Les deux clés restent strictement côté serveur.
   const secretKey =
-    process.env.SUPABASE_SECRET_KEY?.trim() ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    process.env.SUPABASE_SECRET_KEY?.trim()
 
   if (!url || !secretKey) return null
 
