@@ -13,96 +13,76 @@ import {
   Utensils,
   ShieldCheck,
   PlusCircle,
+  Map,
 } from 'lucide-react'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 
-const navItems = [
+const primaryItems = [
   { label: 'Régions', href: '/regions', icon: Compass },
   { label: 'Merveilles', href: '/merveilles', icon: Sparkles },
-  { label: 'Agenda', href: '/evenements', icon: CalendarDays },
   { label: 'Culture', href: '/culture', icon: BookOpenText },
+  { label: 'Agenda', href: '/evenements', icon: CalendarDays },
+  { label: 'Articles', href: '/articles', icon: BookOpenText },
 ]
 
-const mobileItems = [
-  ...navItems,
+const secondaryItems = [
   { label: 'Gastronomie', href: '/gastronomie', icon: Utensils },
   { label: 'Photothèque', href: '/media', icon: Camera },
+  { label: 'Publications', href: '/publications', icon: BookOpenText },
+  { label: 'Carte du Niger', href: '/carte', icon: Map },
+  { label: 'Merveilles IA', href: '/assistant', icon: Sparkles },
+  { label: 'Dictionnaire des langues', href: '/dictionnaire', icon: Languages },
 ]
 
 export default async function Header() {
   const isAdmin = await isAdminAuthenticated()
 
   return (
-    <>
-      <header className="siteHeader">
-        <div className="container siteHeaderInner">
-          <div className="siteHeaderMobileLeft" aria-hidden="true" />
+    <header className="siteHeader">
+      <div className="container siteHeaderInner">
+        <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
+          <Image className="siteBrandLogo" src="/images/niger-merveilles-mark.svg" alt="" width={58} height={48} priority />
+          <span className="siteBrandCopy">
+            <strong>Le Niger et ses Merveilles</strong>
+            <small>Explorer · Comprendre · Préserver</small>
+          </span>
+        </Link>
 
-          <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
-            <Image className="siteBrandLogo" src="/images/niger-merveilles-mark.svg" alt="" width={58} height={48} priority />
-            <span className="siteBrandCopy">
-              <strong>Le Niger et ses Merveilles</strong>
-              <small>Explorer · Comprendre · Préserver</small>
-            </span>
+        <nav className="siteNav" aria-label="Navigation principale">
+          {primaryItems.map(({ label, href }) => <Link href={href} key={href}>{label}</Link>)}
+        </nav>
+
+        <div className="siteHeaderActions">
+          <Link className="siteSearchButton" href="/recherche" aria-label="Rechercher sur le site">
+            <Search size={17} />
           </Link>
-
-          <nav className="siteNav" aria-label="Navigation principale">
-            {navItems.map(({ label, href, icon: Icon }) => (
-              <Link href={href} key={href}>
-                <Icon size={15} />
-                {label}
-              </Link>
-            ))}
-            <Link href="/articles"><BookOpenText size={15} />Articles</Link>
-            <Link href="/publications"><BookOpenText size={15} />Publications</Link>
-            <Link href="/carte"><Compass size={15} />Carte</Link>
-            <Link href="/assistant"><Sparkles size={15} />Merveilles IA</Link>
-            <Link href="/dictionnaire"><Languages size={15} />Dictionnaire</Link>
-          </nav>
-
-          <div className="siteHeaderActions">
-            <Link className="siteContributeButton" href="/contribution">
-              <Send size={14} />
-              Contribuer
-            </Link>
-
-            <details className="siteMobileMenu">
-              <summary aria-label="Ouvrir le menu principal"><Menu size={20} /></summary>
-              <div className="siteMobilePanel">
-                <div className="siteMobileHead">
-                  <span>Navigation</span>
-                </div>
-                <nav aria-label="Navigation mobile">
-                  {mobileItems.map(({ label, href, icon: Icon }) => (
-                    <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
-                  ))}
-                  <Link href="/articles"><BookOpenText size={17} /><span>Articles</span></Link>
-                  <Link href="/publications"><BookOpenText size={17} /><span>Publications</span></Link>
-                  <Link href="/carte"><Compass size={17} /><span>Carte</span></Link>
-                  <Link href="/assistant"><Sparkles size={17} /><span>Merveilles IA</span></Link>
-                  <Link href="/dictionnaire"><Languages size={17} /><span>Dictionnaire des langues</span></Link>
-                  <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
-                  <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
-                  {isAdmin && (
-                    <>
-                      <div className="siteMobileAdminDivider" aria-hidden="true" />
-                      <Link className="siteMobileAdminLink" href="/admin">
-                        <ShieldCheck size={17} /><span>Administration</span>
-                      </Link>
-                      <Link className="siteMobileAdminPublish" href="/admin/evenements">
-                        <PlusCircle size={17} /><span>Publier un événement</span>
-                      </Link>
-                      <Link className="siteMobileAdminPublish" href="/admin/articles">
-                        <PlusCircle size={17} /><span>Publier un article</span>
-                      </Link>
-                    </>
-                  )}
-                </nav>
-              </div>
-            </details>
-          </div>
+          <Link className="siteContributeButton" href="/contribution">
+            <Send size={14} />
+            Contribuer
+          </Link>
+          <details className="siteMobileMenu">
+            <summary aria-label="Ouvrir le menu principal"><Menu size={20} /></summary>
+            <div className="siteMobilePanel">
+              <div className="siteMobileHead">Explorer le site</div>
+              <nav aria-label="Navigation complémentaire">
+                {secondaryItems.map(({ label, href, icon: Icon }) => (
+                  <Link href={href} key={href}><Icon size={17} /><span>{label}</span></Link>
+                ))}
+                <Link href="/recherche"><Search size={17} /><span>Recherche</span></Link>
+                <Link className="siteMobileCta" href="/contribution"><Send size={17} /><span>Contribuer au projet</span></Link>
+                {isAdmin && (
+                  <>
+                    <div className="siteMobileAdminDivider" aria-hidden="true" />
+                    <Link className="siteMobileAdminLink" href="/admin"><ShieldCheck size={17} /><span>Administration</span></Link>
+                    <Link className="siteMobileAdminPublish" href="/admin/publications"><PlusCircle size={17} /><span>Gérer les publications</span></Link>
+                    <Link className="siteMobileAdminPublish" href="/admin/articles"><PlusCircle size={17} /><span>Publier un article</span></Link>
+                  </>
+                )}
+              </nav>
+            </div>
+          </details>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   )
 }
