@@ -4,6 +4,7 @@ import { findNigerDictionary, NIGER_LANGUAGES } from '../../../lib/niger-diction
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 type ChatMessage = { role: 'user' | 'model'; content: string }
 
@@ -90,6 +91,19 @@ Lorsque le contexte documentaire ci-dessous fournit une source pertinente, appui
 const DEFAULT_MODEL = 'gemini-3.8-flash'
 const FALLBACK_MODELS = ['gemini-3.6-flash', 'gemini-3.5-flash-lite']
 
+// Vercel may contain one key or a pool of keys. Keep all credentials server-side.
+function getGeminiApiKeys(): string[] {
+  const values = [
+    process.env.GEMINI_API_KEYS,
+    process.env.GEMINI_API_KEY,
+    ...Object.entries(process.env)
+      .filter(([name]) => /^GEMINI_API_KEY_\\d+$/.test(name))
+      .sort(([a], [b]) => Number(a.split('_').pop()) - Number(b.split('_').pop()))
+      .map(([, value]) => value),
+  ]
+  return [...new Set(values.flatMap((value) => (value || '').split(/[;,\\s]+/).map((key) => key.trim()).filter(Boolean)))]
+}
+
 function normalizeModel(value: string) {
   return value.trim().replace(/^models\//, '')
 }
@@ -105,8 +119,8 @@ function isRetryable(status: number) {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.GEMINI_API_KEY?.trim()
-  if (!apiKey) {
+  const apiKeys = getGeminiApiKeys()
+  if (!apiKeys.length) {
     return NextResponse.json(
       { error: 'L’assistant IA n’est pas encore configuré. Ajoutez GEMINI_API_KEY dans les variables d’environnement du projet.' },
       { status: 503 },
@@ -213,90 +227,60 @@ export async function POST(request: Request) {
   let lastMessage = 'Aucun modèle n’a répondu.'
   let networkFailure = false
 
-  for (const model of models) {
+  // Tester les modèles et les clés configurées en parallèle évite qu'un modèle
+  // saturé bloque toute la conversation pendant plusieurs délais successifs.
+  const attempts = models.flatMap((model, modelIndex) =>
+    apiKeys.map((apiKey, keyIndex) => ({ model, apiKey, modelIndex, keyIndex }))
+  )
+  const results = await Promise.allSettled(attempts.map(async ({ model, apiKey }) => {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`
+    const upstream = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents: validMessages,
+        generationConfig: { temperature: 0.55, maxOutputTokens: 4096 },
+      }),
+      signal: AbortSignal.timeout(12000),
+      cache: 'no-store',
+    })
+    const data = await upstream.json().catch(() => ({}))
+    if (!upstream.ok) {
+      const message = typeof data?.error?.message === 'string' ? data.error.message : 'Erreur Gemini inconnue'
+      throw Object.assign(new Error(message), { status: upstream.status, model })
+    }
+    const answer = data?.candidates?.[0]?.content?.parts
+      ?.map((part: { text?: string }) => part.text || '')
+      .join('')
+      .trim()
+    if (!answer) throw Object.assign(new Error('Gemini n’a pas généré de texte.'), { status: 502, model })
+    return { answer, model }
+  }))
 
-    try {
-      const upstream = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey,
-        },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents: validMessages,
-          generationConfig: { temperature: 0.55, maxOutputTokens: 4096 },
-        }),
-        signal: AbortSignal.timeout(18000),
-        cache: 'no-store',
-      })
+  const success = results.find((result): result is PromiseFulfilledResult<{ answer: string; model: string }> => result.status === 'fulfilled')
+  if (success) {
+    return NextResponse.json(success.value, { headers: { 'Cache-Control': 'no-store' } })
+  }
 
-      const data = await upstream.json().catch(() => ({}))
-
-      if (upstream.ok) {
-        const answer = data?.candidates?.[0]?.content?.parts
-          ?.map((part: { text?: string }) => part.text || '')
-          .join('')
-          .trim()
-
-        if (!answer) {
-          console.error('Gemini returned no text:', model, JSON.stringify(data?.promptFeedback || {}))
-          return NextResponse.json(
-            { error: 'Gemini n’a pas généré de texte. Reformulez votre question et réessayez.' },
-            { status: 502 },
-          )
-        }
-
-        return NextResponse.json(
-          { answer, model },
-          { headers: { 'Cache-Control': 'no-store' } },
-        )
-      }
-
-      lastStatus = upstream.status
-      lastMessage = typeof data?.error?.message === 'string' ? data.error.message : 'Erreur Gemini inconnue'
-      console.error('Gemini API error:', upstream.status, model, lastMessage)
-
-      if (isModelUnavailable(upstream.status, lastMessage) || isRetryable(upstream.status)) {
-        continue
-      }
-
-      if (upstream.status === 401 || upstream.status === 403) {
-        return NextResponse.json(
-          { error: 'La clé Gemini est refusée. Vérifiez GEMINI_API_KEY et que Gemini API est activée pour cette clé.' },
-          { status: 502 },
-        )
-      }
-
-      if (upstream.status === 400) {
-        return NextResponse.json(
-          { error: 'Gemini a refusé le format de la requête. Vérifiez la configuration du modèle et réessayez.' },
-          { status: 502 },
-        )
-      }
-
-      return NextResponse.json(
-        { error: 'Gemini ne peut pas répondre pour le moment. Réessayez plus tard.' },
-        { status: 502 },
-      )
-    } catch (error) {
-      // Une panne réseau ou un timeout sur un modèle ne doit pas empêcher
-      // l'essai des modèles de secours.
-      networkFailure = true
-      lastStatus = 504
-      lastMessage = error instanceof Error ? error.message : 'Erreur réseau inconnue'
-      console.error('Gemini fetch failed; trying next model:', model, lastMessage)
-      continue
+  for (const result of results) {
+    if (result.status === 'rejected') {
+      const error = result.reason as Error & { status?: number; model?: string }
+      lastStatus = error.status || 504
+      lastMessage = error.message || 'Erreur réseau inconnue'
+      networkFailure ||= !error.status
+      console.error('Gemini attempt failed:', lastStatus, error.model || 'unknown-model', lastMessage)
     }
   }
 
-  console.error('Tous les modèles Gemini ont échoué:', { lastStatus, lastMessage, networkFailure })
+  console.error('Tous les modèles Gemini ont échoué:', { lastStatus, lastMessage, networkFailure, modelsTried: models.length, keysConfigured: apiKeys.length })
   return NextResponse.json(
     {
-      error: networkFailure
-        ? 'Les modèles Gemini ne répondent pas actuellement. Vérifiez la connexion du serveur et réessayez.'
-        : 'Aucun modèle Gemini disponible pour cette clé. Vérifiez GEMINI_API_KEY et les modèles autorisés dans Google AI Studio.',
+      error: networkFailure || lastStatus >= 500
+        ? 'Les serveurs Gemini sont momentanément indisponibles. Niger IA a essayé les modèles et les clés configurés. Réessayez dans quelques instants.'
+        : lastStatus === 401 || lastStatus === 403
+          ? 'Google refuse les clés Gemini configurées. Vérifiez leurs autorisations dans Google AI Studio.'
+          : 'Aucun modèle Gemini disponible pour cette configuration. Vérifiez les modèles autorisés dans Google AI Studio.',
     },
     { status: 502, headers: { 'Cache-Control': 'no-store' } },
   )
