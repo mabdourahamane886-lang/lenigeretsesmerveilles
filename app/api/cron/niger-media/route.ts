@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     .limit(1)
     .maybeSingle()
 
-  if (queueError) return NextResponse.json({ error: "queue_read_failed" }, { status: 500 })
+  if (queueError) return NextResponse.json({ error: "queue_read_failed", code: queueError.code, message: queueError.message }, { status: 500 })
   if (!job) return NextResponse.json({ ok: true, processed: 0 })
 
   const { data: claimed, error: claimError } = await supabase
