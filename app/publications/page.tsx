@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
-import { getPublicationBody, getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
+import { getPublicationBody, getPublicationTitle } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -128,7 +128,7 @@ export default async function PublicationsPage() {
                   <article className="card publicationFeedCard" key={publication.id}>
                     <div className="cardbody">
                       <div style={{display:'flex',alignItems:'center',gap:12}}>
-                        <div className="publicationAvatar" aria-hidden="true">🇳🇪</div>
+                        <div className="publicationAvatar" aria-hidden="true">NM</div>
                         <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{formatDate(publication.published_at)}</div></div>
                       </div>
                       <h3 style={{fontSize:21,lineHeight:1.35,margin:'18px 0 8px'}}>{title}</h3>
@@ -140,7 +140,7 @@ export default async function PublicationsPage() {
                         {publication.location && <span className="tag">{publication.location}</span>}
                         {publication.mood && <span className="tag">{publication.mood}</span>}
                         {publication.activity && <span className="tag">{publication.activity}</span>}
-                        {publication.tagged_people?.length ? <span className="tag">👤 {publication.tagged_people.join(', ')}</span> : null}
+                        {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
                       </div>
                       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
                         <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
