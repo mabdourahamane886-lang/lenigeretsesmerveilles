@@ -45,6 +45,9 @@ export async function generateMetadata({
   const title = publication.content?.trim().slice(0, 70) || 'Publication du Niger'
   const description = publication.content?.trim().slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
+  const previewImage = publication.media_url && publication.media_type === 'photo'
+    ? publication.media_url
+    : `${baseUrl}/opengraph-image`
 
   return {
     title,
@@ -56,19 +59,13 @@ export async function generateMetadata({
       title,
       description,
       siteName: 'Le Niger et ses Merveilles',
-      images: publication.media_url && publication.media_type === 'photo'
-        ? [{ url: publication.media_url, alt: title }]
-        : undefined,
+      images: [{ url: previewImage, alt: title }],
     },
     twitter: {
-      card: publication.media_url && publication.media_type === 'photo'
-        ? 'summary_large_image'
-        : 'summary',
+      card: 'summary_large_image',
       title,
       description,
-      images: publication.media_url && publication.media_type === 'photo'
-        ? [publication.media_url]
-        : undefined,
+      images: [previewImage],
     },
   }
 }
