@@ -16,7 +16,7 @@ function getParagraphs(content?: string | null) {
 export function getPublicationTitle(content?: string | null) {
   const first = getParagraphs(content)[0] || 'Publication du Niger'
   const sentence = first.split(/[.!?…](?:\s|$)/)[0]?.trim() || first
-  return sentence.length > 72 ? \`${sentence.slice(0, 69).trimEnd()}…\` : sentence
+  return sentence.length > 72 ? sentence.slice(0, 69).trimEnd() + '…' : sentence
 }
 
 export function getPublicationBody(content?: string | null) {
@@ -30,5 +30,5 @@ export function getPublicationBody(content?: string | null) {
 export function getPublicationExcerpt(content?: string | null, maxLength = 112) {
   const body = getPublicationBody(content) || normalizePublicationContent(content)
   const clean = body.replace(/\s+/g, ' ').trim()
-  return clean.length > maxLength ? \`${clean.slice(0, maxLength - 1).trimEnd()}…\` : clean
+  return clean.length > maxLength ? clean.slice(0, maxLength - 1).trimEnd() + '…' : clean
 }
