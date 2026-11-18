@@ -14,6 +14,7 @@ import {
   Utensils,
 } from 'lucide-react'
 import wonders from '../data/wonders'
+import { getPublicationTitle } from '../lib/publications/format'
 import { nigerMedia } from '../data/media'
 import { regions as fallbackRegions } from '../data/regions'
 import { createAdminClient } from '../lib/supabase/admin'
@@ -149,24 +150,6 @@ async function getHomeData() {
     publications: publications || [],
     articlesCount: articlesCount ?? 0,
   }
-}
-
-function normalizePublicationContent(content?: string | null) {
-  return (content || '')
-    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}r/g, '\n')
-    .replace(/\r\n?/g, '\n')
-    .trim()
-}
-
-function getShortPublicationTitle(content?: string | null) {
-  const clean = normalizePublicationContent(content).replace(/\s+/g, ' ').trim()
-  if (!clean) return 'Publication du Niger'
-  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
-  const words = firstSentence.split(' ')
-  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
-  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
 }
 
 function formatDate(value?: string | null) {
@@ -413,7 +396,7 @@ export default async function Home() {
                     )}
                     <div className="proArticleBody">
                       <span className="proMiniLabel">{publication.location || 'Niger'}</span>
-                      <h3>{getShortPublicationTitle(publication.content)}</h3>
+                      <h3>{getPublicationTitle(publication.content)}</h3>
                       <p>{publication.author_name || 'Le Niger et ses Merveilles'}</p>
                       <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
                     </div>
