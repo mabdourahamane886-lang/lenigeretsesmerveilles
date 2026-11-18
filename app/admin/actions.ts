@@ -132,7 +132,7 @@ export async function reviewContribution(f:FormData){const s=await db(),id=t(f,'
 
 export async function createPublication(f:FormData){
  const s=await db()
- const contentText=String(f.get('content')||'').replace(/\\{1,2}r\\{1,2}n/g,'\n').replace(/\\{1,2}n/g,'\n').replace(/\\{1,2}r/g,'\n').trim()
+ const contentText=normalizePublicationContent(String(f.get('content')||''))
  const visibility=String(f.get('visibility')||'public')
  if(!contentText && !f.get('media_file')) throw new Error('Ajoute un texte ou une photo/vidéo avant de publier.')
  if(!['public','private'].includes(visibility)) throw new Error('Visibilité invalide.')
