@@ -42,9 +42,9 @@ type Publication = {
 
 function normalizePublicationContent(content?: string | null) {
   return (content || '')
-    .replace(/\\r\\n/g, '\n')
-    .replace(/\\n/g, '\n')
-    .replace(/\\r/g, '\n')
+    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}r/g, '\n')
     .replace(/\r\n?/g, '\n')
     .trim()
 }
@@ -142,7 +142,7 @@ export default async function PublicationsPage() {
               <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
                 {publications.map((publication) => (
                   (() => { const title = getShortPublicationTitle(publication.content); const content = normalizePublicationContent(publication.content); return (
-                  <article className="card" key={publication.id}>
+                  <article className="card publicationFeedCard" key={publication.id}>
                     <div className="cardbody">
                       <div style={{display:'flex',alignItems:'center',gap:12}}>
                         <div className="publicationAvatar" aria-hidden="true">🇳🇪</div>
