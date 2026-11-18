@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { getPublicationBody, getPublicationTitle } from '../../../lib/publications/format'
+import { getPublicationBody, getPublicationTitle, normalizePublicationContent } from '../../../lib/publications/format'
 import { createAdminClient } from '../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../lib/supabase/server'
 
@@ -63,7 +63,7 @@ export async function generateMetadata({
       title,
       description,
       siteName: 'Le Niger et ses Merveilles',
-      images: [{ url: previewImage, alt: title, type: 'image/jpeg' }],
+      images: [{ url: previewImage, alt: title }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -92,7 +92,7 @@ export default async function PublicationDetailPage({
 
   if (!publication) notFound()
 
-  const title = getShortPublicationTitle(publication.content)
+  const title = getPublicationTitle(publication.content)
   const content = getPublicationBody(publication.content)
 
   return (
@@ -106,7 +106,7 @@ export default async function PublicationDetailPage({
 
           <article className="proseCard articleProse">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-              <div className="publicationAvatar" aria-hidden="true">🇳🇪</div>
+              <div className="publicationAvatar" aria-hidden="true">NM</div>
               <div>
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
                 <div className="muted">{formatDate(publication.published_at)}</div>
@@ -148,7 +148,7 @@ export default async function PublicationDetailPage({
               {publication.mood && <span className="tag">{publication.mood}</span>}
               {publication.activity && <span className="tag">{publication.activity}</span>}
               {publication.tagged_people?.length ? (
-                <span className="tag">👤 {publication.tagged_people.join(', ')}</span>
+                <span className="tag">{publication.tagged_people.join(', ')}</span>
               ) : null}
             </div>
 
