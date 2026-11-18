@@ -16,7 +16,11 @@ function getParagraphs(content?: string | null) {
 export function getPublicationTitle(content?: string | null) {
   const first = getParagraphs(content)[0] || 'Publication du Niger'
   const sentence = first.split(/[.!?…](?:\s|$)/)[0]?.trim() || first
-  return sentence.length > 72 ? sentence.slice(0, 69).trimEnd() + '…' : sentence
+  const cleanTitle = sentence
+    .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u200D]/gu, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+  return cleanTitle.length > 72 ? cleanTitle.slice(0, 69).trimEnd() + '…' : cleanTitle
 }
 
 export function getPublicationBody(content?: string | null) {
