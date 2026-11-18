@@ -11,8 +11,17 @@ export const revalidate = 0
 
 const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
+function normalizePublicationContent(content?: string | null) {
+  return (content || '')
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\r/g, '\n')
+    .replace(/\r\n?/g, '\n')
+    .trim()
+}
+
 function getShortPublicationTitle(content?: string | null) {
-  const clean = (content || '').replace(/\s+/g, ' ').trim()
+  const clean = normalizePublicationContent(content).replace(/\s+/g, ' ').trim()
   if (!clean) return 'Publication du Niger'
   const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
   const words = firstSentence.split(' ')
@@ -53,7 +62,7 @@ export async function generateMetadata({
   }
 
   const title = getShortPublicationTitle(publication.content)
-  const description = publication.content?.trim().slice(0, 160) ||
+  const description = normalizePublicationContent(publication.content).slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   // Always serve publication previews through our own public URL. This avoids
   // social crawlers failing on storage URLs, redirects, or storage permissions.
@@ -101,6 +110,7 @@ export default async function PublicationDetailPage({
   if (!publication) notFound()
 
   const title = getShortPublicationTitle(publication.content)
+  const content = normalizePublicationContent(publication.content)
 
   return (
     <>
@@ -122,9 +132,9 @@ export default async function PublicationDetailPage({
 
             <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.25, margin: '0 0 18px' }}>{title}</h1>
 
-            {publication.content && (
+            {content && (
               <div className="prose">
-                <p style={{ whiteSpace: 'pre-wrap' }}>{publication.content}</p>
+                <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p>
               </div>
             )}
 
