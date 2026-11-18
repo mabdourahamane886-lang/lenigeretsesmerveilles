@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
+import { normalizePublicationContent } from '../../lib/publications/format'
 
 const t=(f:FormData,n:string)=>String(f.get(n)||'').trim()||null
 const on=(f:FormData,n:string)=>f.get(n)==='on'
