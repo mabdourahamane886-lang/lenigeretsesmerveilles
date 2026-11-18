@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpenText, CalendarDays, UserRound } from 'lucide-react'
 import Header from '../../../components/site/header'
 import ShareButton from '../../../components/site/share-button'
 import { createClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
 
 export const dynamic='force-dynamic'
 
@@ -12,7 +13,7 @@ const SITE_URL = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
   const {slug}=await params
-  const supabase=await createClient()
+  const supabase=createAdminClient() ?? await createClient()
   if(!supabase) return {title:'Publication | Le Niger et ses Merveilles'}
   const {data:article}=await supabase.from('niger_articles').select('title,excerpt,cover_url,category,published').eq('slug',slug).eq('published',true).maybeSingle()
   if(!article) return {title:'Publication introuvable | Le Niger et ses Merveilles'}
