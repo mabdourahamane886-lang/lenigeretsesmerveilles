@@ -151,6 +151,15 @@ async function getHomeData() {
   }
 }
 
+function getShortPublicationTitle(content?: string | null) {
+  const clean = (content || '').replace(/\s+/g, ' ').trim()
+  if (!clean) return 'Publication du Niger'
+  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
+  const words = firstSentence.split(' ')
+  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
+  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
+}
+
 function formatDate(value?: string | null) {
   if (!value) return 'À venir'
   return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value))
@@ -395,7 +404,7 @@ export default async function Home() {
                     )}
                     <div className="proArticleBody">
                       <span className="proMiniLabel">{publication.location || 'Niger'}</span>
-                      <h3>{publication.content ? publication.content.slice(0, 120) : 'Publication du Niger et ses Merveilles'}</h3>
+                      <h3>{getShortPublicationTitle(publication.content)}</h3>
                       <p>{publication.author_name || 'Le Niger et ses Merveilles'}</p>
                       <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
                     </div>
