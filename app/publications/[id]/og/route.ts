@@ -45,19 +45,38 @@ export async function GET(
     const imageUrl = new URL(publication.media_url)
     const configuredSupabaseUrl =
       process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
+    let configuredSupabaseHost: string | null = null
 
-    // Only fetch images from the configured Supabase project. This prevents
-    // the endpoint from becoming an arbitrary server-side URL proxy.
+    try {
+      configuredSupabaseHost = configuredSupabaseUrl
+        ? new URL(configuredSupabaseUrl).hostname
+        : null
+    } catch {
+      configuredSupabaseHost = null
+    }
+
+    // Accept only the configured Supabase project or Smooth Bundle's public
+    // delivery domain. The explicit host allowlist prevents arbitrary URL
+    // fetching while supporting media uploaded through the site's CDN.
+    const isSupabaseAsset = Boolean(
+      configuredSupabaseHost && imageUrl.hostname === configuredSupabaseHost,
+    )
+    const isSmoothBundleAsset =
+      imageUrl.hostname === 'smoothbundle.com' ||
+      imageUrl.hostname.endsWith('.smoothbundle.com')
+
     if (
       imageUrl.protocol !== 'https:' ||
-      !configuredSupabaseUrl ||
-      imageUrl.hostname !== new URL(configuredSupabaseUrl).hostname
+      imageUrl.port !== '' ||
+      imageUrl.username ||
+      imageUrl.password ||
+      (!isSupabaseAsset && !isSmoothBundleAsset)
     ) {
       return NextResponse.json({ error: 'Source image non autorisée' }, { status: 400 })
     }
 
     const upstream = await fetch(imageUrl.toString(), {
-      redirect: 'follow',
+      redirect: 'error',
       signal: AbortSignal.timeout(10000),
       headers: { Accept: 'image/avif,image/webp,image/png,image/jpeg' },
       cache: 'no-store',
