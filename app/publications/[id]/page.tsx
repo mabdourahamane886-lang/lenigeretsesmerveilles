@@ -55,8 +55,10 @@ export async function generateMetadata({
   const title = getShortPublicationTitle(publication.content)
   const description = publication.content?.trim().slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
+  // Always serve publication previews through our own public URL. This avoids
+  // social crawlers failing on storage URLs, redirects, or storage permissions.
   const previewImage = publication.media_url && publication.media_type === 'photo'
-    ? publication.media_url
+    ? `${baseUrl}/publications/${publication.id}/og`
     : `${baseUrl}/opengraph-image`
 
   return {
@@ -69,7 +71,7 @@ export async function generateMetadata({
       title,
       description,
       siteName: 'Le Niger et ses Merveilles',
-      images: [{ url: previewImage, alt: title }],
+      images: [{ url: previewImage, alt: title, type: 'image/jpeg' }],
     },
     twitter: {
       card: 'summary_large_image',
