@@ -14,7 +14,7 @@ import {
   Utensils,
 } from 'lucide-react'
 import wonders from '../data/wonders'
-import { getPublicationTitle } from '../lib/publications/format'
+import { getPublicationExcerpt, getPublicationTitle } from '../lib/publications/format'
 import { nigerMedia } from '../data/media'
 import { regions as fallbackRegions } from '../data/regions'
 import { createAdminClient } from '../lib/supabase/admin'
@@ -397,7 +397,8 @@ export default async function Home() {
                     <div className="proArticleBody">
                       <span className="proMiniLabel">{publication.location || 'Niger'}</span>
                       <h3>{getPublicationTitle(publication.content)}</h3>
-                      <p>{publication.author_name || 'Le Niger et ses Merveilles'}</p>
+                      <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
+                      <small>{publication.author_name || 'Le Niger et ses Merveilles'}</small>
                       <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
                     </div>
                   </Link>
