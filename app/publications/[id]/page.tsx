@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { createAdminClient } from '../../../lib/supabase/admin'
+import { createAdminClient } from '../../../lib/supabase/admin'\nimport { createClient as createServerClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
