@@ -163,7 +163,7 @@ export default async function Home() {
   return (
     <>
 
-      <main>
+      <main className="homePageWide">
         <section className="proHero">
           <div className="proHeroBackdrop" style={{ backgroundImage: `url(${nigerMedia.niamey.image})` }} />
           <div className="proHeroShade" />
