@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
+import { getPublicationBody, getPublicationTitle } from '../../../lib/publications/format'
 import { createAdminClient } from '../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../lib/supabase/server'
 
@@ -10,24 +11,6 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
-
-function normalizePublicationContent(content?: string | null) {
-  return (content || '')
-    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}r/g, '\n')
-    .replace(/\r\n?/g, '\n')
-    .trim()
-}
-
-function getShortPublicationTitle(content?: string | null) {
-  const clean = normalizePublicationContent(content).replace(/\s+/g, ' ').trim()
-  if (!clean) return 'Publication du Niger'
-  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
-  const words = firstSentence.split(' ')
-  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
-  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
-}
 
 async function getPublicPublication(id: string) {
   const supabase = createAdminClient() ?? await createServerClient()
@@ -61,7 +44,7 @@ export async function generateMetadata({
     return { title: 'Publication introuvable' }
   }
 
-  const title = getShortPublicationTitle(publication.content)
+  const title = getPublicationTitle(publication.content)
   const description = normalizePublicationContent(publication.content).slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   // Always serve publication previews through our own public URL. This avoids
@@ -110,7 +93,7 @@ export default async function PublicationDetailPage({
   if (!publication) notFound()
 
   const title = getShortPublicationTitle(publication.content)
-  const content = normalizePublicationContent(publication.content)
+  const content = getPublicationBody(publication.content)
 
   return (
     <>
@@ -133,8 +116,10 @@ export default async function PublicationDetailPage({
             <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.25, margin: '0 0 18px' }}>{title}</h1>
 
             {content && (
-              <div className="prose">
-                <p style={{ whiteSpace: 'pre-wrap' }}>{content}</p>
+              <div className="prose publicationDetailBody">
+                {content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
               </div>
             )}
 
