@@ -132,7 +132,7 @@ export default async function PublicationsPage() {
                         <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{formatDate(publication.published_at)}</div></div>
                       </div>
                       <h3 style={{fontSize:21,lineHeight:1.35,margin:'18px 0 8px'}}>{title}</h3>
-                      {content && <p style={{whiteSpace:'pre-wrap',fontSize:17,lineHeight:1.65,marginTop:8}}>{content}</p>}
+                      {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
                       {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
                       {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
                       {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
