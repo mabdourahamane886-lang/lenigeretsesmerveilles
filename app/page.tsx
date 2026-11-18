@@ -151,8 +151,17 @@ async function getHomeData() {
   }
 }
 
+function normalizePublicationContent(content?: string | null) {
+  return (content || '')
+    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}r/g, '\n')
+    .replace(/\r\n?/g, '\n')
+    .trim()
+}
+
 function getShortPublicationTitle(content?: string | null) {
-  const clean = (content || '').replace(/\s+/g, ' ').trim()
+  const clean = normalizePublicationContent(content).replace(/\s+/g, ' ').trim()
   if (!clean) return 'Publication du Niger'
   const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
   const words = firstSentence.split(' ')
@@ -395,7 +404,7 @@ export default async function Home() {
               </div>
               <div className="proArticleRow">
                 {publications.map((publication) => (
-                  <Link href={`/publications/${publication.id}`} className="proArticleCard" key={publication.id}>
+                  <Link href={`/publications/${publication.id}`} className="proArticleCard proPublicationCard" key={publication.id}>
                     {publication.media_url && publication.media_type === 'photo' && (
                       <img src={publication.media_url} alt="" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
