@@ -1,6 +1,6 @@
 export function normalizePublicationContent(content?: string | null) {
   return (content || '')
-    .replace(/\\\\+(?:r\\\\+n|n|r)/gi, '\n')
+    .replace(/\\+(?:r\\+n|n|r)/gi, '\n')
     .replace(/\\r\\n?/g, '\n')
     .replace(/\r\n?/g, '\n')
     .trim()
