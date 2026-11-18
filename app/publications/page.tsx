@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
+import { getPublicationBody, getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -38,24 +39,6 @@ type Publication = {
   mood: string | null
   activity: string | null
   published_at: string | null
-}
-
-function normalizePublicationContent(content?: string | null) {
-  return (content || '')
-    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}n/g, '\n')
-    .replace(/\\{1,2}r/g, '\n')
-    .replace(/\r\n?/g, '\n')
-    .trim()
-}
-
-function getShortPublicationTitle(content?: string | null) {
-  const clean = normalizePublicationContent(content).replace(/\s+/g, ' ').trim()
-  if (!clean) return 'Publication du Niger'
-  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
-  const words = firstSentence.split(' ')
-  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
-  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
 }
 
 function formatDate(value?: string | null) {
@@ -141,7 +124,7 @@ export default async function PublicationsPage() {
             ) : (
               <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
                 {publications.map((publication) => (
-                  (() => { const title = getShortPublicationTitle(publication.content); const content = normalizePublicationContent(publication.content); return (
+                  (() => { const title = getPublicationTitle(publication.content); const content = getPublicationBody(publication.content); return (
                   <article className="card publicationFeedCard" key={publication.id}>
                     <div className="cardbody">
                       <div style={{display:'flex',alignItems:'center',gap:12}}>
