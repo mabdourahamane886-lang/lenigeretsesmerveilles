@@ -3052,3 +3052,22 @@ body:not(.home-page) .proArticleHero {
  .proPublicationCard .proArticleBody{padding:12px}
  .proPublicationCard .proArticleBody h3{font-size:18px}
 }
+
+
+/* Publications : hiérarchie éditoriale, paragraphes propres et cartes cohérentes. */
+.proPublicationCard{grid-template-columns:minmax(118px,25%) minmax(0,1fr);min-height:184px}
+.proPublicationCard .proArticleBody h3{-webkit-line-clamp:2;line-clamp:2;overflow-wrap:normal;word-break:normal}
+.proPublicationCard:focus-visible{outline:3px solid #d49a3a;outline-offset:3px}
+.publicationFeedCard h3{max-width:22ch}
+.publicationFeedCard .publicationFeedText{color:#596b61;font-size:16px;line-height:1.8;white-space:pre-line}
+.publicationFeedCard img{max-height:680px}
+.publicationDetailBody{color:#42564b;font-size:17px;line-height:1.9}
+.publicationDetailBody p{margin:0 0 1.15em}
+.publicationDetailBody p:last-child{margin-bottom:0}
+@media(max-width:600px){
+ .proPublicationCard{grid-template-columns:108px minmax(0,1fr);min-height:168px}
+ .proPublicationCard .proArticleImage{min-height:168px}
+ .proPublicationCard .proArticleBody h3{font-size:19px;line-height:1.22}
+ .publicationFeedCard .publicationFeedText{font-size:15px;line-height:1.75}
+ .publicationDetailBody{font-size:16px;line-height:1.8}
+}
