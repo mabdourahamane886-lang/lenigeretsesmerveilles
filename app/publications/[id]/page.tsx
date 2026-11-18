@@ -13,9 +13,9 @@ const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
 function normalizePublicationContent(content?: string | null) {
   return (content || '')
-    .replace(/\\r\\n/g, '\n')
-    .replace(/\\n/g, '\n')
-    .replace(/\\r/g, '\n')
+    .replace(/\\{1,2}r\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}n/g, '\n')
+    .replace(/\\{1,2}r/g, '\n')
     .replace(/\r\n?/g, '\n')
     .trim()
 }
