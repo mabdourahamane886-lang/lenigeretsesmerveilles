@@ -179,14 +179,6 @@ export default async function Home() {
                 Explorez les régions, les paysages, les patrimoines, les cultures et les rendez-vous
                 qui donnent au Niger toute sa profondeur.
               </p>
-              <div className="proHeroActions">
-                <Link className="proButton proButtonPrimary" href="/merveilles">
-                  Commencer l’exploration <ArrowRight size={17} />
-                </Link>
-                <Link className="proButton proButtonGhost" href="/regions">
-                  Voir les régions
-                </Link>
-              </div>
               <div className="proHeroProof">
                 <span><strong>8</strong> régions</span>
                 <span><strong>∞</strong> histoires à raconter</span>
