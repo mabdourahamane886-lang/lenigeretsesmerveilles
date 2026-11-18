@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { createAdminClient } from '../../../lib/supabase/admin'\nimport { createClient as createServerClient } from '../../../lib/supabase/server'
+import { createAdminClient } from '../../../lib/supabase/admin'
+import { createClient as createServerClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -20,7 +21,7 @@ function getShortPublicationTitle(content?: string | null) {
 }
 
 async function getPublicPublication(id: string) {
-  const supabase = createAdminClient()
+  const supabase = createAdminClient() ?? await createServerClient()
   if (!supabase) return null
 
   const { data, error } = await supabase
