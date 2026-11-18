@@ -97,7 +97,7 @@ export default async function PublicationDetailPage({
 
   if (!publication) notFound()
 
-  const title = publication.content?.trim().slice(0, 70) || 'Publication du Niger'
+  const title = getShortPublicationTitle(publication.content)
 
   return (
     <>
