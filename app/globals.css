@@ -3002,3 +3002,24 @@ body:not(.home-page) .proArticleHero {
 .siteBackButton:hover { background: #f0f7f2; }
 .siteBackButton:focus-visible { outline: 3px solid #d6a928; outline-offset: 3px; }
 @media (max-width: 600px) { .siteBackButtonWrap { top: 72px; left: 10px; } .siteBackButton { min-height: 40px; padding: 8px 12px; } }
+
+
+/* Accueil : largeur éditoriale plus généreuse sur grands écrans.
+   Les pages intérieures conservent leur largeur actuelle. */
+.homePageWide .container{
+  width:min(1380px,calc(100% - 72px));
+}
+.homePageWide .proHeroCopy{
+  max-width:900px;
+}
+.homePageWide .proSectionIntro{
+  gap:clamp(28px,4vw,64px);
+}
+.homePageWide .proExplorerGrid{
+  gap:clamp(16px,1.5vw,24px);
+}
+@media(max-width:700px){
+  .homePageWide .container{
+    width:calc(100% - 28px);
+  }
+}
