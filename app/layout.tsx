@@ -40,11 +40,13 @@ export const metadata: Metadata = {
     title: 'Le Niger et ses Merveilles 🇳🇪',
     description:
       'Une plateforme pour explorer les territoires, les patrimoines, les cultures et les histoires du Niger.',
+    images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Le Niger et ses Merveilles 🇳🇪',
     description: 'Découvrez le Niger autrement.',
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
