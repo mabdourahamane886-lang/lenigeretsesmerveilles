@@ -40,6 +40,15 @@ type Publication = {
   published_at: string | null
 }
 
+function getShortPublicationTitle(content?: string | null) {
+  const clean = (content || '').replace(/\s+/g, ' ').trim()
+  if (!clean) return 'Publication du Niger'
+  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
+  const words = firstSentence.split(' ')
+  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
+  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
+}
+
 function formatDate(value?: string | null) {
   if (!value) return ''
   const date = new Date(value)
@@ -123,13 +132,15 @@ export default async function PublicationsPage() {
             ) : (
               <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
                 {publications.map((publication) => (
+                  (() => { const title = getShortPublicationTitle(publication.content); return (
                   <article className="card" key={publication.id}>
                     <div className="cardbody">
                       <div style={{display:'flex',alignItems:'center',gap:12}}>
                         <div className="publicationAvatar" aria-hidden="true">🇳🇪</div>
                         <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{formatDate(publication.published_at)}</div></div>
                       </div>
-                      {publication.content && <p style={{whiteSpace:'pre-wrap',fontSize:17,lineHeight:1.65,marginTop:16}}>{publication.content}</p>}
+                      <h3 style={{fontSize:21,lineHeight:1.35,margin:'18px 0 8px'}}>{title}</h3>
+                      {publication.content && <p style={{whiteSpace:'pre-wrap',fontSize:17,lineHeight:1.65,marginTop:8}}>{publication.content}</p>}
                       {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
                       {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
                       {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
@@ -145,6 +156,7 @@ export default async function PublicationsPage() {
                       </div>
                     </div>
                   </article>
+                  ) })()
                 ))}
               </div>
             )}
