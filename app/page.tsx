@@ -152,9 +152,9 @@ async function getHomeData() {
 }
 
 function getShortPublicationTitle(content?: string | null) {
-  const clean = (content || '').replace(/\\s+/g, ' ').trim()
+  const clean = (content || '').replace(/\s+/g, ' ').trim()
   if (!clean) return 'Publication du Niger'
-  const firstSentence = clean.split(/[.!?…](?:\\s|$)/)[0]?.trim() || clean
+  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
   const words = firstSentence.split(' ')
   const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
   return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
