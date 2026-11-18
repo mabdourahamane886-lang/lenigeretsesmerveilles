@@ -10,6 +10,15 @@ export const revalidate = 0
 
 const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
+function getShortPublicationTitle(content?: string | null) {
+  const clean = (content || '').replace(/\s+/g, ' ').trim()
+  if (!clean) return 'Publication du Niger'
+  const firstSentence = clean.split(/[.!?…](?:\s|$)/)[0]?.trim() || clean
+  const words = firstSentence.split(' ')
+  const shortTitle = words.length > 7 ? words.slice(0, 7).join(' ') : firstSentence
+  return shortTitle.length > 58 ? `${shortTitle.slice(0, 55).trimEnd()}…` : shortTitle
+}
+
 async function getPublicPublication(id: string) {
   const supabase = createAdminClient()
   if (!supabase) return null
@@ -42,7 +51,7 @@ export async function generateMetadata({
     return { title: 'Publication introuvable' }
   }
 
-  const title = publication.content?.trim().slice(0, 70) || 'Publication du Niger'
+  const title = getShortPublicationTitle(publication.content)
   const description = publication.content?.trim().slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   const previewImage = publication.media_url && publication.media_type === 'photo'
@@ -88,7 +97,7 @@ export default async function PublicationDetailPage({
 
   if (!publication) notFound()
 
-  const title = publication.content?.trim().slice(0, 70) || 'Publication du Niger'
+  const title = getShortPublicationTitle(publication.content)
 
   return (
     <>
@@ -107,6 +116,8 @@ export default async function PublicationDetailPage({
                 <div className="muted">{formatDate(publication.published_at)}</div>
               </div>
             </div>
+
+            <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.25, margin: '0 0 18px' }}>{title}</h1>
 
             {publication.content && (
               <div className="prose">
