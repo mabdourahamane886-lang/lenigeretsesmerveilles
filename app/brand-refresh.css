@@ -41,7 +41,7 @@ a{transition:color .2s ease,background .2s ease,border-color .2s ease,transform 
 .siteHeaderMobileLeft{display:none}
 
 /* Accueil : hiérarchie éditoriale, respiration et contrastes */
-.proHero{position:relative;isolation:isolate;min-height:640px;display:flex;align-items:center;overflow:hidden;background:#062d22}
+.proHero{position:relative;isolation:isolate;min-height:760px;display:flex;align-items:center;overflow:hidden;background:#062d22}
 .proHeroBackdrop{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center 46%;transform:scale(1.025)}
 .proHeroShade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(3,29,22,.94) 0%,rgba(3,35,26,.78) 48%,rgba(3,35,26,.22) 100%),linear-gradient(0deg,rgba(3,29,22,.48),transparent 50%)}
 .proHeroGrid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.72fr);gap:clamp(40px,8vw,110px);align-items:center;padding-block:82px}
