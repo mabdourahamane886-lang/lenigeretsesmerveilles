@@ -12,7 +12,16 @@ export const revalidate = 0
 
 const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function isValidPublicationId(id: string) {
+  return UUID_PATTERN.test(id)
+}
+
 async function getPublicPublication(id: string) {
+  // Never send malformed route parameters to PostgreSQL UUID columns.
+  if (!isValidPublicationId(id)) return null
+
   const supabase = createAdminClient() ?? await createServerClient()
   if (!supabase) return null
 
