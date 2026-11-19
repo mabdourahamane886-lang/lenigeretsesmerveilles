@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import sharp from 'sharp'
 import { createAdminClient } from '../../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../../lib/supabase/server'
+import { getPublicationTitle } from '../../../../lib/publications/format'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -146,6 +148,60 @@ function fallbackImage(request: Request) {
   })
 }
 
+function escapeXml(value: string) {
+  return value.replace(/[<>&'"]/g, (character) => ({
+    '<': '&lt;',
+    '>': '&gt;',
+    '&': '&amp;',
+    "'": '&apos;',
+    '"': '&quot;',
+  })[character]!)
+}
+
+function createOverlay(title: string) {
+  const cleanTitle = title.length > 72 ? `${title.slice(0, 69).trimEnd()}…` : title
+  const words = cleanTitle.split(/\s+/)
+  const lines: string[] = []
+  let line = ''
+
+  for (const word of words) {
+    const nextLine = line ? `${line} ${word}` : word
+    if (nextLine.length > 34 && line) {
+      lines.push(line)
+      line = word
+    } else {
+      line = nextLine
+    }
+  }
+  if (line) lines.push(line)
+
+  const titleLines = lines.slice(0, 2)
+  if (lines.length > 2) titleLines[1] = `${titleLines[1].slice(0, 30).trimEnd()}…`
+  const titleSvg = titleLines
+    .map((text, index) => `<text x="72" y="${480 + index * 64}" class="title">${escapeXml(text)}</text>`)
+    .join('')
+
+  return Buffer.from(`
+    <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#062b20" stop-opacity=".12"/>
+          <stop offset=".48" stop-color="#062b20" stop-opacity=".18"/>
+          <stop offset="1" stop-color="#062b20" stop-opacity=".88"/>
+        </linearGradient>
+        <style>
+          .brand { font: 700 22px Arial, sans-serif; letter-spacing: 2px; fill: #fff; }
+          .title { font: 700 52px Arial, sans-serif; fill: #fff; }
+        </style>
+      </defs>
+      <rect width="1200" height="630" fill="url(#shade)"/>
+      <rect x="72" y="72" width="7" height="46" rx="3" fill="#e58a31"/>
+      <text x="98" y="102" class="brand">LE NIGER ET SES MERVEILLES</text>
+      ${titleSvg}
+    </svg>
+  `)
+}
+
 /**
  * Public same-origin Open Graph image endpoint.
  * The original storage URL is never exposed to social crawlers.
@@ -169,7 +225,7 @@ export async function GET(
 
     const { data: publication, error } = await supabase
       .from('niger_publications')
-      .select('media_url,media_type')
+      .select('content,media_url,media_type')
       .eq('id', id)
       .eq('published', true)
       .eq('visibility', 'public')
@@ -185,13 +241,18 @@ export async function GET(
     }
 
     const allowedHosts = getAllowedHosts()
-    const { bytes, contentType } = await fetchImageSafely(publication.media_url, allowedHosts)
+    const { bytes } = await fetchImageSafely(publication.media_url, allowedHosts)
+    const image = await sharp(bytes, { limitInputPixels: 100_000_000 })
+      .resize(1200, 630, { fit: 'cover', position: 'attention' })
+      .composite([{ input: createOverlay(getPublicationTitle(publication.content)) }])
+      .jpeg({ quality: 86, progressive: true })
+      .toBuffer()
 
-    return new Response(bytes, {
+    return new Response(new Uint8Array(image), {
       status: 200,
       headers: {
-        'Content-Type': contentType,
-        'Content-Length': String(bytes.byteLength),
+        'Content-Type': 'image/jpeg',
+        'Content-Length': String(image.byteLength),
         'Content-Disposition': 'inline',
         'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
         'X-Content-Type-Options': 'nosniff',
