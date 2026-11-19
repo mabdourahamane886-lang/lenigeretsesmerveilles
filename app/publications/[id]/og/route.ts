@@ -6,6 +6,8 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -24,6 +26,12 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+
+    // Reject malformed route parameters before querying the PostgreSQL UUID column.
+    if (!UUID_PATTERN.test(id)) {
+      return NextResponse.json({ error: 'Image de publication introuvable' }, { status: 404 })
+    }
+
     const supabase = createAdminClient() ?? await createServerClient()
 
     if (!supabase) {
