@@ -56,10 +56,10 @@ export async function generateMetadata({
   const title = getPublicationTitle(publication.content)
   const description = normalizePublicationContent(publication.content).slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
-  // Always serve publication previews through our own public URL. This avoids
-  // social crawlers failing on storage URLs, redirects, or storage permissions.
+  // Use the exact photo URL stored with the publication.
+  // This keeps previews automatically synchronized with current and future uploads.
   const previewImage = publication.media_url && publication.media_type === 'photo'
-    ? `${baseUrl}/publications/${publication.id}/og`
+    ? publication.media_url
     : `${baseUrl}/opengraph-image`
 
   return {
