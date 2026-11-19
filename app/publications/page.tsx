@@ -5,22 +5,26 @@ import { getPublicationBody, getPublicationTitle } from '../../lib/publications/
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
+const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
+
 export const metadata: Metadata = {
   title: 'Publications',
   description: 'Découvrez les publications, photos et récits de Le Niger et ses Merveilles : paysages, culture et patrimoine du Niger.',
-  alternates: { canonical: 'https://lenigeretsesmerveilles-ngr.vercel.app/publications' },
+  alternates: { canonical: `${baseUrl}/publications` },
   openGraph: {
     type: 'website',
-    url: 'https://lenigeretsesmerveilles-ngr.vercel.app/publications',
+    url: `${baseUrl}/publications`,
     siteName: 'Le Niger et ses Merveilles',
     locale: 'fr_FR',
     title: 'Publications | Le Niger et ses Merveilles',
     description: 'Photos, récits et découvertes pour explorer les paysages, les cultures et le patrimoine du Niger.',
+    images: [{ url: `${baseUrl}/opengraph-image`, width: 1200, height: 630, alt: 'Le Niger et ses Merveilles' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Publications | Le Niger et ses Merveilles',
     description: 'Photos, récits et découvertes pour explorer le Niger.',
+    images: [`${baseUrl}/opengraph-image`],
   },
 }
 
@@ -59,8 +63,6 @@ const categories = [
 ]
 
 export default async function PublicationsPage() {
-  // Prefer the server-only admin client, but fall back to the public server client
-  // so published posts remain visible when the service-role secret is not configured.
   const supabase = createAdminClient() ?? await createServerClient()
   let publications: Publication[] = []
   let loadError = false
