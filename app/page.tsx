@@ -379,12 +379,12 @@ export default async function Home() {
               </div>
               <div className="proArticleRow">
                 {publications.map((publication) => (
-                  <Link href={`/publications/${publication.id}`} className="proArticleCard proPublicationCard" key={publication.id}>
+                  <article className="proArticleCard proPublicationCard" key={publication.id}>
                     {publication.media_url && publication.media_type === 'photo' && (
-                      <img src={publication.media_url} alt="" className="proArticleImage" style={{objectFit:'cover'}} />
+                      <img src={publication.media_url} alt={getPublicationTitle(publication.content)} className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
                     {publication.media_url && publication.media_type === 'video' && (
-                      <video src={publication.media_url} controls className="proArticleImage" style={{objectFit:'cover'}} />
+                      <video src={publication.media_url} controls preload="metadata" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
                     <div className="proArticleBody">
                       <span className="proMiniLabel">{publication.location || 'Niger'}</span>
@@ -392,8 +392,11 @@ export default async function Home() {
                       <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
                       <small>{publication.author_name || 'Le Niger et ses Merveilles'}</small>
                       <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
+                      <Link className="proInlineLink" href={`/publications/${encodeURIComponent(publication.id)}`} aria-label={`Ouvrir la publication : ${getPublicationTitle(publication.content)}`}>
+                        Lire la publication <ArrowRight size={15} />
+                      </Link>
                     </div>
-                  </Link>
+                  </article>
                 ))}
               </div>
             </div>
