@@ -85,6 +85,7 @@ const explorerCards: ExplorerCard[] = [
   { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.', image: nigerMedia.gastronomie.image, alt: nigerMedia.gastronomie.alt },
   { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Festivals, rencontres et événements à venir.', image: nigerMedia.parcW.image, alt: 'Paysage du Parc national du W, Niger' },
   { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.', collage: [nigerMedia.agadez.image, nigerMedia.zinder.image, nigerMedia.tenere.image, nigerMedia.parcW.image], alt: 'Collage de paysages et patrimoines du Niger' },
+  { href: '/decouvrir', icon: Compass, label: 'Plateforme', title: '12 fonctionnalités', text: 'Accédez à tous les espaces pour découvrir et documenter le Niger.', image: nigerMedia.niamey.image, alt: 'Vue du Niger' },
 ]
 
 async function getHomeData() {
