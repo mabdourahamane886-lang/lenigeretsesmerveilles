@@ -34,8 +34,14 @@ function getAllowedHosts() {
     if (normalized && /^[a-z0-9.-]+$/.test(normalized)) hosts.add(normalized)
   }
 
+  // Smooth Bundle serves publication assets from its dedicated CDN host.
   hosts.add('smoothbundle.com')
   hosts.add('www.smoothbundle.com')
+  hosts.add('cdn.smoothbundle.com')
+
+  // Wikimedia Special:FilePath redirects to its controlled upload CDN.
+  hosts.add('commons.wikimedia.org')
+  hosts.add('upload.wikimedia.org')
   return hosts
 }
 
