@@ -32,7 +32,6 @@ const secondaryItems = [
   { label: 'Carte du Niger', href: '/carte', icon: Map },
   { label: 'Merveilles IA', href: '/assistant', icon: Sparkles },
   { label: 'Dictionnaire des langues', href: '/dictionnaire', icon: Languages },
-  { label: 'Les 12 fonctionnalités', href: '/decouvrir', icon: Compass },
 ]
 
 export default async function Header() {
