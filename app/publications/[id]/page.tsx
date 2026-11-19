@@ -3,14 +3,14 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { getPublicationBody, getPublicationTitle, normalizePublicationContent } from '../../../lib/publications/format'
+import { getPublicationBody, getPublicationExcerpt, getPublicationTitle } from '../../../lib/publications/format'
 import { createAdminClient } from '../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const baseUrl = 'https://lenigeretsesmerveilles-ngr.vercel.app'
+const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://lenigeretsesmerveilles-ngr.vercel.app').replace(/\/$/, '')
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -54,25 +54,49 @@ export async function generateMetadata({
   }
 
   const title = getPublicationTitle(publication.content)
-  const description = normalizePublicationContent(publication.content).slice(0, 160) ||
+  const description = getPublicationExcerpt(publication.content, 160).slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
-  // Use the exact photo URL stored with the publication.
-  // This keeps previews automatically synchronized with current and future uploads.
-  const previewImage = publication.media_url && publication.media_type === 'photo'
-    ? publication.media_url
+  const hasPhoto = Boolean(publication.media_url && publication.media_type === 'photo')
+  const previewImage = hasPhoto
+    ? `${baseUrl}/publications/${publication.id}/og`
     : `${baseUrl}/opengraph-image`
+  const canonicalUrl = `${baseUrl}/publications/${publication.id}`
+  const publicationTags = [
+    publication.location,
+    publication.mood,
+    publication.activity,
+    ...(publication.tagged_people || []),
+  ].filter((tag): tag is string => Boolean(tag))
+  const validPublishedDate = publication.published_at && !Number.isNaN(new Date(publication.published_at).getTime())
+    ? publication.published_at
+    : undefined
 
   return {
     title,
     description,
-    alternates: { canonical: `${baseUrl}/publications/${publication.id}` },
+    alternates: { canonical: canonicalUrl },
+    authors: [{ name: publication.author_name || 'Le Niger et ses Merveilles' }],
+    category: publication.location || 'Culture du Niger',
+    keywords: [...new Set(['Niger', 'Le Niger et ses Merveilles', 'publication', ...publicationTags])],
     openGraph: {
       type: 'article',
-      url: `${baseUrl}/publications/${publication.id}`,
+      url: canonicalUrl,
       title,
       description,
       siteName: 'Le Niger et ses Merveilles',
-      images: [{ url: previewImage, alt: title }],
+      locale: 'fr_FR',
+      publishedTime: validPublishedDate,
+      authors: [publication.author_name || 'Le Niger et ses Merveilles'],
+      section: publication.location || 'Publications',
+      tags: publicationTags.length ? publicationTags : ['Niger', 'Culture'],
+      images: [{
+        url: previewImage,
+        secureUrl: previewImage,
+        width: 1200,
+        height: 630,
+        alt: title,
+        type: hasPhoto ? 'image/jpeg' : 'image/png',
+      }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -103,9 +127,41 @@ export default async function PublicationDetailPage({
 
   const title = getPublicationTitle(publication.content)
   const content = getPublicationBody(publication.content)
+  const description = getPublicationExcerpt(publication.content, 160) ||
+    'Découvrez cette publication sur Le Niger et ses Merveilles.'
+  const canonicalUrl = `${baseUrl}/publications/${publication.id}`
+  const socialImage = publication.media_url && publication.media_type === 'photo'
+    ? `${canonicalUrl}/og`
+    : `${baseUrl}/opengraph-image`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    url: canonicalUrl,
+    datePublished: publication.published_at || undefined,
+    author: {
+      '@type': 'Organization',
+      name: publication.author_name || 'Le Niger et ses Merveilles',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Le Niger et ses Merveilles',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/icon.svg`,
+      },
+    },
+    image: [socialImage],
+    inLanguage: 'fr-FR',
+  }
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <main className="page">
         <div className="container narrowEvent">
           <Breadcrumbs items={[
