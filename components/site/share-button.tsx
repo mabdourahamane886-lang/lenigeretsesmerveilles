@@ -3,28 +3,60 @@
 import { useState } from 'react'
 import { Check, Copy, Share2 } from 'lucide-react'
 
+async function copyToClipboard(value: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value)
+    return
+  }
+
+  const field = document.createElement('textarea')
+  field.value = value
+  field.setAttribute('readonly', '')
+  field.style.position = 'fixed'
+  field.style.opacity = '0'
+  document.body.appendChild(field)
+  field.select()
+  const copied = document.execCommand('copy')
+  field.remove()
+  if (!copied) throw new Error('Copie indisponible')
+}
+
 export default function ShareButton({ title }: { title: string }) {
   const [copied, setCopied] = useState(false)
 
-  async function share() {
-    const url = window.location.href
+  async function copyLink() {
     try {
-      if (navigator.share) {
-        await navigator.share({ title, url })
-        return
-      }
-      await navigator.clipboard.writeText(url)
+      await copyToClipboard(window.location.href)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1800)
     } catch {
-      // L'utilisateur peut fermer la fenêtre de partage sans erreur visible.
+      setCopied(false)
     }
   }
 
+  async function share() {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url })
+        return
+      } catch {
+        // Si le partage est annulé ou indisponible, le lien reste copiable.
+      }
+    }
+    await copyLink()
+  }
+
   return (
-    <button type="button" className="proButton proButtonDark shareButton" onClick={share}>
-      {copied ? <Check size={15} /> : <Share2 size={15} />}
-      {copied ? 'Lien copié' : 'Partager / copier le lien'}
-    </button>
+    <div className="articleShareActions" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <button type="button" className="proButton proButtonDark shareButton" onClick={share}>
+        <Share2 size={15} />
+        Partager
+      </button>
+      <button type="button" className="proButton proButtonDark shareButton" onClick={copyLink}>
+        {copied ? <Check size={15} /> : <Copy size={15} />}
+        {copied ? 'Lien copié' : 'Copier le lien direct'}
+      </button>
+    </div>
   )
 }
