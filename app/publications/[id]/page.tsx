@@ -57,8 +57,10 @@ export async function generateMetadata({
   const description = getPublicationExcerpt(publication.content, 160).slice(0, 160) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   const hasPhoto = Boolean(publication.media_url && publication.media_type === 'photo')
-  const previewImage = hasPhoto
-    ? `${baseUrl}/publications/${publication.id}/og`
+  // Use the original public CDN asset: the server-side proxy currently receives 404
+  // from the media CDN in production and falls back to the generic site image.
+  const previewImage = hasPhoto && publication.media_url
+    ? publication.media_url
     : `${baseUrl}/opengraph-image`
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
   const publicationTags = [
@@ -92,10 +94,7 @@ export async function generateMetadata({
       images: [{
         url: previewImage,
         secureUrl: previewImage,
-        width: 1200,
-        height: 630,
         alt: title,
-        type: hasPhoto ? 'image/jpeg' : 'image/png',
       }],
     },
     twitter: {
@@ -131,7 +130,7 @@ export default async function PublicationDetailPage({
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
   const socialImage = publication.media_url && publication.media_type === 'photo'
-    ? `${canonicalUrl}/og`
+    ? publication.media_url
     : `${baseUrl}/opengraph-image`
   const jsonLd = {
     '@context': 'https://schema.org',
