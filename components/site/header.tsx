@@ -26,6 +26,7 @@ const primaryItems = [
 ]
 
 const secondaryItems = [
+  { label: 'Culture', href: '/culture', icon: BookOpenText },
   { label: 'Gastronomie', href: '/gastronomie', icon: Utensils },
   { label: 'Photothèque', href: '/media', icon: Camera },
   { label: 'Publications', href: '/publications', icon: BookOpenText },
