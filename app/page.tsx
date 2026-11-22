@@ -430,28 +430,6 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="homeMapSection">
-          <div className="container homeMapGrid">
-            <div><div className="kicker">Du nord au sud, de l’est à l’ouest</div><h2>Le Niger se découvre région par région.</h2>
-              <p>Chaque territoire possède ses paysages, ses patrimoines et ses récits. Commencez votre voyage par la carte des régions et approfondissez chaque destination.</p>
-              <Link className="proButton proButtonPrimary" href="/regions">Parcourir les 8 régions <ArrowRight size={17}/></Link>
-            </div>
-            <div className="homeRegionTiles">{regions.slice(0,8).map((region,index)=><Link href={`/regions/${region.slug}`} key={region.slug}><small>{String(index+1).padStart(2,'0')}</small><strong>{region.name}</strong><ArrowRight size={15}/></Link>)}</div>
-          </div>
-        </section>
-
-        <section className="section proSection">
-          <div className="container">
-            <div className="proSectionIntro"><div><div className="kicker">En images & en récits</div><h2>Voir, lire et écouter le Niger.</h2></div><p>Des ressources pour prolonger la découverte et partager une mémoire collective mieux documentée.</p></div>
-            <div className="homeResourceGrid">
-              <Link href="/media"><Camera size={23}/><h3>Photothèque</h3><p>Images, légendes, crédits et informations sur les licences.</p><span>Ouvrir la galerie <ArrowRight size={15}/></span></Link>
-              <Link href="/articles"><BookOpenText size={23}/><h3>Articles & dossiers</h3><p>Des contenus éditoriaux pour approfondir les sujets.</p><span>Lire les articles <ArrowRight size={15}/></span></Link>
-              <Link href="/evenements"><CalendarDays size={23}/><h3>Agenda culturel</h3><p>Retrouvez les événements publiés et leurs informations pratiques.</p><span>Voir l’agenda <ArrowRight size={15}/></span></Link>
-              <Link href="/assistant"><Sparkles size={23}/><h3>Merveilles IA</h3><p>Un assistant pour orienter vos recherches et vos découvertes.</p><span>Poser une question <ArrowRight size={15}/></span></Link>
-            </div>
-          </div>
-        </section>
-
         <section className="section proSection">
           <div className="container">
             <div className="proContribution">
