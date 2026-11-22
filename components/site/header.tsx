@@ -26,6 +26,11 @@ const primaryItems = [
 ]
 
 const secondaryItems = [
+  { label: 'Accueil', href: '/', icon: Compass },
+  { label: 'Régions', href: '/regions', icon: Compass },
+  { label: 'Merveilles', href: '/merveilles', icon: Sparkles },
+  { label: 'Articles', href: '/articles', icon: BookOpenText },
+  { label: 'Agenda', href: '/evenements', icon: CalendarDays },
   { label: 'Culture', href: '/culture', icon: BookOpenText },
   { label: 'Gastronomie', href: '/gastronomie', icon: Utensils },
   { label: 'Photothèque', href: '/media', icon: Camera },

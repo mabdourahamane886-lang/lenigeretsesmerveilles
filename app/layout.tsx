@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import './brand-refresh.css'
+import './refonte-2026.css'
 import Header from '../components/site/header'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'

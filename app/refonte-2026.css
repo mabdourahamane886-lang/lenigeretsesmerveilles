@@ -1,0 +1,109 @@
+/* Refonte éditoriale 2026 — couche non destructive. */
+:root{
+  --brand-forest:#064634;--brand-deep:#082d24;--brand-green:#087252;
+  --brand-gold:#d99c43;--brand-sand:#f7f3e9;--brand-paper:#ffffff;
+  --brand-ink:#17342b;--brand-muted:#586c62;--brand-line:rgba(7,72,49,.12);
+  --brand-shadow:0 18px 50px rgba(5,49,32,.10);
+}
+html{scroll-padding-top:90px}
+body{background:#fff;overflow-x:hidden}
+.siteHeader{background:rgba(255,255,255,.97);border-bottom:1px solid #e6e9e4;box-shadow:0 7px 28px rgba(9,40,29,.055)}
+.siteHeaderInner{min-height:78px}
+.siteBrandCopy strong{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.03em}
+.siteNav a{font-size:12px;position:relative}
+.siteNav a::after{content:"";position:absolute;bottom:4px;left:0;right:100%;height:2px;background:var(--brand-gold);transition:right .25s ease}
+.siteNav a:hover::after,.siteNav a:focus-visible::after{right:0}
+.siteSearchButton,.siteMobileMenu>summary{background:#f7faf8;border-color:#e3ebe6}
+.siteSearchButton:hover,.siteMobileMenu>summary:hover{background:#eaf3ed}
+.siteMobileMenu[open]>summary{background:#eaf4ee;border-color:#9cc5b0}
+.siteMobilePanel{border:1px solid #e5ebe6;border-radius:20px;box-shadow:0 22px 65px #062b2040;max-height:min(78vh,720px);overflow:auto}
+.siteMobilePanel nav a{font-size:13px}
+.siteContributeButton{background:#0b6649;box-shadow:0 9px 24px #0b66492b}
+.homePageWide{background:#fff}
+.proHero{min-height:690px;background:#082f25}
+.proHeroBackdrop{background-position:center 48%}
+.proHeroShade{background:linear-gradient(90deg,rgba(3,29,25,.93),rgba(4,34,28,.78) 42%,rgba(3,30,25,.18) 100%),linear-gradient(0deg,rgba(3,29,22,.35),transparent)}
+.proHeroGrid{padding-block:clamp(90px,11vw,145px)}
+.proHeroCopy{max-width:850px}
+.proEyebrow{padding:10px 15px;border:1px solid #ffffff42;border-radius:999px;background:#ffffff12;color:#ffe0a5;font-size:11px;letter-spacing:.1em}
+.proHeroCopy h1{max-width:800px;font-size:clamp(49px,6.8vw,94px);line-height:1.04;letter-spacing:-.052em;margin:25px 0}
+.proHeroCopy h1 em{color:#efc980}
+.proHeroCopy>p{max-width:665px;font-size:clamp(15px,1.4vw,18px);line-height:1.75;color:#f5f7f3e8}
+.proHeroProof{margin-top:34px;gap:12px}
+.proHeroProof span{display:inline-flex;align-items:center;gap:5px;padding:11px 15px;border:1px solid #ffffff39;border-radius:999px;background:#ffffff13;color:#fff;font-weight:600}
+.proHeroProof strong{font-size:18px;color:#ffd18c}
+.proSection{padding-block:clamp(64px,7vw,100px)}
+.proSectionIntro{margin-bottom:34px}
+.proSectionIntro h2{font-size:clamp(34px,4.5vw,56px);line-height:1.09}
+.proSectionIntro>p{font-size:14px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.13em;color:#ad742b}
+.kicker::before{content:"";width:19px;height:2px;background:#d99c43}
+.proExplorerGrid{gap:20px}
+.proExplorerCard{min-height:365px;border-radius:24px;box-shadow:0 15px 35px #04352614;outline-offset:5px}
+.proExplorerCardMedia{transition:transform .65s ease}
+.proExplorerCardContent{padding:clamp(18px,2.4vw,29px);background:linear-gradient(180deg,#082b2114 15%,#06241e2b 37%,#031e1bdc 100%)}
+.proExplorerTop{top:22px;left:22px;right:22px}
+.proExplorerIcon{height:44px;width:44px;background:#fff3}
+.proExplorerCard h3{font-size:clamp(25px,2.5vw,32px);letter-spacing:-.025em}
+.proExplorerCard p{font-size:13px;line-height:1.6}
+.proExplorerCard:hover,.proExplorerCard:focus-visible{transform:translateY(-5px);box-shadow:0 25px 55px #06372b2b}
+.proDarkSection{background:radial-gradient(circle at 95% 5%,#16583e 0%,transparent 40%),#062c22}
+.proWonderFeature{gap:22px}
+.proWonderMain,.proMiniStory{border-radius:22px;border-color:#ffffff2a}
+.proWonderImage{min-height:360px}
+.proWonderBody{padding:30px}
+.proWonderBody h3{font-size:clamp(27px,3vw,39px)}
+.proRegionGrid{gap:16px}
+.proRegionCardVisual{position:relative;isolation:isolate;min-height:225px!important;display:flex;align-items:end!important;overflow:hidden;border:0!important;border-radius:20px!important;background:#0a3528!important;padding:22px!important;box-shadow:0 15px 30px #073b2b15}
+.proRegionCardVisual::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#031e1be8,transparent 72%)}
+.proRegionCardImage{position:absolute;inset:0;width:100%;height:100%;z-index:-2;object-fit:cover;transition:transform .5s ease}
+.proRegionCardVisual:hover .proRegionCardImage{transform:scale(1.06)}
+.proRegionCardVisual .proRegionName{color:#fff;font-family:Georgia,serif;font-size:clamp(19px,2vw,24px);line-height:1.1;text-shadow:0 2px 8px #0008}
+.proRegionCardVisual .proRegionNumber{position:absolute;top:16px;left:19px;color:#ffe1a0;font:20px Georgia,serif}
+.proRegionCardVisual .proRegionArrow{color:#fff}
+.proTintSection{background:#f7f7f2}
+.proEditorialLayout{gap:clamp(28px,5vw,72px)}
+.proEditorialVisual{border-radius:26px}
+.proEditorialLink{min-height:74px;border-radius:15px;transition:transform .2s ease,box-shadow .2s ease}
+.proEditorialLink:hover{transform:translateX(3px);box-shadow:0 8px 20px #073b2b12}
+.proArticleCard{border-radius:20px}
+.proArticleCard:hover{transform:translateY(-4px)}
+.siteFooter{background:#062820}
+.siteFooterTop{grid-template-columns:1.5fr 1fr 1fr;gap:clamp(24px,4vw,60px)}
+.siteFooterColumn a{line-height:1.6}
+button,a,summary{-webkit-tap-highlight-color:transparent}
+:where(a,button,summary,input,textarea,select):focus-visible{outline:3px solid #d99c43!important;outline-offset:3px}
+@media(max-width:1100px){.siteFooterTop{grid-template-columns:1.25fr 1fr 1fr}}
+@media(max-width:760px){
+ .container{width:calc(100% - 32px)}
+ .siteHeaderInner{min-height:70px}
+ .siteBrandCopy strong{font-size:14px}
+ .siteBrandCopy small{font-size:8px;letter-spacing:.06em}
+ .proHero{min-height:610px}
+ .proHeroGrid{padding-block:75px 84px}
+ .proHeroShade{background:linear-gradient(90deg,#05261fe8,#05271fac),linear-gradient(0deg,#05261f77,transparent)}
+ .proEyebrow{font-size:9px;letter-spacing:.045em}
+ .proHeroCopy h1{font-size:clamp(44px,10.7vw,64px)}
+ .proHeroCopy>p{font-size:14px}
+ .proHeroProof{gap:8px;margin-top:25px}
+ .proHeroProof span{padding:8px 11px;font-size:10px}
+ .proSectionIntro h2{font-size:clamp(31px,8vw,43px)}
+ .proExplorerGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .proExplorerCard{min-height:285px;border-radius:16px}
+ .proExplorerCardContent{padding:16px}
+ .proExplorerCard h3{font-size:23px}
+ .proExplorerCard p{font-size:11px}
+ .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .proRegionCardVisual{min-height:185px!important;padding:15px!important}
+ .proRegionCardVisual .proRegionName{font-size:20px}
+ .siteFooterTop{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .siteFooterBrand{grid-column:1/-1}
+}
+@media(max-width:390px){
+ .proExplorerGrid{grid-template-columns:1fr}
+ .proExplorerCard{min-height:290px}
+ .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .proRegionCardVisual{min-height:165px!important}
+ .proRegionCardVisual .proRegionName{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){.proExplorerCard:hover,.proArticleCard:hover,.proEditorialLink:hover{transform:none}}
