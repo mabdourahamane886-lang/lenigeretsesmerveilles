@@ -1,19 +1,13 @@
+import { adminDatabase } from '../../../lib/admin/database'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
-import { createAdminClient } from '../../../lib/supabase/admin'
-import { regions as fallbackRegions } from '../../../data/regions'
 import EventForm from './event-form'
 
 export default async function AdminEvenements() {
-  const s = createAdminClient() || await createClient()
-  const [{ data: regions }, { data: events }] = s
-    ? await Promise.all([
-        s.from('niger_regions').select('id,name').order('name'),
-        s.from('niger_events').select('id,name,slug,city,published,starts_at').order('starts_at', { ascending: true }),
-      ])
-    : [{ data: fallbackRegions.map((region) => ({ id: '', name: region.name })) }, { data: [] }]
-  const regionOptions = regions?.length ? regions : fallbackRegions.map((region) => ({ id: '', name: region.name }))
-
+  const db = await adminDatabase()
+  const [{data: regionOptions}, {data: events}] = await Promise.all([
+    db.from('niger_regions').select('id,name').order('name', {ascending:true}).throwOnError(),
+    db.from('niger_events').select('id,name,slug,city,published,starts_at').order('starts_at', {ascending:true}).throwOnError(),
+  ])
   return <main className="section"><div className="container">
     <Link className="textlink" href="/admin">← Administration</Link>
     <div className="adminHero"><div><span className="kicker">Événements</span><h1>Festivals et rendez-vous</h1></div></div>

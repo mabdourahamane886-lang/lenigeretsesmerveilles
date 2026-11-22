@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { createPublication } from '../actions'
 
-type Result = { id: string; scheduled?: boolean; targets?: string[] }
+type Result = { id: string; scheduled?: boolean; targets?: string[]; public: boolean; deliveryWarning: boolean }
 
 const platforms = [
   { key: 'facebook', label: 'Facebook', icon: '📘' },
@@ -27,15 +27,13 @@ export default function PublicationComposer() {
     setNotice('')
     setPublicationUrl('')
     try {
+      const schedule = formData.get('scheduled_at')
+      if (typeof schedule === 'string' && schedule) formData.set('scheduled_at', new Date(schedule).toISOString())
       const result = await createPublication(formData) as Result
       const url = `${window.location.origin}/publications/${result.id}`
-      if (result.scheduled) {
-        setNotice('Publication programmée sur le site. Les réseaux sélectionnés sont ajoutés à la file de diffusion.')
-      } else {
-        setPublicationUrl(url)
-        setNotice('Publication enregistrée sur le site et tâches sociales ajoutées à la file de diffusion.')
-        await navigator.clipboard.writeText(url).catch(() => undefined)
-      }
+      const message = result.scheduled ? 'Publication programmée.' : result.public ? 'Publication en ligne.' : 'Publication privée enregistrée.'
+      setNotice(result.deliveryWarning ? message+' La diffusion sociale reste à reprogrammer.' : message)
+      if (result.public && !result.scheduled) setPublicationUrl(url)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Impossible d’enregistrer cette publication.')
     } finally {
@@ -115,7 +113,7 @@ export default function PublicationComposer() {
           </div>
           <label style={{display:'block',marginTop:16}}>
             📅 Programmer la publication (facultatif)
-            <input name="scheduled_at" type="datetime-local" min={new Date(Date.now()+60000).toISOString().slice(0,16)} style={{display:'block',width:'100%',marginTop:8}} />
+            <input name="scheduled_at" type="datetime-local" style={{display:'block',width:'100%',marginTop:8}} />
           </label>
           <p className="muted" style={{fontSize:13,marginTop:10}}>Sans date, la publication est mise en ligne immédiatement sur le site. Les tâches sociales sont traitées par le service d’automatisation selon les API autorisées.</p>
         </section>
@@ -124,7 +122,7 @@ export default function PublicationComposer() {
         <button className="btn primary" disabled={loading}>{loading ? 'Enregistrement en cours…' : 'PUBLIER / PROGRAMMER'}</button>
 
         {error && <p role="alert" style={{color:'#b42318',fontWeight:700}}>{error}</p>}
-        {notice && <div className="notice proNotice" role="status"><strong>{notice}</strong>{publicationUrl && <><p>Le lien direct a été copié si le navigateur l’autorise :</p><a href={publicationUrl} target="_blank" rel="noreferrer">{publicationUrl}</a><button type="button" className="btn" onClick={() => navigator.clipboard.writeText(publicationUrl)}>Copier le lien</button></>}</div>}
+        {notice && <div className="notice proNotice" role="status"><strong>{notice}</strong>{publicationUrl && <><p>Lien de la publication</p><a href={publicationUrl} target="_blank" rel="noreferrer">{publicationUrl}</a><button type="button" className="btn" onClick={() => navigator.clipboard.writeText(publicationUrl)}>Copier le lien</button></>}</div>}
       </form>
     </div>
   )

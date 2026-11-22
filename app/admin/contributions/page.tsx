@@ -1,5 +1,5 @@
+import { adminDatabase } from '../../../lib/admin/database'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
 import { reviewContribution } from '../actions'
 
 function formatDate(value: string) {
@@ -7,11 +7,10 @@ function formatDate(value: string) {
 }
 
 export default async function AdminContributions() {
-  const supabase = await createClient()
-  const { data: contributions } = supabase
-    ? await supabase.from('niger_contributions').select('id,contributor_name,contributor_email,category,title,description,history,location,status,created_at,reviewer_notes').order('created_at',{ascending:false})
-    : { data: [] }
-
+  const db = await adminDatabase()
+  const [{data: contributions}] = await Promise.all([
+    db.from('niger_contributions').select('id,contributor_name,contributor_email,category,title,description,history,location,status,created_at,reviewer_notes').order('created_at', {ascending:false}).throwOnError(),
+  ])
   return (
     <main className="section"><div className="container">
       <Link className="textlink" href="/admin">← Administration</Link>
@@ -24,7 +23,7 @@ export default async function AdminContributions() {
           {item.contributor_email && <div className="moderationContact">Contact : {item.contributor_email}</div>}
           <form className="moderationForm" action={reviewContribution}>
             <input type="hidden" name="id" value={item.id} />
-            <textarea name="reviewer_notes" rows={2} placeholder="Note interne (facultatif)">{item.reviewer_notes || ''}</textarea>
+            <textarea name="reviewer_notes" rows={2} placeholder="Note interne (facultatif)" defaultValue={item.reviewer_notes || ''}/>
             <div className="actions moderationActions">
               <button className="btn darkbtn" name="status" value="approved">Valider</button>
               <button className="btn secondaryBtn" name="status" value="pending">Maintenir en attente</button>

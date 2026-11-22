@@ -1,13 +1,12 @@
+import { adminDatabase } from '../../../lib/admin/database'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
 import AdForm from './ad-form'
 
 export default async function AdminPublicites() {
-  const supabase = await createClient()
-  const { data: ads } = supabase
-    ? await supabase.from('niger_advertisements').select('id,name,title,placement,active,starts_at,ends_at,impressions,clicks').order('created_at', { ascending: false })
-    : { data: [] }
-
+  const db = await adminDatabase()
+  const [{data: ads}] = await Promise.all([
+    db.from('niger_advertisements').select('id,name,title,placement,active,starts_at,ends_at,impressions,clicks').order('created_at', {ascending:false}).throwOnError(),
+  ])
   return <main className="section"><div className="container">
     <Link className="textlink" href="/admin">← Administration</Link>
     <div className="adminHero"><div><span className="kicker">Publicités</span><h1>Gestion des campagnes</h1><p className="muted">Crée, active et programme les campagnes affichées sur la plateforme.</p></div></div>
