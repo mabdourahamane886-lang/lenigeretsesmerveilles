@@ -3107,3 +3107,55 @@ body:not(.home-page) .proArticleHero {
 .homeResourceGrid span{display:inline-flex;align-items:center;gap:7px;margin-top:auto;padding-top:20px;color:#0b5d3b;font-size:11px;font-weight:850}
 @media(max-width:900px){.homeEditorialGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.homeEditorialCard:last-child{grid-column:1/-1}.homeMapGrid{grid-template-columns:1fr}.homeResourceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.homeEditorialGrid{grid-template-columns:1fr;gap:13px}.homeEditorialCard,.homeEditorialCard:last-child{grid-column:auto;min-height:280px;border-radius:19px}.homeMapSection{padding:54px 0}.homeRegionTiles{gap:8px}.homeRegionTiles a{grid-template-columns:26px 1fr 14px;gap:6px;min-height:62px;padding:10px}.homeRegionTiles strong{font-size:11px}.homeResourceGrid{grid-template-columns:1fr;gap:10px}.homeResourceGrid>a{min-height:175px;padding:20px}.homeResourceGrid h3{margin-top:12px}}
+
+
+/* Optimisation mobile approfondie de la page d’accueil */
+@media(max-width:700px){
+  .homePageWide{overflow-x:clip}
+  .homePageWide .section.proSection{padding-block:clamp(38px,9vw,58px)}
+  .homePageWide .proSectionIntro{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-bottom:22px}
+  .homePageWide .proSectionIntro h2{font-size:clamp(27px,7vw,36px);line-height:1.12;max-width:19ch}
+  .homePageWide .proSectionIntro>p{font-size:13px;line-height:1.7;max-width:100%}
+  .homePageWide .proHero{min-height: min(760px,88svh);display:flex;align-items:center}
+  .homePageWide .proHeroGrid{padding-top:54px;padding-bottom:48px}
+  .homePageWide .proHeroCopy{max-width:100%}
+  .homePageWide .proHeroCopy h1{font-size:clamp(42px,12vw,60px);line-height:1.02;max-width:10ch}
+  .homePageWide .proHeroCopy>p{font-size:14px;line-height:1.75;max-width:36ch}
+  .homePageWide .proHeroProof{display:flex;flex-wrap:wrap;gap:9px 15px;font-size:10px}
+  .homePageWide .proHeroActions{display:grid!important;grid-template-columns:1fr;gap:10px!important;margin-top:22px!important}
+  .homePageWide .proHeroActions .proButton{width:100%;justify-content:center;min-height:48px}
+  .homePageWide .proExplorerGrid{grid-template-columns:1fr 1fr;gap:10px}
+  .homePageWide .proExplorerCard{min-width:0;min-height:225px;border-radius:17px}
+  .homePageWide .proExplorerCardMedia{min-height:225px}
+  .homePageWide .proExplorerCardContent{padding:14px}
+  .homePageWide .proExplorerCardContent h3{font-size:18px;line-height:1.15}
+  .homePageWide .proExplorerCardContent p{font-size:11px;line-height:1.5}
+  .homePageWide .proExplorerTop{margin-bottom:14px}
+  .homePageWide .proDarkSection{padding-block:42px}
+  .homePageWide .proWonderFeature{grid-template-columns:1fr;gap:16px}
+  .homePageWide .proWonderImage{min-height:245px}
+  .homePageWide .proWonderBody{padding:20px}
+  .homePageWide .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .homePageWide .proRegionCard{min-height:92px;padding:13px;border-radius:15px}
+  .homePageWide .proRegionName{font-size:14px;line-height:1.25}
+  .homePageWide .proEditorialLayout{grid-template-columns:1fr;gap:20px}
+  .homePageWide .proEditorialVisual{min-height:245px;border-radius:18px}
+  .homePageWide .proArticleRow{grid-template-columns:1fr;gap:12px}
+  .homePageWide .proArticleCard{min-width:0}
+  .homePageWide .proContribution{display:flex;flex-direction:column;align-items:flex-start;gap:15px;padding:23px;border-radius:19px}
+  .homePageWide .proContribution h2{font-size:25px;line-height:1.2}
+  .homePageWide .proContribution .proButton{width:100%;justify-content:center}
+}
+@media(max-width:390px){
+  .homePageWide .container{width:calc(100% - 24px)}
+  .homePageWide .proExplorerGrid{gap:8px}
+  .homePageWide .proExplorerCard,.homePageWide .proExplorerCardMedia{min-height:205px}
+  .homePageWide .proExplorerCardContent{padding:11px}
+  .homePageWide .proExplorerCardContent h3{font-size:16px}
+  .homePageWide .proExplorerCardContent p{font-size:10px}
+  .homePageWide .proRegionCard{min-height:82px;padding:10px}
+  .homePageWide .proRegionName{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .homePageWide *, .homeEditorialCard:before{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
