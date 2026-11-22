@@ -32,6 +32,12 @@ export const nigerMedia: Record<string, NigerMedia> = {
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:Niger_River_à_Niamey.jpg',
     alt: 'Fleuve Niger à Niamey, Niger',
   },
+  touareg: {
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Femme%20touareg.jpg?width=1800',
+    source: 'Wikimedia Commons', author: 'Bello Gouré', license: 'CC BY-SA 4.0',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Femme_touareg.jpg',
+    alt: 'Femme touarègue préparant le thé au Niger',
+  },
   zinder: {
     image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Zinder_%286328132791%29.jpg?width=1800',
     source: 'Wikimedia Commons', author: 'Roland', license: 'CC BY-SA 2.0',
