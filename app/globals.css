@@ -3159,3 +3159,20 @@ body:not(.home-page) .proArticleHero {
 @media(prefers-reduced-motion:reduce){
   .homePageWide *, .homeEditorialCard:before{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
+
+
+/* Cartes d'accueil : photographies réelles visibles et lisibles sur toutes les tailles. */
+.homeEditorialCard:before{background-image:var(--home-card-image,none)!important;background-size:cover;background-position:center}
+.homeEditorialCard{background-position:center;background-repeat:no-repeat}
+.homeEditorialCard:after{background:linear-gradient(180deg,rgba(4,32,22,.04) 5%,rgba(4,32,22,.82) 100%)}
+.proRegionCardVisual{position:relative;isolation:isolate;display:flex;min-height:190px;flex-direction:column;justify-content:flex-end;overflow:hidden;padding:20px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.12);border-radius:19px;background:#164a36;box-shadow:0 12px 30px rgba(8,38,27,.12);transition:transform .22s ease,box-shadow .22s ease}
+.proRegionCardImage{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .45s ease}
+.proRegionCardVisual:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(4,26,18,.08) 10%,rgba(4,26,18,.82) 100%)}
+.proRegionCardVisual:hover{transform:translateY(-4px);box-shadow:0 18px 38px rgba(8,38,27,.2)}
+.proRegionCardVisual:hover .proRegionCardImage{transform:scale(1.045)}
+.proRegionCardVisual .proRegionNumber{align-self:flex-start;margin-bottom:auto;color:#f2c47d;font-size:11px;font-weight:900;letter-spacing:.12em}
+.proRegionCardVisual .proRegionName{position:relative;z-index:1;color:#fff;font-size:clamp(18px,2vw,24px);font-weight:850;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.proRegionCardVisual .proRegionArrow{position:absolute;right:17px;bottom:18px;color:#f2c47d}
+.proRegionCardVisual:focus-visible,.homeEditorialCard:focus-visible{outline:3px solid #d49a3a;outline-offset:4px}
+@media(max-width:700px){.homePageWide .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.homePageWide .proRegionCardVisual{min-height:145px;padding:14px;border-radius:15px}.homePageWide .proRegionCardVisual .proRegionName{font-size:16px}.homePageWide .homeEditorialCard{min-height:265px}}
+@media(max-width:380px){.homePageWide .proRegionCardVisual{min-height:128px;padding:11px}.homePageWide .proRegionCardVisual .proRegionName{font-size:14px}}
