@@ -3,7 +3,7 @@ import { isAdminAuthenticated } from "../../../../../lib/admin-auth"
 import { createAdminClient } from "../../../../../lib/supabase/admin"
 import { encryptTikTokTokens, tiktokClientKey, tiktokClientSecret, tiktokRedirectUri } from "../../../../../lib/tiktok"
 
-export const runtime = "edge"
+export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
   const redirectBack = new URL("/admin/publications", request.url)
