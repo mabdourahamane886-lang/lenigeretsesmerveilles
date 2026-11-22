@@ -184,6 +184,10 @@ export default async function Home() {
                 <span><strong>∞</strong> histoires à raconter</span>
                 <span>une mémoire à préserver</span>
               </div>
+              <div className="proHeroActions" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 30 }}>
+                <Link className="proButton proButtonPrimary" href="/regions">Explorer le Niger <ArrowRight size={17} /></Link>
+                <Link className="proButton proButtonGhost" href="/merveilles">Voir les merveilles <Compass size={17} /></Link>
+              </div>
             </div>
 
           </div>
