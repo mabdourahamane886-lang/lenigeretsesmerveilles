@@ -109,7 +109,6 @@ export default async function CulturePage() {
                   <figure className={styles.figure}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- Documentary images use credited external originals. */}
                     <img src={community.image} alt="" width={480} height={300} loading="lazy" decoding="async" />
-                    <figcaption>{community.credit}</figcaption>
                   </figure>
                   <div className={styles.cardBody}>
                     <h3>{community.name}</h3>
@@ -148,6 +147,14 @@ export default async function CulturePage() {
             </div>
             <Link href="/contribution">Proposer une contribution <ArrowRight size={17} aria-hidden="true" /></Link>
           </section>
+          <details style={{ marginTop: '1.5rem' }}>
+            <summary>Crédits photographiques</summary>
+            <ul>
+              {communities.map((community) => (
+                <li key={community.name}><strong>{community.name}</strong> — {community.credit}</li>
+              ))}
+            </ul>
+          </details>
         </div>
       </main>
     </>
