@@ -3176,3 +3176,61 @@ body:not(.home-page) .proArticleHero {
 .proRegionCardVisual:focus-visible,.homeEditorialCard:focus-visible{outline:3px solid #d49a3a;outline-offset:4px}
 @media(max-width:700px){.homePageWide .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.homePageWide .proRegionCardVisual{min-height:145px;padding:14px;border-radius:15px}.homePageWide .proRegionCardVisual .proRegionName{font-size:16px}.homePageWide .homeEditorialCard{min-height:265px}}
 @media(max-width:380px){.homePageWide .proRegionCardVisual{min-height:128px;padding:11px}.homePageWide .proRegionCardVisual .proRegionName{font-size:14px}}
+
+
+/* Explorer par univers : cartes homogènes, lisibles et adaptées au tactile. */
+.homePageWide .proExplorerGrid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;
+  gap:16px;
+}
+.homePageWide .proExplorerCard{
+  min-width:0;
+  min-height:320px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  background:#073b2b;
+  box-shadow:0 12px 30px rgba(5,35,25,.12);
+}
+.homePageWide .proExplorerCardMedia{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background-size:cover;
+  background-position:center;
+  transition:transform .4s ease;
+}
+.homePageWide .proExplorerCardMedia:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(4,30,22,.08) 10%,rgba(4,30,22,.88) 100%);
+}
+.homePageWide .proExplorerCardContent{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  min-height:0;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  background:transparent;
+}
+.homePageWide .proExplorerCardContent .proExplorerTop{margin-bottom:auto}
+.homePageWide .proExplorerCardContent .proMiniLabel{margin-top:24px;color:#f4c47a}
+.homePageWide .proExplorerCardContent h3{font-size:clamp(20px,2vw,27px);line-height:1.12}
+.homePageWide .proExplorerCardContent p{max-width:34ch;color:rgba(255,255,255,.9);font-size:13px}
+.homePageWide .proExplorerCard:focus-visible{outline:3px solid #d49a3a;outline-offset:4px}
+@media(max-width:900px){
+  .homePageWide .proExplorerGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .homePageWide .proExplorerCard{min-height:260px}
+}
+@media(max-width:480px){
+  .homePageWide .proExplorerGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .homePageWide .proExplorerCard{min-height:225px;border-radius:15px}
+  .homePageWide .proExplorerCardContent{padding:13px}
+  .homePageWide .proExplorerCardContent .proMiniLabel{margin-top:15px;font-size:10px}
+  .homePageWide .proExplorerCardContent h3{font-size:17px}
+  .homePageWide .proExplorerCardContent p{font-size:11px;line-height:1.4}
+}
