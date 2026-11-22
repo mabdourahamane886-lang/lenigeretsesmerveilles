@@ -79,12 +79,12 @@ const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
 }))
 
 const explorerCards: ExplorerCard[] = [
-  { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Parcourez le Niger territoire par territoire.', image: nigerMedia.agadez.image, alt: 'Paysage d’Agadez, Niger' },
-  { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Paysages, villes historiques et lieux remarquables.', image: nigerMedia.tenere.image, alt: 'Paysage du désert du Ténéré, Niger' },
-  { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Langues, savoir-faire, histoire et pratiques.', image: nigerMedia.touareg.image, alt: 'Patrimoine culturel de Zinder, Niger' },
-  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Découvrez les spécialités et récits culinaires.', image: nigerMedia.gastronomie.image, alt: nigerMedia.gastronomie.alt },
-  { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Festivals, rencontres et événements à venir.', image: nigerMedia.parcW.image, alt: 'Paysage du Parc national du W, Niger' },
-  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Images documentées, crédits et licences.', collage: [nigerMedia.agadez.image, nigerMedia.zinder.image, nigerMedia.tenere.image, nigerMedia.parcW.image], alt: 'Collage de paysages et patrimoines du Niger' },
+  { href: '/regions', icon: Compass, label: 'Territoires', title: 'Les 8 régions', text: 'Découvrez les huit régions, leurs villes, leurs paysages et leurs particularités.', image: nigerMedia.agadez.image, alt: 'Paysage d’Agadez, Niger' },
+  { href: '/merveilles', icon: Sparkles, label: 'Patrimoine', title: 'Les merveilles', text: 'Sites naturels, monuments, paysages et lieux de mémoire à découvrir.', image: nigerMedia.tenere.image, alt: 'Paysage du désert du Ténéré, Niger' },
+  { href: '/culture', icon: BookOpenText, label: 'Identité', title: 'Culture & traditions', text: 'Rencontrez les peuples du Niger à travers leurs langues, leurs savoir-faire, leurs arts et leurs traditions.', image: nigerMedia.touareg.image, alt: 'Femme touarègue, photographie illustrant les cultures du Niger' },
+  { href: '/gastronomie', icon: Utensils, label: 'Saveurs', title: 'Gastronomie', text: 'Goûtez aux spécialités régionales et découvrez les produits, recettes et traditions culinaires.', image: nigerMedia.gastronomie.image, alt: nigerMedia.gastronomie.alt },
+  { href: '/evenements', icon: CalendarDays, label: 'Agenda', title: 'Les rendez-vous', text: 'Retrouvez les festivals, fêtes, rencontres culturelles et autres rendez-vous annoncés.', image: nigerMedia.parcW.image, alt: 'Paysage du Parc national du W, Niger' },
+  { href: '/media', icon: Camera, label: 'Images', title: 'Photothèque', text: 'Explorez les photographies du Niger avec leurs légendes, leurs sources et leurs crédits.', collage: [nigerMedia.agadez.image, nigerMedia.zinder.image, nigerMedia.tenere.image, nigerMedia.parcW.image], alt: 'Collage de paysages et patrimoines du Niger' },
 ]
 
 async function getHomeData() {
@@ -172,17 +172,17 @@ export default async function Home() {
             <div className="proHeroCopy">
               <div className="proEyebrow">
                 <span className="proEyebrowDot" />
-                Plateforme culturelle et touristique du Niger
+                Votre guide numérique pour découvrir le Niger
               </div>
-              <h1>Le Niger, <em>raconté</em> autrement.</h1>
+              <h1>Le Niger, <em>à découvrir</em> dans toute sa richesse.</h1>
               <p>
-                Explorez les régions, les paysages, les patrimoines, les cultures et les rendez-vous
-                qui donnent au Niger toute sa profondeur.
+                Des dunes du Sahara aux rives du fleuve Niger, partez à la rencontre des huit régions, des peuples,
+                des patrimoines, des traditions et des initiatives qui font vivre le pays.
               </p>
               <div className="proHeroProof">
                 <span><strong>8</strong> régions</span>
-                <span><strong>∞</strong> histoires à raconter</span>
-                <span>une mémoire à préserver</span>
+                <span><strong>∞</strong> récits à découvrir</span>
+                <span>un patrimoine à transmettre</span>
               </div>
             </div>
 
@@ -194,9 +194,9 @@ export default async function Home() {
             <div className="proSectionIntro">
               <div>
                 <div className="kicker">Explorer par univers</div>
-                <h2>Tout le Niger, en quelques clics.</h2>
+                <h2>Explorez le Niger, univers après univers.</h2>
               </div>
-              <p>Une navigation conçue pour passer rapidement d’un territoire à une histoire, d’un patrimoine à un événement.</p>
+              <p>Choisissez un univers et accédez directement aux régions, aux merveilles, aux cultures, aux saveurs, aux événements et aux images du Niger.</p>
             </div>
 
             <div className="proExplorerGrid">
@@ -241,9 +241,9 @@ export default async function Home() {
             <div className="proSectionIntro proSectionIntroLight">
               <div>
                 <div className="kicker">Sélection éditoriale</div>
-                <h2>Les merveilles qui ouvrent la découverte.</h2>
+                <h2>Des merveilles naturelles, historiques et culturelles.</h2>
               </div>
-              <Link className="proInlineLink proInlineLinkLight" href="/merveilles">Voir toute la sélection <ArrowRight size={16} /></Link>
+              <Link className="proInlineLink proInlineLinkLight" href="/merveilles">Explorer toutes les merveilles <ArrowRight size={16} /></Link>
             </div>
 
             <div className="proWonderFeature">
@@ -256,7 +256,7 @@ export default async function Home() {
                   <span className="proMiniLabel">À la une</span>
                   <h3>{featuredWonder?.name || 'Découvrez le Niger'}</h3>
                   <p>{featuredWonder?.text || 'Explorez les patrimoines et paysages qui composent la richesse du Niger.'}</p>
-                  <Link className="proInlineLink" href="/merveilles">Découvrir cette sélection <ArrowRight size={16} /></Link>
+                  <Link className="proInlineLink" href="/merveilles">En savoir plus <ArrowRight size={16} /></Link>
                 </div>
               </article>
 
@@ -281,7 +281,7 @@ export default async function Home() {
             <div className="proSectionIntro">
               <div>
                 <div className="kicker">Les territoires</div>
-                <h2>8 régions, 8 portes d’entrée vers la découverte.</h2>
+                <h2>Huit régions, huit territoires à explorer.</h2>
               </div>
               <Link className="proInlineLink" href="/regions">Explorer les régions <ArrowRight size={16} /></Link>
             </div>
@@ -306,15 +306,15 @@ export default async function Home() {
             <div className="container">
               <div className="proEditorialLayout">
                 <div className="proEditorialCopy">
-                  <div className="kicker">La vie du Niger</div>
-                  <h2>Ce qui se passe, ce qui se raconte.</h2>
+                  <div className="kicker">Actualités & récits</div>
+                  <h2>Suivez les événements et les histoires du pays.</h2>
                   <p>
-                    L’agenda et les publications donnent un rythme à la plateforme :
-                    découvrez les prochains rendez-vous et les histoires récemment publiées.
+                    Consultez les rendez-vous annoncés, retrouvez les articles de la rédaction et suivez les initiatives
+                    qui font l’actualité culturelle et touristique du Niger.
                   </p>
                   <div className="proEditorialLinks">
-                    <Link href="/evenements" className="proEditorialLink"><CalendarDays size={18} /><span><b>Agenda</b><small>{events.length ? `${events.length} rendez-vous à venir` : 'Les événements arrivent bientôt'}</small></span><ArrowRight size={17} /></Link>
-                    <Link href="/articles" className="proEditorialLink"><BookOpenText size={18} /><span><b>Articles</b><small>{articlesCount ? `${articlesCount} articles publiés` : 'La rédaction prépare les premiers contenus'}</small></span><ArrowRight size={17} /></Link>
+                    <Link href="/evenements" className="proEditorialLink"><CalendarDays size={18} /><span><b>Agenda</b><small>{events.length ? `${events.length} rendez-vous à venir` : 'Aucun événement annoncé pour le moment'}</small></span><ArrowRight size={17} /></Link>
+                    <Link href="/articles" className="proEditorialLink"><BookOpenText size={18} /><span><b>Articles</b><small>{articlesCount ? `${articlesCount} articles publiés` : 'Les premiers articles seront publiés ici'}</small></span><ArrowRight size={17} /></Link>
                   </div>
                 </div>
 
@@ -355,11 +355,11 @@ export default async function Home() {
                 >
                   <span className="proMiniLabel">La plateforme évolue</span>
                   <h3 style={{ margin: '10px 0 8px', fontSize: 'clamp(20px, 3vw, 28px)' }}>
-                    Les prochaines histoires du Niger se préparent.
+                    De nouveaux récits et rendez-vous seront bientôt au programme.
                   </h3>
                   <p style={{ maxWidth: '680px', margin: '0 0 18px', lineHeight: 1.7 }}>
-                    En attendant les prochains articles et événements vérifiés, explorez les régions,
-                    découvrez les traditions ou posez vos questions à Merveilles IA.
+                    En attendant les prochaines publications, parcourez les régions, découvrez les cultures et les traditions,
+                    ou interrogez Merveilles IA pour approfondir votre découverte du Niger.
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                     <Link className="proButton proButtonPrimary" href="/culture">Explorer la culture <ArrowRight size={16} /></Link>
@@ -377,7 +377,7 @@ export default async function Home() {
               <div className="proSectionIntro">
                 <div>
                   <div className="kicker">Publications</div>
-                  <h2>Les dernières nouvelles du Niger.</h2>
+                  <h2>Les publications récentes à suivre.</h2>
                 </div>
                 <Link className="proInlineLink" href="/publications">Voir toutes les publications <ArrowRight size={16} /></Link>
               </div>
@@ -410,21 +410,21 @@ export default async function Home() {
         <section className="section proSection homeDiscoverSection">
           <div className="container">
             <div className="proSectionIntro">
-              <div><div className="kicker">Mémoire & identité</div><h2>Un patrimoine vivant, des récits à transmettre.</h2></div>
-              <p>Explorez les expressions culturelles du Niger avec curiosité, respect et attention aux sources.</p>
+              <div><div className="kicker">Mémoire & identité</div><h2>Des cultures vivantes, une mémoire à partager.</h2></div>
+              <p>Découvrez la diversité des communautés du Niger, leurs langues, leurs expressions artistiques et leurs savoir-faire, dans le respect des sources et des traditions.</p>
             </div>
             <div className="homeEditorialGrid">
               <Link href="/culture" className="homeEditorialCard homeCultureCard" style={{ '--home-card-image': `url("${nigerMedia.zinder.image}")` } as React.CSSProperties}>
-                <span className="homeEditorialTag">Identités & savoir-faire</span><h3>La richesse des cultures nigériennes</h3>
-                <p>Langues, traditions, artisanat, pratiques sociales et patrimoine immatériel.</p><span className="homeEditorialCta">Explorer la culture <ArrowRight size={16}/></span>
+                <span className="homeEditorialTag">Identités & savoir-faire</span><h3>Les cultures et les savoir-faire du Niger</h3>
+                <p>Découvrez la diversité des communautés, leurs langues, leurs arts, leurs savoir-faire et les traditions transmises de génération en génération.</p><span className="homeEditorialCta">Explorer la culture <ArrowRight size={16}/></span>
               </Link>
               <Link href="/gastronomie" className="homeEditorialCard homeFoodCard" style={{ '--home-card-image': `url("${nigerMedia.gastronomie.image}")` } as React.CSSProperties}>
-                <span className="homeEditorialTag">Saveurs & transmission</span><h3>La gastronomie du Niger</h3>
-                <p>Des spécialités, des produits locaux et des histoires autour de la table.</p><span className="homeEditorialCta">Découvrir les saveurs <ArrowRight size={16}/></span>
+                <span className="homeEditorialTag">Saveurs & transmission</span><h3>Les saveurs du Niger</h3>
+                <p>Des céréales aux sauces, des recettes familiales aux spécialités régionales : découvrez les goûts et les habitudes culinaires du pays.</p><span className="homeEditorialCta">Découvrir les saveurs <ArrowRight size={16}/></span>
               </Link>
               <Link href="/merveilles" className="homeEditorialCard homeHeritageCard" style={{ '--home-card-image': `url("${nigerMedia.agadez.image}")` } as React.CSSProperties}>
-                <span className="homeEditorialTag">Histoire & territoires</span><h3>Des lieux qui racontent le pays</h3>
-                <p>Parcourez les sites remarquables et leurs récits documentés.</p><span className="homeEditorialCta">Voir les merveilles <ArrowRight size={16}/></span>
+                <span className="homeEditorialTag">Histoire & territoires</span><h3>Les lieux emblématiques du Niger</h3>
+                <p>Explorez les paysages, les sites historiques et les espaces naturels, en découvrant leur histoire et les informations disponibles.</p><span className="homeEditorialCta">Voir les merveilles <ArrowRight size={16}/></span>
               </Link>
             </div>
           </div>
@@ -436,8 +436,8 @@ export default async function Home() {
               <div className="proContributionMark"><Send size={21} /></div>
               <div>
                 <span className="proMiniLabel">Participer</span>
-                <h2>Vous connaissez une histoire qui mérite d’être racontée ?</h2>
-                <p>Proposez une merveille, un événement, une histoire culturelle ou une ressource. Chaque contribution est vérifiée avant sa publication.</p>
+                <h2>Vous connaissez un lieu, une tradition ou une histoire à faire découvrir ?</h2>
+                <p>Partagez une information, une photographie, un site remarquable, un événement ou un témoignage culturel. Les propositions sont examinées par l’équipe avant leur éventuelle publication.</p>
               </div>
               <Link className="proButton proButtonDark" href="/contribution">Contribuer <ArrowRight size={16} /></Link>
             </div>
