@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpenText, Drum, HandHeart, Languages, HeartHandshake } from 'lucide-react'
+import { ArrowDown, ArrowRight } from 'lucide-react'
 import Header from '../../components/site/header'
 import { createClient } from '../../lib/supabase/server'
+import styles from './culture.module.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,13 +17,6 @@ export const metadata = {
     type: 'website' as const,
   },
 }
-
-const sections = [
-  { icon: Languages, title: 'Langues & peuples', text: 'Une diversité linguistique et humaine à documenter avec précision.' },
-  { icon: HandHeart, title: 'Traditions & savoir-faire', text: 'Des pratiques transmises, adaptées et préservées au fil des générations.' },
-  { icon: Drum, title: 'Musique & célébrations', text: 'Rythmes, cérémonies, festivals et formes d’expression culturelle.' },
-  { icon: BookOpenText, title: 'Histoire & mémoire', text: 'Des récits qui permettent de mieux comprendre les territoires.' },
-]
 
 const communities = [
   {
@@ -86,67 +80,76 @@ const communities = [
 export default async function CulturePage() {
   const supabase = await createClient()
   const { data: cultures } = supabase
-    ? await supabase.from('niger_cultures').select('id,title,slug,language,traditions,history,cover_url').eq('published', true).order('title')
+    ? await supabase.from('niger_cultures').select('id,title,slug,language').eq('published', true).order('title')
     : { data: [] }
 
   return (
     <>
       <Header />
-      <main className="page">
+      <main className={styles.page}>
         <div className="container">
-          <section className="cultureHero">
-            <div><span className="kicker">Identité & patrimoine</span><h1>La culture du Niger est un territoire à part entière.</h1><p>Explorez les langues, les peuples, les traditions, l’artisanat, la mémoire et les pratiques qui donnent au Niger sa richesse culturelle.</p><Link className="proButton proButtonPrimary" href="/contribution">Participer à la mémoire culturelle <ArrowRight size={15}/></Link></div>
-            <div className="cultureHeroMark"><span><span className="proNigerFlag" aria-label="Niger" role="img"><i /><i /><i /></span></span><small>Culture · Mémoire · Transmission</small></div>
+          <section className={styles.hero} aria-labelledby="culture-title">
+            <p className={styles.eyebrow}>Le Niger et ses merveilles</p>
+            <h1 id="culture-title">Cultures du Niger</h1>
+            <p>Des communautés, des langues et des récits pour découvrir la diversité culturelle du Niger.</p>
+            <nav className={styles.heroLinks} aria-label="Sur cette page">
+              <a href="#ethnies">Voir les communautés <ArrowDown size={17} aria-hidden="true" /></a>
+              <a href="#fiches">Consulter les fiches <ArrowDown size={17} aria-hidden="true" /></a>
+            </nav>
           </section>
 
-          <section className="catalogSection">
-            <div className="contentHeader"><div><span className="kicker">Explorer par thème</span><h2>Quatre portes d’entrée.</h2></div></div>
-            <div className="themeGrid">{sections.map(({ icon: Icon, title, text }) => <article className="themeCard" key={title}><span className="themeIcon"><Icon size={19}/></span><h3>{title}</h3><p>{text}</p></article>)}</div>
-          </section>
-
-          <section id="ethnies" className="catalogSection">
-            <div className="contentHeader">
-              <div><span className="kicker">Diversité humaine · Niger 🇳🇪</span><h2>Les peuples et les communautés du Niger</h2><p>Découvrez huit communautés et des repères culturels, dans le respect de leurs histoires et de leur diversité.</p></div>
-            </div>
-            <div className="notice proNotice" style={{marginBottom:24}}>
-              <HeartHandshake size={22}/>
-              <div><strong>Une galerie documentaire, pas des catégories figées.</strong><p>Les communautés ne sont pas toutes uniformes et plusieurs vivent de part et d’autre des frontières. Une tenue ou une photographie ne suffit pas à identifier l’origine d’une personne. Les crédits et licences des images doivent être respectés.</p></div>
-            </div>
-            <div className="catalogGrid">
+          <section id="ethnies" className={styles.section} aria-labelledby="communities-title">
+            <header className={styles.sectionHeader}>
+              <h2 id="communities-title">Peuples et communautés</h2>
+              <p>Huit portraits documentaires. Les langues et les traditions varient au sein des communautés, et certaines vivent de part et d’autre des frontières du Niger.</p>
+            </header>
+            <div className={styles.gallery}>
               {communities.map((community) => (
-                <article className="catalogCard" key={community.name}>
-                  <div className="catalogImage" role="img" aria-label={'Photographie illustrative : ' + community.name} style={community.image ? { backgroundImage: 'url("' + community.image + '")' } : undefined}>
-                    <span className="catalogPill">{community.aliases}</span>
-                  </div>
-                  <div className="catalogBody">
+                <article className={styles.card} key={community.name}>
+                  <figure className={styles.figure}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- Documentary images use credited external originals. */}
+                    <img src={community.image} alt="" width={480} height={300} loading="lazy" decoding="async" />
+                    <figcaption>{community.credit}</figcaption>
+                  </figure>
+                  <div className={styles.cardBody}>
                     <h3>{community.name}</h3>
+                    <p className={styles.alias}>{community.aliases}</p>
                     <p>{community.description}</p>
-                    <small style={{display:'block',margin:'10px 0',color:'#58665f'}}>Crédit : {community.credit}</small>
                   </div>
                 </article>
               ))}
             </div>
-            <p style={{marginTop:16,color:'#58665f',fontSize:'.9rem'}}>Les images sont des références documentaires. Avant toute réutilisation éditoriale, vérifiez la source, la légende et la licence d’origine.</p>
           </section>
 
-          <section className="catalogSection">
-            <div className="contentHeader"><div><span className="kicker">Contenus publiés</span><h2>Découvrir les cultures.</h2><p>Des fiches culturelles publiées et vérifiées par l’administration.</p></div></div>
+          <section id="fiches" className={styles.section} aria-labelledby="fiches-title">
+            <header className={styles.sectionHeader}>
+              <h2 id="fiches-title">Fiches culturelles</h2>
+            </header>
             {!cultures?.length ? (
-              <div className="catalogEmpty large"><BookOpenText size={24}/><div><strong>La mémoire culturelle se construit.</strong><span>Les premières fiches vérifiées apparaîtront ici.</span></div></div>
+              <p className={styles.empty}>Aucune fiche culturelle disponible pour le moment.</p>
             ) : (
-              <div className="catalogGrid">{cultures.map(culture => <article className="catalogCard" key={culture.id}><div className="catalogImage" style={culture.cover_url ? {backgroundImage:'url(' + culture.cover_url + ')'} : undefined}><span className="catalogPill">{culture.language || 'Culture'}</span></div><div className="catalogBody"><h3>{culture.title}</h3><p>{culture.history || culture.traditions || 'Traditions et patrimoine culturel du Niger.'}</p><span className="cardLink">Lire la fiche <ArrowRight size={14}/></span></div></article>)}</div>
+              <ul className={styles.entries}>
+                {cultures.map((culture) => (
+                  <li key={culture.id}>
+                    <Link href={`/culture/${encodeURIComponent(culture.slug)}`}>
+                      <span><strong>{culture.title}</strong>{culture.language && <small>{culture.language}</small>}</span>
+                      <ArrowRight size={19} aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </section>
 
-          <section className="catalogSection">
-            <div className="contentHeader"><div><span className="kicker">Traditions & patrimoine</span><h2>Un patrimoine vivant à transmettre.</h2><p>Vêtements traditionnels, danses, musiques, artisanat, cérémonies et récits contribuent à la richesse des cultures nigériennes.</p></div></div>
-            <div className="themeGrid">{sections.slice(1).map(({ icon: Icon, title, text }) => <article className="themeCard" key={title}><span className="themeIcon"><Icon size={19}/></span><h3>{title}</h3><p>{text}</p></article>)}</div>
+          <section className={styles.contribution} aria-labelledby="culture-contribution-title">
+            <div>
+              <h2 id="culture-contribution-title">Partager un témoignage</h2>
+              <p>Proposez un récit, une tradition ou une source documentaire.</p>
+            </div>
+            <Link href="/contribution">Proposer une contribution <ArrowRight size={17} aria-hidden="true" /></Link>
           </section>
-
-          <section className="notice proNotice"><strong>Une plateforme nourrie par la communauté.</strong><p>Vous pouvez proposer une tradition, un récit, une langue, un artisanat ou une source documentaire. Chaque contenu est vérifié avant publication.</p><Link className="textlink" href="/contribution">Contribuer <ArrowRight size={15}/></Link></section>
         </div>
       </main>
-      
     </>
   )
 }
