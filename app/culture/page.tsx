@@ -43,8 +43,8 @@ const communities = [
     name: 'Touareg',
     aliases: 'Kel Tamasheq',
     description: 'Des communautés sahariennes et sahéliennes connues entre autres pour leurs langues, leur poésie, leur artisanat et leurs vêtements traditionnels.',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Mariage_Touareg_Niger3.jpg',
-    credit: 'Mariage touareg au Niger · Wikimedia Commons ; vérifier la licence du fichier.',
+    image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Usaid_niger_Abalak_082105_touareg.jpg?width=1200',
+    credit: 'USAID / Rebecca Gustafson · Wikimedia Commons · domaine public (photographie réalisée dans le cadre des fonctions officielles).',
   },
   {
     name: 'Peul / Fulbé',
