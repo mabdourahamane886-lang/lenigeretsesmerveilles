@@ -3234,3 +3234,23 @@ body:not(.home-page) .proArticleHero {
   .homePageWide .proExplorerCardContent h3{font-size:17px}
   .homePageWide .proExplorerCardContent p{font-size:11px;line-height:1.4}
 }
+
+
+/* Galerie photographique de la gastronomie nigérienne */
+.foodPhotoSection{margin:56px 0 48px}
+.foodPhotoSection .sectionHeading{max-width:720px;margin:0 0 24px}
+.foodPhotoSection .sectionHeading h2{font-size:clamp(1.8rem,4vw,2.7rem);margin:8px 0}
+.foodPhotoSection .sectionHeading p{color:var(--muted,#64748b);line-height:1.7}
+.foodPhotoGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.foodPhotoCard{overflow:hidden;border:1px solid #e6ebe8;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(15,40,30,.06)}
+.foodPhotoVisual{height:210px;background:#edf1ed;overflow:hidden}
+.foodPhotoVisual img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .35s ease}
+.foodPhotoCard:hover .foodPhotoVisual img{transform:scale(1.045)}
+.foodPhotoText{padding:16px}
+.foodPhotoText h3{margin:0 0 8px;font-size:1.12rem;color:#123b2c}
+.foodPhotoText p{margin:0 0 12px;color:#58665f;line-height:1.55;font-size:.94rem}
+.foodPhotoText small,.foodPhotoCredit{color:#718078;font-size:.78rem}
+.foodPhotoCredit{margin-top:16px}
+.foodPhotoCredit a{color:#176747;text-decoration:underline}
+@media(max-width:900px){.foodPhotoGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.foodPhotoSection{margin:38px 0}.foodPhotoGrid{grid-template-columns:1fr;gap:14px}.foodPhotoVisual{height:230px}.foodPhotoText{padding:14px}}
