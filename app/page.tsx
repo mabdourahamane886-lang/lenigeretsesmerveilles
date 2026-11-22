@@ -291,13 +291,17 @@ export default async function Home() {
             </div>
 
             <div className="proRegionGrid">
-              {regions.map((region, index) => (
-                <Link href={`/regions/${region.slug}`} className="proRegionCard" key={region.slug}>
-                  <span className="proRegionNumber">{String(index + 1).padStart(2, '0')}</span>
-                  <div className="proRegionName">{region.name}</div>
-                  <span className="proRegionArrow"><ArrowRight size={16} /></span>
-                </Link>
-              ))}
+              {regions.map((region, index) => {
+                const regionImage = fallbackRegions.find((item) => item.slug === region.slug)?.image
+                return (
+                  <Link href={`/regions/${region.slug}`} className="proRegionCard proRegionCardVisual" key={region.slug}>
+                    {regionImage && <img className="proRegionCardImage" src={regionImage} alt={`Paysage de la région de ${region.name}, Niger`} loading="lazy" />}
+                    <span className="proRegionNumber">{String(index + 1).padStart(2, '0')}</span>
+                    <div className="proRegionName">{region.name}</div>
+                    <span className="proRegionArrow"><ArrowRight size={16} /></span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </section>
@@ -414,15 +418,15 @@ export default async function Home() {
               <p>Explorez les expressions culturelles du Niger avec curiosité, respect et attention aux sources.</p>
             </div>
             <div className="homeEditorialGrid">
-              <Link href="/culture" className="homeEditorialCard homeCultureCard">
+              <Link href="/culture" className="homeEditorialCard homeCultureCard" style={{ '--home-card-image': `url("${nigerMedia.zinder.image}")` } as React.CSSProperties}>
                 <span className="homeEditorialTag">Identités & savoir-faire</span><h3>La richesse des cultures nigériennes</h3>
                 <p>Langues, traditions, artisanat, pratiques sociales et patrimoine immatériel.</p><span className="homeEditorialCta">Explorer la culture <ArrowRight size={16}/></span>
               </Link>
-              <Link href="/gastronomie" className="homeEditorialCard homeFoodCard">
+              <Link href="/gastronomie" className="homeEditorialCard homeFoodCard" style={{ '--home-card-image': `url("${nigerMedia.gastronomie.image}")` } as React.CSSProperties}>
                 <span className="homeEditorialTag">Saveurs & transmission</span><h3>La gastronomie du Niger</h3>
                 <p>Des spécialités, des produits locaux et des histoires autour de la table.</p><span className="homeEditorialCta">Découvrir les saveurs <ArrowRight size={16}/></span>
               </Link>
-              <Link href="/merveilles" className="homeEditorialCard homeHeritageCard">
+              <Link href="/merveilles" className="homeEditorialCard homeHeritageCard" style={{ '--home-card-image': `url("${nigerMedia.agadez.image}")` } as React.CSSProperties}>
                 <span className="homeEditorialTag">Histoire & territoires</span><h3>Des lieux qui racontent le pays</h3>
                 <p>Parcourez les sites remarquables et leurs récits documentés.</p><span className="homeEditorialCta">Voir les merveilles <ArrowRight size={16}/></span>
               </Link>
