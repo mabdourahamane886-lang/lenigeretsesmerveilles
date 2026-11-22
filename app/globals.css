@@ -3254,3 +3254,5 @@ body:not(.home-page) .proArticleHero {
 .foodPhotoCredit a{color:#176747;text-decoration:underline}
 @media(max-width:900px){.foodPhotoGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.foodPhotoSection{margin:38px 0}.foodPhotoGrid{grid-template-columns:1fr;gap:14px}.foodPhotoVisual{height:230px}.foodPhotoText{padding:14px}}
+
+.publicationScreenReaderTitle { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }

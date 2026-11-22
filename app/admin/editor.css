@@ -1,0 +1,32 @@
+.editorShell{--ink:#123b30;--line:#dbe5df;color:#193c32;background:#f6f8f6;min-height:85vh}
+.editorBar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem clamp(1rem,4vw,4rem);background:#103d30;color:#fff;border-bottom:3px solid #df9954}
+.editorBar a,.editorBar button{color:inherit;font:inherit;text-decoration:none}
+.editorBar>a,.editorBar>div{display:flex;align-items:center;gap:.8rem}
+.editorBar>a{font-weight:750}
+.editorBar>div{font-size:.88rem}
+.editorBar button{background:transparent;border:1px solid #74928a;padding:.45rem .8rem;border-radius:6px;cursor:pointer}
+.editorMark{display:grid;place-items:center;width:32px;height:32px;background:#f4bc80;color:#123b30;font:700 21px Georgia,serif;border-radius:5px}
+.editorGrid{display:grid;grid-template-columns:200px minmax(0,1fr);max-width:1440px;margin:auto}
+.editorGrid>aside{padding:2rem .65rem;background:#fff;border-right:1px solid var(--line)}
+.editorNav{display:flex;flex-direction:column;gap:.25rem;position:sticky;top:1rem}
+.editorNav a{display:flex;align-items:center;gap:.7rem;color:#2f5146;padding:.65rem .85rem;font-weight:600;text-decoration:none;border-radius:.45rem}
+.editorNav a[aria-current],.editorNav a:hover{background:#e7f2e9;color:#124930}
+.editorContent{min-width:0;padding:clamp(1rem,3vw,3.3rem)}
+.editorContent .container{width:100%;max-width:100%;margin:0;padding:0}
+.editorContent main{padding:0}
+.editorContent .adminHero{background:transparent;color:var(--ink);margin:0 0 1.25rem;padding:0;border:0;box-shadow:none}
+.editorContent h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12;letter-spacing:-.035em;margin:.35rem 0 .85rem}
+.editorContent .adminForm,.editorContent .adminList,.editorContent .moderationCard,.editorPanel{background:white;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:clamp(1rem,2.5vw,2rem);margin-bottom:1.25rem;box-shadow:none}
+.editorContent :is(input,select,textarea){max-width:100%}
+.editorContent .adminForm label{color:var(--ink)}
+.editorContent :is(a,button,input,select,textarea):focus-visible{outline:3px solid #ad6723;outline-offset:3px}
+.editorActions,.editorStatus{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap}
+.editorStats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem;margin:1.5rem 0}
+.editorStats a{padding:1.05rem;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;display:grid;text-decoration:none;gap:.4rem}
+.editorStats strong{font-size:1.8rem}
+.editorItem{display:grid;gap:.3rem;padding:.8rem 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.editorItem a{color:var(--ink);font-weight:650}
+.editorFeedback{border-inline-start:3px solid #257447;padding:.65rem 1rem;background:#edf6ef;margin:.7rem 0}
+.editorFeedback[role=alert]{border-color:#b34233;background:#fff1ed}
+.editorContent fieldset.editorFields{display:contents}
+@media(max-width:780px){.editorGrid{display:block}.editorGrid>aside{padding:.45rem;border:0;border-bottom:1px solid var(--line)}.editorNav{flex-direction:row;overflow-x:auto;position:static}.editorNav a{white-space:nowrap}.editorBar{flex-wrap:wrap;padding:.75rem 1rem}.editorBar>div{margin-left:auto}.editorContent .formRow{display:grid;grid-template-columns:1fr}.editorContent .grid{grid-template-columns:1fr}}

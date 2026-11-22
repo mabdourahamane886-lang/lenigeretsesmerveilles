@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
-import { getPublicationBody, getPublicationTitle } from '../../lib/publications/format'
+import { normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -73,7 +73,7 @@ export default async function PublicationsPage() {
       .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published_at')
       .eq('published', true)
       .eq('visibility', 'public')
-      .order('published_at', { ascending: false })
+      .order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
     if (error) {
       console.error('[publications] Impossible de charger les publications:', error.message)
       loadError = true
@@ -89,23 +89,8 @@ export default async function PublicationsPage() {
       <main className="page">
         <div className="container">
           <section style={{padding:'36px 0 24px'}}>
-            <span className="kicker">Le Niger et ses Merveilles · Centre de contenu</span>
-            <h1 style={{fontSize:'clamp(2rem,5vw,3.5rem)',maxWidth:850,marginTop:10}}>Toutes les découvertes du Niger, au même endroit.</h1>
-            <p className="lead" style={{maxWidth:780}}>Cette page rassemble les rubriques de la plateforme : actualités, événements à venir, gastronomie, merveilles, culture et nouvelles catégories à venir. Choisissez une rubrique pour consulter son contenu.</p>
-          </section>
-
-          <section aria-label="Catégories de publication" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,260px),1fr))',gap:18,margin:'18px 0 48px'}}>
-            {categories.map((category) => {
-              const Icon = category.icon
-              return (
-                <article key={category.title} className="card" style={{display:'flex',flexDirection:'column',padding:24,minHeight:230,borderRadius:20}}>
-                  <div style={{width:48,height:48,borderRadius:15,display:'grid',placeItems:'center',background:'#e8f3ed',color:'#145c43',marginBottom:16}}><Icon size={24}/></div>
-                  <h2 style={{fontSize:21,margin:'0 0 8px'}}>{category.title}</h2>
-                  <p className="muted" style={{lineHeight:1.7,margin:'0 0 20px',flex:1}}>{category.description}</p>
-                  <Link className="proButton proButtonDark" href={category.href} style={{alignSelf:'flex-start',display:'inline-flex',alignItems:'center',gap:8,textDecoration:'none'}}>{category.label}<ArrowRight size={16}/></Link>
-                </article>
-              )
-            })}
+            <span className="kicker">Le Niger et ses Merveilles</span>
+            <h1 style={{fontSize:'clamp(2rem,5vw,3.5rem)',maxWidth:850,marginTop:10}}>Publications</h1>
           </section>
 
           <section id="publications-recentes" className="catalogSection" style={{scrollMarginTop:90}}>
@@ -116,7 +101,7 @@ export default async function PublicationsPage() {
             {loadError ? (
               <div className="catalogEmpty large" role="status">
                 <Camera size={25}/>
-                <div><strong>Le fil des publications est temporairement indisponible.</strong><span>Les rubriques ci-dessus restent accessibles. Réessayez plus tard pour le fil des publications récentes.</span></div>
+                <div><strong>Le fil des publications est temporairement indisponible.</strong><span>Les rubriques ci-dessous restent accessibles. Réessayez plus tard pour le fil des publications récentes.</span></div>
               </div>
             ) : !publications.length ? (
               <div className="catalogEmpty large">
@@ -126,14 +111,13 @@ export default async function PublicationsPage() {
             ) : (
               <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
                 {publications.map((publication) => (
-                  (() => { const title = getPublicationTitle(publication.content); const content = getPublicationBody(publication.content); return (
+                  (() => { const content = normalizePublicationContent(publication.content); return (
                   <article className="card publicationFeedCard" key={publication.id}>
                     <div className="cardbody">
                       <div style={{display:'flex',alignItems:'center',gap:12}}>
                         <div className="publicationAvatar" aria-hidden="true">NM</div>
                         <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{formatDate(publication.published_at)}</div></div>
                       </div>
-                      <h3 style={{fontSize:21,lineHeight:1.35,margin:'18px 0 8px'}}>{title}</h3>
                       {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
                       {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
                       {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
@@ -154,6 +138,20 @@ export default async function PublicationsPage() {
                 ))}
               </div>
             )}
+          </section>
+
+          <section aria-label="Catégories de publication" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,260px),1fr))',gap:18,margin:'18px 0 48px'}}>
+            {categories.map((category) => {
+              const Icon = category.icon
+              return (
+                <article key={category.title} className="card" style={{display:'flex',flexDirection:'column',padding:24,minHeight:230,borderRadius:20}}>
+                  <div style={{width:48,height:48,borderRadius:15,display:'grid',placeItems:'center',background:'#e8f3ed',color:'#145c43',marginBottom:16}}><Icon size={24}/></div>
+                  <h2 style={{fontSize:21,margin:'0 0 8px'}}>{category.title}</h2>
+                  <p className="muted" style={{lineHeight:1.7,margin:'0 0 20px',flex:1}}>{category.description}</p>
+                  <Link className="proButton proButtonDark" href={category.href} style={{alignSelf:'flex-start',display:'inline-flex',alignItems:'center',gap:8,textDecoration:'none'}}>{category.label}<ArrowRight size={16}/></Link>
+                </article>
+              )
+            })}
           </section>
         </div>
       </main>

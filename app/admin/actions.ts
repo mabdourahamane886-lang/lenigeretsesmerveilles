@@ -6,12 +6,20 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { normalizePublicationContent } from '../../lib/publications/format'
+import { isUploadedPhoto } from '../../lib/publications/photo'
 
 const t=(f:FormData,n:string)=>String(f.get(n)||'').trim()||null
 const on=(f:FormData,n:string)=>f.get(n)==='on'
 const slugify=(v:string)=>v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')
 const num=(f:FormData,n:string)=>{const v=t(f,n);if(!v)return null;const x=Number(v);return Number.isFinite(x)?x:null}
-const dt=(f:FormData,n:string)=>{const v=t(f,n);return v?new Date(v).toISOString():null}
+function dt(f: FormData, name: string) {
+ const value=t(f,name)
+ if (!value) return null
+ // These editorial fields are entered in Niamey local time (UTC+1).
+ const date=new Date(/^\d{4}-\d\d-\d\dT\d\d:\d\d$/.test(value) ? value+'+01:00' : value)
+ if (!Number.isFinite(date.getTime())) throw new Error('Date invalide.')
+ return date.toISOString()
+}
 async function db(){if(!(await isAdminAuthenticated()))throw new Error('Connexion administrateur requise.');const s=createAdminClient();if(!s)throw new Error('La connexion sécurisée à la base de données n’est pas configurée.');return s}
 function refresh(...p:string[]){p.forEach((path)=>revalidatePath(path))}
 
@@ -112,20 +120,20 @@ export async function createArticle(f:FormData){
   coverUrl=uploaded.url
  }
  const published=on(f,'published');const {error}=await s.from('niger_articles').insert({title,slug,excerpt:t(f,'excerpt')||'',content,category:t(f,'category')||'culture',region_id:t(f,'region_id'),cover_url:coverUrl,author_name:t(f,'author_name')||'Le Niger et ses Merveilles',published,published_at:published?new Date().toISOString():null})
- if(error)throw new Error(`Impossible d’enregistrer la publication : ${error.message}`);refresh('/admin/articles','/articles','/');return{slug}
+ if(error)throw new Error(`Impossible d’enregistrer la publication : ${error.message}`);refresh('/admin','/admin/articles','/articles','/publications','/');return{slug}
 }
 
 export async function createWonder(f:FormData){const s=await db(),name=String(f.get('name')||'').trim();if(!name)throw new Error('Le nom est obligatoire.');const base=slugify(name)||`merveille-${Date.now()}`,{data:old}=await s.from('niger_wonders').select('id').eq('slug',base).maybeSingle(),slug=old?`${base}-${Date.now().toString().slice(-6)}`:base;const {error}=await s.from('niger_wonders').insert({name,slug,category_id:t(f,'category_id'),region_id:t(f,'region_id'),short_description:t(f,'short_description')||'',description:t(f,'description')||'',history:t(f,'history')||'',why_visit:t(f,'why_visit')||'',latitude:num(f,'latitude'),longitude:num(f,'longitude'),cover_url:t(f,'cover_url'),video_url:t(f,'video_url'),published:on(f,'published'),featured:on(f,'featured')});if(error)throw new Error(`Impossible d’enregistrer la merveille : ${error.message}`);refresh('/admin/merveilles','/merveilles','/')}
 
 export async function createRegion(f:FormData){const s=await db(),name=String(f.get('name')||'').trim();if(!name)throw new Error('Le nom de la région est obligatoire.');const {error}=await s.from('niger_regions').insert({name,slug:slugify(name),description:t(f,'description')||'',cover_url:t(f,'cover_url')});if(error)throw new Error(`Impossible d’enregistrer la région : ${error.message}`);refresh('/admin/regions','/regions','/')}
 
-export async function createCulture(f:FormData){const s=await db(),title=String(f.get('title')||'').trim();if(!title)throw new Error('Le titre est obligatoire.');const {error}=await s.from('niger_cultures').insert({title,slug:`${slugify(title)||'culture'}-${Date.now().toString().slice(-6)}`,region_id:t(f,'region_id'),language:t(f,'language'),traditions:t(f,'traditions'),clothing:t(f,'clothing'),gastronomy:t(f,'gastronomy'),music_dance:t(f,'music_dance'),crafts:t(f,'crafts'),festivals:t(f,'festivals'),history:t(f,'history'),cover_url:t(f,'cover_url'),published:on(f,'published')});if(error)throw new Error(`Impossible d’enregistrer la culture : ${error.message}`);refresh('/admin/cultures','/culture','/')}
+export async function createCulture(f:FormData){const s=await db(),title=String(f.get('title')||'').trim();if(!title)throw new Error('Le titre est obligatoire.');const {error}=await s.from('niger_cultures').insert({title,slug:`${slugify(title)||'culture'}-${Date.now().toString().slice(-6)}`,region_id:t(f,'region_id'),language:t(f,'language'),traditions:t(f,'traditions')||'',clothing:t(f,'clothing')||'',gastronomy:t(f,'gastronomy')||'',music_dance:t(f,'music_dance')||'',crafts:t(f,'crafts')||'',festivals:t(f,'festivals')||'',history:t(f,'history')||'',cover_url:t(f,'cover_url'),published:on(f,'published')});if(error)throw new Error(`Impossible d’enregistrer la culture : ${error.message}`);refresh('/admin/cultures','/culture','/')}
 
-export async function createGastronomy(f:FormData){const s=await db(),name=String(f.get('name')||'').trim();if(!name)throw new Error('Le nom du plat est obligatoire.');const {error}=await s.from('niger_gastronomy').insert({name,region_id:t(f,'region_id'),description:t(f,'description')||'',ingredients:t(f,'ingredients')||'',preparation:t(f,'preparation')||'',history:t(f,'history')||'',image_url:t(f,'image_url'),video_url:t(f,'video_url'),published:on(f,'published')});if(error)throw new Error(`Impossible d’enregistrer le plat : ${error.message}`);refresh('/admin/gastronomie','/gastronomie','/')}
+export async function createGastronomy(f:FormData){const s=await db(),name=String(f.get('name')||'').trim();if(!name)throw new Error('Le nom du plat est obligatoire.');const {error}=await s.from('niger_gastronomy').insert({name,slug:(slugify(name)||'plat')+'-'+crypto.randomUUID().slice(0,8),region_id:t(f,'region_id'),description:t(f,'description')||'',ingredients:t(f,'ingredients')||'',preparation:t(f,'preparation')||'',history:t(f,'history')||'',image_url:t(f,'image_url'),video_url:t(f,'video_url'),published:on(f,'published')});if(error)throw new Error(`Impossible d’enregistrer le plat : ${error.message}`);refresh('/admin/gastronomie','/gastronomie','/')}
 
 export async function createEvent(f:FormData){const s=await db(),name=String(f.get('name')||'').trim();if(!name)throw new Error('Le nom de l’événement est obligatoire.');const slug=`${slugify(name)||'evenement'}-${Date.now().toString().slice(-6)}`;const {error}=await s.from('niger_events').insert({name,slug,region_id:t(f,'region_id'),city:t(f,'city'),starts_at:dt(f,'starts_at'),ends_at:dt(f,'ends_at'),description:t(f,'description')||'',program:t(f,'program')||'',location:t(f,'location'),image_url:t(f,'image_url'),published:on(f,'published')});if(error)throw new Error(`Impossible d’enregistrer l’événement : ${error.message}`);refresh('/admin/evenements','/evenements','/');return{slug}}
 
-export async function createAdvertisement(f:FormData){const s=await db(),name=String(f.get('name')||'').trim(),title=String(f.get('title')||'').trim();if(!name||!title)throw new Error('Le nom et le titre sont obligatoires.');const {error}=await s.from('niger_advertisements').insert({name,title,body:t(f,'body')||'',media_url:t(f,'media_url'),media_type:t(f,'media_url')?'image':'text',cta_label:t(f,'cta_label'),destination_url:t(f,'destination_url'),starts_at:dt(f,'starts_at'),ends_at:dt(f,'ends_at'),placement:t(f,'placement')||'home',active:on(f,'active')});if(error)throw new Error(`Impossible d’enregistrer la campagne : ${error.message}`);refresh('/admin/publicites','/')}
+export async function createAdvertisement(f:FormData){const s=await db(),name=String(f.get('name')||'').trim(),title=String(f.get('title')||'').trim();if(!name||!title)throw new Error('Le nom et le titre sont obligatoires.');const {error}=await s.from('niger_advertisements').insert({name,title,body:t(f,'body')||'',media_url:t(f,'media_url'),media_type:'image',cta_label:t(f,'cta_label'),destination_url:t(f,'destination_url'),starts_at:dt(f,'starts_at'),ends_at:dt(f,'ends_at'),placement:t(f,'placement')||'home',active:on(f,'active')});if(error)throw new Error(`Impossible d’enregistrer la campagne : ${error.message}`);refresh('/admin/publicites','/')}
 
 export async function reviewContribution(f:FormData){const s=await db(),id=t(f,'id'),status=t(f,'status');if(!id||!['pending','approved','rejected'].includes(status||''))throw new Error('Action de modération invalide.');const {error}=await s.from('niger_contributions').update({status,reviewer_notes:t(f,'reviewer_notes')}).eq('id',id);if(error)throw new Error(`Impossible de mettre à jour la contribution : ${error.message}`);refresh('/admin/contributions','/admin')}
 
@@ -134,7 +142,7 @@ export async function createPublication(f:FormData){
  const s=await db()
  const contentText=normalizePublicationContent(String(f.get('content')||''))
  const visibility=String(f.get('visibility')||'public')
- if(!contentText && !f.get('media_file')) throw new Error('Ajoute un texte ou une photo/vidéo avant de publier.')
+ if(!contentText && !(f.get('media_file') instanceof File && (f.get('media_file') as File).size > 0)) throw new Error('Ajoute un texte ou une photo/vidéo avant de publier.')
  if(!['public','private'].includes(visibility)) throw new Error('Visibilité invalide.')
  const mediaFile=f.get('media_file')
  const musicFile=f.get('music_file')
@@ -156,7 +164,7 @@ export async function createPublication(f:FormData){
  }
  const tagged=String(f.get('tagged_people')||'').split(',').map(v=>v.trim()).filter(Boolean).slice(0,20)
  const allowedTargets=['facebook','instagram','tiktok','whatsapp'] as const
- const targets=allowedTargets.filter((platform)=>on(f,`target_${platform}`))
+ const targets=visibility==='private'?[]:allowedTargets.filter((platform)=>on(f,`target_${platform}`))
  const scheduledInput=t(f,'scheduled_at')
  const scheduledAt=scheduledInput?new Date(scheduledInput):null
  if(scheduledAt && (!Number.isFinite(scheduledAt.getTime()) || scheduledAt.getTime()<=Date.now())) throw new Error('Choisis une date et une heure futures pour la programmation.')
@@ -170,13 +178,40 @@ export async function createPublication(f:FormData){
    automation_status:isScheduled?'scheduled':'published',
  }).select('id').single()
  if(error || !publication) throw new Error('Impossible d’enregistrer la publication : '+(error?.message||'identifiant de publication absent'))
+ let deliveryWarning = false
  if(targets.length){
    const {error:queueError}=await s.from('niger_publication_deliveries').insert(targets.map((platform)=>({
      publication_id:publication.id, platform, status:'pending',
      scheduled_at:scheduledAt?scheduledAt.toISOString():new Date().toISOString(),
    })))
-   if(queueError) throw new Error('Publication enregistrée sur le site, mais la file de diffusion sociale n’a pas pu être créée : '+queueError.message)
+   if(queueError) {deliveryWarning=true; console.error('[publication/diffusion]',queueError.code)}
  }
  refresh('/admin/publications','/publications','/')
- return { id: String(publication.id), scheduled: isScheduled, targets }
+ return { id: String(publication.id), scheduled: isScheduled, public: visibility==='public', deliveryWarning, targets }
+}
+
+export async function createPublicPost(id: string, description: string, path: string | null) {
+  const s = await db()
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))
+    return {error:'Identifiant de publication invalide.'} as const
+  const content = description.trim()
+  if (!content && !path) return {error:'Ajoute une description ou une photo.'} as const
+  let mediaUrl: string | null = null
+  if (path) {
+    if (!isUploadedPhoto(path)) return {error:'Photo invalide. Sélectionne-la à nouveau.'} as const
+    const bucket = s.storage.from('niger-media')
+    const folder = path.substring(0,path.lastIndexOf('/'))
+    const files = await bucket.list(folder)
+    const names = new Set(files.data?.map(file => file.name))
+    if (files.error || !names.has(path.slice(folder.length+1)) || !names.has('partage.jpg'))
+      return {error:'La photo ou son aperçu est incomplet. Réessaie le transfert.'} as const
+    mediaUrl = bucket.getPublicUrl(path).data.publicUrl
+  }
+  const {error} = await s.from('niger_publications').upsert({
+    id, content, author_name:'Le Niger et ses Merveilles', media_type:path ? 'photo' : 'none', media_url:mediaUrl,
+    published:true, visibility:'public', published_at:new Date().toISOString(), automation_status:'published',
+  }, {onConflict:'id', ignoreDuplicates:true})
+  if (error) {console.error('[admin/publications]',error.code); return {error:'La base n’a pas confirmé la publication. Ton contenu est conservé dans le formulaire.'} as const}
+  refresh('/admin','/admin/publications','/publications','/publications/'+id,'/')
+  return {id} as const
 }

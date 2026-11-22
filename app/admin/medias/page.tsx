@@ -1,44 +1,20 @@
+import { adminDatabase } from '../../../lib/admin/database'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
 import { createMedia } from '../actions'
 import MediaPicker from './media-picker'
-
-type OptionRow = { id: string; name: string }
-type MediaRow = {
- id: string
- title: string
- url: string
- credit: string
- published: boolean
- region_id: string | null
- media_type: 'photo' | 'video'
- media_category: string | null
- created_at: string
-}
 
 export default async function AdminMedias({ searchParams }: { searchParams?: Promise<{ error?: string; success?: string }> }){
  const params = searchParams ? await searchParams : {}
  const errorMessage = params.error || ''
  const successMessage = params.success === '1' ? 'Média publié avec succès dans la galerie.' : ''
- let regions:OptionRow[]=[]
- let wonders:OptionRow[]=[]
- let media:MediaRow[]=[]
- try {
-  const supabase=await createClient()
-  if(supabase){
-   const results=await Promise.allSettled([
-    supabase.from('niger_regions').select('id,name').order('name'),
-    supabase.from('niger_wonders').select('id,name').order('name'),
-    supabase.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at',{ascending:false}),
-   ])
-   if(results[0].status==='fulfilled'&&!results[0].value.error) regions=results[0].value.data||[]
-   if(results[1].status==='fulfilled'&&!results[1].value.error) wonders=results[1].value.data||[]
-   if(results[2].status==='fulfilled'&&!results[2].value.error) media=results[2].value.data||[]
-  }
- } catch {
-  // La page reste rendable avec des listes vides si une lecture échoue.
- }
- return <main className="section"><div className="container" style={{paddingBottom:100}}>
+
+  const db = await adminDatabase()
+  const [{data: regions}, {data: wonders}, {data: media}] = await Promise.all([
+    db.from('niger_regions').select('id,name').order('name', {ascending:true}).throwOnError(),
+    db.from('niger_wonders').select('id,name').order('name', {ascending:true}).throwOnError(),
+    db.from('niger_media').select('id,title,url,credit,published,region_id,media_type,media_category,created_at').order('created_at', {ascending:false}).throwOnError(),
+  ])
+   return <main className="section"><div className="container" style={{paddingBottom:100}}>
   <Link className="textlink" href="/admin">← Administration</Link>
   {errorMessage && <div role="alert" style={{margin:'16px 0',padding:'14px 16px',borderRadius:12,background:'#fff1f0',border:'1px solid #f3b7b2',color:'#9b1c1c',fontWeight:700}}>⚠️ {errorMessage}</div>}
   {successMessage && <div role="status" style={{margin:'16px 0',padding:'14px 16px',borderRadius:12,background:'#eefbf3',border:'1px solid #b7e4c7',color:'#176b3a',fontWeight:700}}>✅ {successMessage}</div>}

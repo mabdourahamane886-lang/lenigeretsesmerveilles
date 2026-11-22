@@ -1,9 +1,11 @@
+import { cache } from 'react'
+import { publicationPreview } from '../../../lib/publications/photo'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
 import ShareButton from '../../../components/site/share-button'
-import { getPublicationBody, getPublicationExcerpt, getPublicationTitle } from '../../../lib/publications/format'
+import { normalizePublicationContent, getPublicationTitle } from '../../../lib/publications/format'
 import { createAdminClient } from '../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../lib/supabase/server'
 
@@ -18,7 +20,7 @@ function isValidPublicationId(id: string) {
   return UUID_PATTERN.test(id)
 }
 
-async function getPublicPublication(id: string) {
+const getPublicPublication = cache(async (id: string) => {
   // Never send malformed route parameters to PostgreSQL UUID columns.
   if (!isValidPublicationId(id)) return null
 
@@ -39,7 +41,7 @@ async function getPublicPublication(id: string) {
   }
 
   return data
-}
+})
 
 export async function generateMetadata({
   params,
@@ -54,14 +56,9 @@ export async function generateMetadata({
   }
 
   const title = getPublicationTitle(publication.content)
-  const description = getPublicationExcerpt(publication.content, 160).slice(0, 160) ||
+  const description = normalizePublicationContent(publication.content).replace(/\s+/g, ' ').slice(0, 180) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
-  const hasPhoto = Boolean(publication.media_url && publication.media_type === 'photo')
-  // Use the original public CDN asset: the server-side proxy currently receives 404
-  // from the media CDN in production and falls back to the generic site image.
-  const previewImage = hasPhoto && publication.media_url
-    ? publication.media_url
-    : `${baseUrl}/opengraph-image`
+  const previewImage = publicationPreview(publication.media_url, publication.media_type, baseUrl)
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
   const publicationTags = [
     publication.location,
@@ -94,6 +91,7 @@ export async function generateMetadata({
       images: [{
         url: previewImage,
         secureUrl: previewImage,
+        ...(previewImage.endsWith('/partage.jpg') ? { type: 'image/jpeg' } : {}),
         alt: title,
       }],
     },
@@ -125,13 +123,11 @@ export default async function PublicationDetailPage({
   if (!publication) notFound()
 
   const title = getPublicationTitle(publication.content)
-  const content = getPublicationBody(publication.content)
-  const description = getPublicationExcerpt(publication.content, 160) ||
+  const content = normalizePublicationContent(publication.content)
+  const description = normalizePublicationContent(publication.content).replace(/\s+/g, ' ').slice(0, 180) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
-  const socialImage = publication.media_url && publication.media_type === 'photo'
-    ? publication.media_url
-    : `${baseUrl}/opengraph-image`
+  const socialImage = publicationPreview(publication.media_url, publication.media_type, baseUrl)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -177,7 +173,7 @@ export default async function PublicationDetailPage({
               </div>
             </div>
 
-            <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', lineHeight: 1.25, margin: '0 0 18px' }}>{title}</h1>
+            <h1 className="publicationScreenReaderTitle">{title}</h1>
 
             {content && (
               <div className="prose publicationDetailBody">

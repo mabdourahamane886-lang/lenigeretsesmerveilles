@@ -9,13 +9,13 @@ function SubmitButton() {
   return <button className="btn primary" disabled={pending} type="submit">{pending ? 'Publication…' : 'Enregistrer la publication'}</button>
 }
 
-type State = { error?: string; slug?: string } | null
+type State = { error?: string; slug?: string; published?: boolean } | null
 
 type Option = { name?: string; slug?: string; id?: string }
 
 export default function ArticleForm({ categories, regions }: { categories: Option[]; regions: Option[] }) {
   const [state, action] = useActionState(async (_state: State, formData: FormData): Promise<State> => {
-    try { const result = await createArticle(formData); return { slug: result.slug } }
+    try { const result = await createArticle(formData); return { slug: result.slug, published:formData.get('published') === 'on' } }
     catch (e) { return { error: e instanceof Error ? e.message : 'Une erreur est survenue.' } }
   }, null)
 
@@ -44,7 +44,8 @@ export default function ArticleForm({ categories, regions }: { categories: Optio
     <label>Auteur<input name="author_name" defaultValue="Mohamed Bickri Jr" /></label>
     <label className="check"><input type="checkbox" name="published" /> Publier immédiatement</label>
     {state?.error && <p className="formError">{state.error}</p>}
-    {state?.slug && <div className="notice proNotice"><strong>Publication enregistrée.</strong><p>Votre lien : <a href={'/articles/' + state.slug} target="_blank" rel="noreferrer">/articles/{state.slug}</a></p><button type="button" className="btn primary" onClick={copyLink}>Copier le lien</button></div>}
+    {state?.slug && !state.published && <p role="status" className="editorFeedback">Brouillon enregistré.</p>}
+    {state?.published && state.slug && <div className="notice proNotice"><strong>Publication enregistrée.</strong><p>Votre lien : <a href={'/articles/' + state.slug} target="_blank" rel="noreferrer">/articles/{state.slug}</a></p><button type="button" className="btn primary" onClick={copyLink}>Copier le lien</button></div>}
     <SubmitButton />
   </form>
 }
