@@ -1,3 +1,4 @@
+import mobile from './home-mobile.module.css'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -162,7 +163,7 @@ export default async function Home() {
     <>
 
       <main className="homePageWide">
-        <section className="proHero">
+        <section className={`proHero ${mobile.hero}`}>
           <div className="proHeroBackdrop" style={{ backgroundImage: `url(${nigerMedia.niamey.image})` }} />
           <div className="proHeroShade" />
           <div className="container proHeroGrid">
