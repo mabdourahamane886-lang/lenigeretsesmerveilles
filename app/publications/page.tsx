@@ -2,9 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compass, Newspaper, Sparkles } from 'lucide-react'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
-import ShareButton from '../../components/site/share-button'
 import styles from './feed.module.css'
-import { getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
+import { normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -103,35 +102,28 @@ export default async function PublicationsPage() {
               <section key={group.key} aria-labelledby={`publications-day-${group.key}`} className={styles.group}>
                 <h2 id={`publications-day-${group.key}`}><CalendarDays size={18} aria-hidden="true" /> {group.label}</h2>
                 {group.entries.map(({ publication, date }) => {
-                  const href = `/publications/${publication.id}`
-                  const title = getPublicationTitle(publication.content)
                   const content = normalizePublicationContent(publication.content)
-                  const tags = [publication.location, publication.mood, publication.activity, ...(publication.tagged_people ?? [])]
-                    .filter((tag): tag is string => Boolean(tag))
                   return (
-                    <article className={styles.card} key={publication.id}>
-                      <header className={styles.byline}>
-                        <span className={styles.avatar} aria-hidden="true">NM</span>
-                        <div>
-                          <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
-                          {date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}
+                    <article className="card publicationFeedCard" key={publication.id}>
+                      <div className="cardbody">
+                        <div style={{display:'flex',alignItems:'center',gap:12}}>
+                          <div className="publicationAvatar" aria-hidden="true">NM</div>
+                          <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}</div></div>
                         </div>
-                      </header>
-                      {content && <p className={styles.text}>{content}</p>}
-                      {publication.media_url && publication.media_type === 'photo' && (
-                        <img className={styles.media} src={publication.media_url} alt={title} loading="lazy" decoding="async" />
-                      )}
-                      {publication.media_url && publication.media_type === 'video' && (
-                        <video className={styles.media} src={publication.media_url} controls preload="metadata" playsInline />
-                      )}
-                      {publication.music_url && <audio className={styles.audio} src={publication.music_url} controls preload="none" />}
-                      {tags.length > 0 && <ul className={styles.tags} aria-label="Repères de la publication">
-                        {[...new Set(tags)].map(tag => <li key={tag}>{tag}</li>)}
-                      </ul>}
-                      <footer className={styles.actions}>
-                        <Link className={styles.read} href={href}>Ouvrir la publication <ArrowRight size={16} aria-hidden="true" /></Link>
-                        <ShareButton title={title} href={href} />
-                      </footer>
+                        {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
+                        {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
+                        {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
+                        {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
+                        <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
+                          {publication.location && <span className="tag">{publication.location}</span>}
+                          {publication.mood && <span className="tag">{publication.mood}</span>}
+                          {publication.activity && <span className="tag">{publication.activity}</span>}
+                          {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
+                          <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
+                        </div>
+                      </div>
                     </article>
                   )
                 })}
