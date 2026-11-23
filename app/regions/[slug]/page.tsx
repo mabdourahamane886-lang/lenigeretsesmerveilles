@@ -53,7 +53,10 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
 
           <section className={styles.profile} aria-labelledby="region-title">
             {/* eslint-disable-next-line @next/next/no-img-element -- Uses the same local or documentary image as the card. */}
-            <img src={regionPhoto(region)} alt={`Photographie de la région de ${region.name}`} fetchPriority="high" />
+            <img src={regionPhoto(region)} alt={slug === 'tillaberi' ? 'Panneau Bienvenue à Tillabéri' : `Photographie de la région de ${region.name}`} fetchPriority="high" />
+            {slug === 'tillaberi' && <p className="imageCredit" style={{ margin: '8px 16px' }}>
+              <a href="https://commons.wikimedia.org/wiki/File:Bienvenue_%C3%A0_Tillaberi.jpg">Photo de Sakou Gado</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> · Redimensionnée
+            </p>}
             <div className={styles.intro}>
               <h1 id="region-title">{region.name}</h1>
               <p>{region.description}</p>

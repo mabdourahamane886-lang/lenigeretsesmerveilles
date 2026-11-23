@@ -16,6 +16,7 @@ export const regionCardPhotos: Partial<Record<string, string>> = {
   niamey: '/images/regions/niamey.webp',
   tahoua: '/images/regions/tahoua.webp',
   zinder: '/images/regions/zinder.webp',
+  tillaberi: '/images/regions/tillaberi.webp',
 }
 
 export function regionPhoto(region: (typeof regions)[number]) {
