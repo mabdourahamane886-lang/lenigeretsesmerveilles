@@ -1,26 +1,28 @@
 @media (max-width: 700px) {
-  .hero:global(.proHero) {
+  :global(.homePageWide) .hero:global(.proHero) {
     aspect-ratio: 4 / 5;
     min-height: 0;
     height: auto;
   }
 
-  .hero :global(.proHeroGrid) {
+  :global(.homePageWide) .hero :global(.proHeroGrid) {
     padding-block: clamp(12px, 5vw, 32px);
   }
 
-  .hero h1 {
+  :global(.homePageWide) .hero :global(.proHeroCopy) h1 {
     font-size: clamp(1.65rem, 8vw, 3rem);
     line-height: 1.08;
+    max-width: 18ch;
+    letter-spacing: -.035em;
     margin-block: .65rem;
   }
 
-  .hero p {
+  :global(.homePageWide) .hero :global(.proHeroCopy) > p {
     font-size: clamp(.9rem, 3.7vw, 1.08rem);
     line-height: 1.5;
   }
 
-  .hero :global(.proHeroProof) {
+  :global(.homePageWide) .hero :global(.proHeroProof) {
     margin-top: .75rem;
   }
 }
