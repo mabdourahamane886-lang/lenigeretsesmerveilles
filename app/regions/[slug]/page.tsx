@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { ArrowRight, CalendarDays, Camera, MapPin, Sparkles, UsersRound } from 'lucide-react'
 import Header from '../../../components/site/header'
 import { createClient } from '../../../lib/supabase/server'
-import { regions as fallbackRegions } from '../../../data/regions'
+import styles from '../../../components/regions/regions.module.css'
+import { regionPhoto, regions } from '../../../data/regions'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,16 +12,8 @@ type Params = { slug: string }
 
 export default async function RegionPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params
-  const fallback = fallbackRegions.find((item) => item.slug === slug)
-  if (!fallback) notFound()
-
-  let region = {
-    id: null as string | null,
-    name: fallback.name,
-    slug: fallback.slug,
-    description: fallback.description,
-    cover_url: fallback.image as string | null,
-  }
+  const region = regions.find((item) => item.slug === slug)
+  if (!region) notFound()
 
   let wonders: Array<{ id: string; name: string; short_description: string | null; cover_url: string | null }> = []
   let cultures: Array<{ id: string; title: string; cover_url: string | null; history: string | null }> = []
@@ -32,19 +25,11 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
   if (supabase) {
     const { data: dbRegion } = await supabase
       .from('niger_regions')
-      .select('id,name,slug,description,cover_url')
+      .select('id')
       .eq('slug', slug)
       .maybeSingle()
 
     if (dbRegion) {
-      region = {
-        id: String(dbRegion.id),
-        name: dbRegion.name || fallback.name,
-        slug: dbRegion.slug || fallback.slug,
-        description: dbRegion.description || fallback.description,
-        cover_url: dbRegion.cover_url || fallback.image,
-      }
-
       const [{ data: dbWonders }, { data: dbCultures }, { data: dbGastronomy }, { data: dbEvents }] = await Promise.all([
         supabase.from('niger_wonders').select('id,name,short_description,cover_url').eq('region_id', dbRegion.id).eq('published', true).order('name'),
         supabase.from('niger_cultures').select('id,title,cover_url,history').eq('region_id', dbRegion.id).eq('published', true).order('title'),
@@ -66,25 +51,12 @@ export default async function RegionPage({ params }: { params: Promise<Params> }
         <div className="container">
           <Link className="proBack" href="/regions">← Toutes les régions</Link>
 
-          <section className="detailHero" style={{display:'grid',gap:0,overflow:'hidden',borderRadius:28,border:'1px solid rgba(18,48,42,.12)',boxShadow:'0 18px 48px rgba(17,45,38,.10)',background:'#fff'}}>
-            <div
-              role="img"
-              aria-label={`Photographie de la région de ${region.name}`}
-              style={{
-                minHeight:280,
-                height:'clamp(250px, 42vw, 460px)',
-                backgroundColor:'#e7e8df',
-                backgroundImage:region.cover_url ? 'linear-gradient(180deg,rgba(8,24,20,.02),rgba(8,24,20,.18)),url(' + region.cover_url + ')' : 'linear-gradient(135deg,#e9efe5,#d6e0d2)',
-                backgroundSize:'cover',
-                backgroundPosition:'center',
-              }}
-            />
-            <div style={{padding:'clamp(24px, 4vw, 44px)',background:'linear-gradient(135deg,#fff 0%,#f7faf6 100%)'}}>
-              <span className="detailEyebrow" style={{display:'inline-flex',alignItems:'center',padding:'8px 12px',borderRadius:999,background:'#e7f2e9',color:'#145c43',fontSize:12,fontWeight:800,letterSpacing:'.08em',textTransform:'uppercase'}}>
-                Région du Niger · {region.name}
-              </span>
-              <h1 style={{margin:'18px 0 14px',fontSize:'clamp(2rem,5vw,3.5rem)',lineHeight:1.05,letterSpacing:'-.035em',color:'#153c30'}}>{region.name}</h1>
-              <p style={{margin:0,maxWidth:900,color:'#43584e',fontSize:'clamp(1rem,1.5vw,1.1rem)',lineHeight:1.95,whiteSpace:'pre-line'}}>{region.description || 'Explorez le patrimoine, les paysages et les cultures de cette région du Niger.'}</p>
+          <section className={styles.profile} aria-labelledby="region-title">
+            {/* eslint-disable-next-line @next/next/no-img-element -- Uses the same local or documentary image as the card. */}
+            <img src={regionPhoto(region)} alt={`Photographie de la région de ${region.name}`} fetchPriority="high" />
+            <div className={styles.intro}>
+              <h1 id="region-title">{region.name}</h1>
+              <p>{region.description}</p>
             </div>
           </section>
 

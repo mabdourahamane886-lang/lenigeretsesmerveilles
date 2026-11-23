@@ -16,7 +16,7 @@ import {
 import wonders from '../data/wonders'
 import { getPublicationExcerpt, getPublicationTitle } from '../lib/publications/format'
 import { nigerMedia } from '../data/media'
-import { regionCardPhotos, regions as fallbackRegions } from '../data/regions'
+import RegionCards from '../components/regions/region-cards'
 import { createAdminClient } from '../lib/supabase/admin'
 
 type HomeWonder = {
@@ -92,7 +92,6 @@ async function getHomeData() {
   if (!supabase) {
     return {
       wonders: staticWonders,
-      regions: fallbackRegions,
       events: [] as HomeEvent[],
       articles: [] as HomeArticle[],
       publications: [] as HomePublication[],
@@ -100,7 +99,7 @@ async function getHomeData() {
     }
   }
 
-  const [{ data: publishedWonders }, { data: regions }, { data: events }, { data: articles }, { data: publications }, { count: articlesCount }] = await Promise.all([
+  const [{ data: publishedWonders }, { data: events }, { data: articles }, { data: publications }, { count: articlesCount }] = await Promise.all([
     supabase
       .from('niger_wonders')
       .select('id,name,short_description,description,cover_url,published,featured')
@@ -108,7 +107,6 @@ async function getHomeData() {
       .order('featured', { ascending: false })
       .order('name')
       .limit(6),
-    supabase.from('niger_regions').select('id,name,slug,description').order('name'),
     supabase
       .from('niger_events')
       .select('id,name,slug,city,starts_at,description,published')
@@ -144,7 +142,6 @@ async function getHomeData() {
 
   return {
     wonders: homeWonders,
-    regions: regions?.length ? regions : fallbackRegions,
     events: events || [],
     articles: articles || [],
     publications: publications || [],
@@ -158,7 +155,7 @@ function formatDate(value?: string | null) {
 }
 
 export default async function Home() {
-  const { wonders: homeWonders, regions, events, articles, publications, articlesCount } = await getHomeData()
+  const { wonders: homeWonders, events, articles, publications, articlesCount } = await getHomeData()
   const featuredWonder = homeWonders[0]
 
   return (
@@ -286,19 +283,7 @@ export default async function Home() {
               <Link className="proInlineLink" href="/regions">Explorer les régions <ArrowRight size={16} /></Link>
             </div>
 
-            <div className="proRegionGrid">
-              {regions.map((region, index) => {
-                const regionImage = regionCardPhotos[region.slug] ?? fallbackRegions.find((item) => item.slug === region.slug)?.image
-                return (
-                  <Link href={`/regions/${region.slug}`} className="proRegionCard proRegionCardVisual" key={region.slug}>
-                    {regionImage && <img className="proRegionCardImage" src={regionImage} alt="" loading="lazy" />}
-                    <span className="proRegionNumber">{String(index + 1).padStart(2, '0')}</span>
-                    <div className="proRegionName">{region.name}</div>
-                    <span className="proRegionArrow"><ArrowRight size={16} /></span>
-                  </Link>
-                )
-              })}
-            </div>
+            <RegionCards />
           </div>
         </section>
 
