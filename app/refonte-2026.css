@@ -107,3 +107,44 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
  .proRegionCardVisual .proRegionName{font-size:17px}
 }
 @media(prefers-reduced-motion:reduce){.proExplorerCard:hover,.proArticleCard:hover,.proEditorialLink:hover{transform:none}}
+
+@keyframes site-content-enter {
+  from { opacity: .45; translate: 0 8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .proHeroCopy,
+  main .sectionHeading {
+    animation: site-content-enter 360ms ease-out;
+  }
+
+  .siteBackButton {
+    transition: background-color 160ms ease, translate 160ms ease;
+  }
+
+  :is(.siteBackButton, .proButton, .btn):active {
+    translate: 0 2px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .foodPhotoCard {
+    transition: translate 180ms ease-out, box-shadow 180ms ease-out;
+  }
+
+  .foodPhotoCard:hover {
+    translate: 0 -3px;
+    box-shadow: 0 13px 28px rgba(15, 40, 30, .12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foodPhotoVisual img {
+    transition: none;
+  }
+
+  .foodPhotoCard:hover .foodPhotoVisual img {
+    transform: none;
+  }
+}
