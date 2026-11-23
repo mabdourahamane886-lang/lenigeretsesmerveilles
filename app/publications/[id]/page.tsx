@@ -1,4 +1,5 @@
 import { cache } from 'react'
+import { publicationDate, publicationTime } from '../../../lib/publications/dates'
 import { publicationPreview } from '../../../lib/publications/photo'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -29,7 +30,7 @@ const getPublicPublication = cache(async (id: string) => {
 
   const { data, error } = await supabase
     .from('niger_publications')
-    .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published,published_at,visibility')
+    .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published,published_at,created_at,visibility')
     .eq('id', id)
     .eq('published', true)
     .eq('visibility', 'public')
@@ -104,14 +105,6 @@ export async function generateMetadata({
   }
 }
 
-function formatDate(value?: string | null) {
-  if (!value) return ''
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'full',
-    timeStyle: 'short',
-  }).format(new Date(value))
-}
-
 export default async function PublicationDetailPage({
   params,
 }: {
@@ -121,6 +114,7 @@ export default async function PublicationDetailPage({
   const publication = await getPublicPublication(id)
 
   if (!publication) notFound()
+  const date = publicationDate(publication.published_at, publication.created_at)
 
   const title = getPublicationTitle(publication.content)
   const content = normalizePublicationContent(publication.content)
@@ -169,7 +163,7 @@ export default async function PublicationDetailPage({
               <div className="publicationAvatar" aria-hidden="true">NM</div>
               <div>
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
-                <div className="muted">{formatDate(publication.published_at)}</div>
+                <div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, true)}</time>}</div>
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
+import { groupPublications, publicationTime } from '../../lib/publications/dates'
 import { normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
@@ -43,13 +44,7 @@ type Publication = {
   mood: string | null
   activity: string | null
   published_at: string | null
-}
-
-function formatDate(value?: string | null) {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
+  created_at: string | null
 }
 
 const categories = [
@@ -70,7 +65,7 @@ export default async function PublicationsPage() {
   if (supabase) {
     const { data, error } = await supabase
       .from('niger_publications')
-      .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published_at')
+      .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,published_at,created_at')
       .eq('published', true)
       .eq('visibility', 'public')
       .order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
@@ -84,6 +79,8 @@ export default async function PublicationsPage() {
     loadError = true
   }
 
+  const groups = groupPublications(publications)
+
   return (
     <>
       <main className="page">
@@ -95,7 +92,7 @@ export default async function PublicationsPage() {
 
           <section id="publications-recentes" className="catalogSection" style={{scrollMarginTop:90}}>
             <div className="contentHeader">
-              <div><span className="kicker">Fil de publication</span><h2>Les publications récentes</h2><p>Les contenus publiés apparaissent ici avec leur lien direct de consultation et de partage.</p></div>
+              <div><h2>Fil de publication</h2><p>Heure du Niger · UTC+1</p></div>
             </div>
 
             {loadError ? (
@@ -110,31 +107,36 @@ export default async function PublicationsPage() {
               </div>
             ) : (
               <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
-                {publications.map((publication) => (
-                  (() => { const content = normalizePublicationContent(publication.content); return (
-                  <article className="card publicationFeedCard" key={publication.id}>
-                    <div className="cardbody">
-                      <div style={{display:'flex',alignItems:'center',gap:12}}>
-                        <div className="publicationAvatar" aria-hidden="true">NM</div>
-                        <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{formatDate(publication.published_at)}</div></div>
-                      </div>
-                      {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
-                      {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
-                      {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
-                      {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
-                      <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
-                        {publication.location && <span className="tag">{publication.location}</span>}
-                        {publication.mood && <span className="tag">{publication.mood}</span>}
-                        {publication.activity && <span className="tag">{publication.activity}</span>}
-                        {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
-                      </div>
-                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
-                        <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
-                        <Link className="textlink" href={`/publications/${publication.id}`}>Obtenir le lien direct</Link>
-                      </div>
-                    </div>
-                  </article>
-                  ) })()
+                {groups.map(group => (
+                  <section key={group.key} aria-labelledby={`publications-day-${group.key}`} style={{ display: 'grid', gap: 16 }}>
+                    <h3 id={`publications-day-${group.key}`} style={{ margin: 0, padding: '8px 0', borderBottom: '1px solid #d8e5dc', color: '#145c43', textTransform: 'capitalize' }}>{group.label}</h3>
+                    {group.entries.map(({ publication, date }) => {
+                      const content = normalizePublicationContent(publication.content)
+                      return (
+                        <article className="card publicationFeedCard" key={publication.id}>
+                          <div className="cardbody">
+                            <div style={{display:'flex',alignItems:'center',gap:12}}>
+                              <div className="publicationAvatar" aria-hidden="true">NM</div>
+                              <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}</div></div>
+                            </div>
+                            {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
+                            {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
+                            {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
+                            {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
+                            <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
+                              {publication.location && <span className="tag">{publication.location}</span>}
+                              {publication.mood && <span className="tag">{publication.mood}</span>}
+                              {publication.activity && <span className="tag">{publication.activity}</span>}
+                              {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
+                            </div>
+                            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
+                              <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
+                            </div>
+                          </div>
+                        </article>
+                      )
+                    })}
+                  </section>
                 ))}
               </div>
             )}
