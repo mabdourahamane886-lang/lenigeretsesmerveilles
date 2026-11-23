@@ -75,7 +75,7 @@ const staticWonders: HomeWonder[] = wonders.map((wonder, index) => ({
   type: wonder.type,
   text: wonder.text,
   image: wonder.image,
-  source: wonder.credit ? `${wonder.credit.source} · ${wonder.credit.author} · ${wonder.credit.license}` : null,
+  source: wonder.credit ? `${wonder.credit.author} · ${wonder.credit.license}` : null,
 }))
 
 const explorerCards: ExplorerCard[] = [
@@ -250,7 +250,7 @@ export default async function Home() {
               <article className="proWonderMain">
                 <div className="proWonderImage" style={featuredWonder?.image ? { backgroundImage: `url(${featuredWonder.image})` } : undefined}>
                   <span className="proMediaPill">{featuredWonder?.type || 'Patrimoine'}</span>
-                  <span className="proMediaCredit">{featuredWonder?.source || 'Wikimedia Commons'}</span>
+                  <span className="proMediaCredit">{featuredWonder?.source || ''}</span>
                 </div>
                 <div className="proWonderBody">
                   <span className="proMiniLabel">À la une</span>

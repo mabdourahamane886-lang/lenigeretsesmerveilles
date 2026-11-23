@@ -53,5 +53,5 @@ export const nigerMedia: Record<string, NigerMedia> = {
 }
 
 export function mediaCredit(media?: NigerMedia) {
-  return media ? `${media.source} · ${media.author} · ${media.license}` : null
+  return media ? `${media.author} · ${media.license}` : null
 }
