@@ -3,6 +3,7 @@ import './globals.css'
 import './brand-refresh.css'
 import './refonte-2026.css'
 import Header from '../components/site/header'
+import BackButton from '../components/site/back-button'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'
 
@@ -75,7 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body><PageBannerController /><Header /><div className="siteGlobalContent">{children}</div><Footer /></body>
+      <body><PageBannerController /><Header /><div className="siteGlobalContent"><BackButton />{children}</div><Footer /></body>
     </html>
   )
 }

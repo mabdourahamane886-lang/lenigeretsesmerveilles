@@ -4,15 +4,30 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
-export default function BackButton() {
-  const pathname = usePathname()
+const sections: Record<string, { href: string; label: string }> = {
+  articles: { href: '/articles', label: 'Retour aux articles' },
+  assistant: { href: '/assistant', label: 'Retour à Niger IA' },
+  culture: { href: '/culture', label: 'Retour à la culture' },
+  evenements: { href: '/evenements', label: 'Retour à l’agenda' },
+  gastronomie: { href: '/gastronomie#galerie', label: 'Retour à la gastronomie' },
+  media: { href: '/media', label: 'Retour à la photothèque' },
+  merveilles: { href: '/merveilles', label: 'Retour aux merveilles' },
+  publications: { href: '/publications', label: 'Retour aux publications' },
+  regions: { href: '/regions', label: 'Retour aux régions' },
+}
 
-  if (pathname === '/') return null
+export default function BackButton() {
+  const [section, child] = usePathname().split('/').filter(Boolean)
+
+  if (!section || section === 'admin' || section === 'admin-login') return null
+
+  const parent = child ? sections[section] : undefined
+  const { href, label } = parent ?? { href: '/', label: 'Retour à l’accueil' }
 
   return (
-    <div className="siteBackButtonWrap">
-      <Link className="siteBackButton" href="/" aria-label="Retour au site, page d’accueil">
-        <ArrowLeft size={17} aria-hidden="true" /> Retour au site
+    <div className="container siteBackButtonWrap">
+      <Link className="siteBackButton" href={href}>
+        <ArrowLeft size={16} aria-hidden="true" /> {label}
       </Link>
     </div>
   )

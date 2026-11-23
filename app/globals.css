@@ -2992,13 +2992,25 @@ body:not(.home-page) .proArticleHero {
 .siteGlobalContent .siteFooter { display: none !important; }
 
 
-/* Bouton Retour toujours visible au premier plan, hors de la page d'accueil. */
-.siteBackButtonWrap { position: fixed; z-index: 99999; top: 88px; left: max(12px, calc((100vw - 1180px) / 2)); margin: 0; pointer-events: none; }
-.siteBackButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; border: 1px solid #d6e4db; border-radius: 999px; padding: 10px 15px; background: #ffffff; color: #0b5d3b; box-shadow: 0 4px 16px rgba(0,0,0,.16); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; pointer-events: auto; position: relative; z-index: 100000; }
-.siteBackButton:hover { background: #f0f7f2; }
-.siteBackButton:focus-visible { outline: 3px solid #d6a928; outline-offset: 3px; }
-@media (max-width: 600px) { .siteBackButtonWrap { top: 72px; left: 10px; } .siteBackButton { min-height: 40px; padding: 8px 12px; } }
+.siteBackButtonWrap { padding-top: 16px; }
+.siteBackButtonWrap + .page { padding-top: 20px; }
 
+.siteBackButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #d6e4db;
+  border-radius: 12px;
+  background: #fff;
+  color: #075339;
+  font-size: .875rem;
+  font-weight: 700;
+}
+
+.siteBackButton:hover { background: #edf6f0; }
+.siteBackButton:focus-visible { outline: 3px solid #d6a928; outline-offset: 3px; }
 
 /* Accueil : largeur éditoriale plus généreuse sur grands écrans.
    Les pages intérieures conservent leur largeur actuelle. */
