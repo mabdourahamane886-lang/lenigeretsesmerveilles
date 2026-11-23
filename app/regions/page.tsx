@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import Header from '../../components/site/header'
 import { createClient } from '../../lib/supabase/server'
-import { regions as fallbackRegions } from '../../data/regions'
+import { regionCardPhotos, regions as fallbackRegions } from '../../data/regions'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,14 +19,14 @@ export default async function RegionsPage() {
           id: String(region.id),
           name: fallback?.name || region.name || '',
           slug: fallback?.slug || region.slug,
-          image: region.cover_url || fallback?.image,
+          image: regionCardPhotos[region.slug] || region.cover_url || fallback?.image,
         }
       })
     : fallbackRegions.map((region, index) => ({
         id: `static-${index}`,
         name: region.name,
         slug: region.slug,
-        image: region.image,
+        image: regionCardPhotos[region.slug] ?? region.image,
       }))
 
   return (

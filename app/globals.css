@@ -2419,10 +2419,6 @@ img{max-width:100%}
   backdrop-filter:blur(18px);
   box-shadow:0 8px 30px rgba(10,45,31,.045);
 }
-.siteHeader:before{
-  content:"";display:block;height:3px;
-  background:linear-gradient(90deg,var(--rebuild-orange) 0 33.33%,#fff 33.33% 66.66%,var(--rebuild-green-2) 66.66% 100%);
-}
 .siteHeaderInner{min-height:78px;display:flex;align-items:center;gap:20px}
 .siteBrand{display:flex;align-items:center;gap:12px;min-width:250px}
 .siteBrandMark{

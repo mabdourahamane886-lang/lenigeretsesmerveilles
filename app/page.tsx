@@ -16,7 +16,7 @@ import {
 import wonders from '../data/wonders'
 import { getPublicationExcerpt, getPublicationTitle } from '../lib/publications/format'
 import { nigerMedia } from '../data/media'
-import { regions as fallbackRegions } from '../data/regions'
+import { regionCardPhotos, regions as fallbackRegions } from '../data/regions'
 import { createAdminClient } from '../lib/supabase/admin'
 
 type HomeWonder = {
@@ -288,10 +288,10 @@ export default async function Home() {
 
             <div className="proRegionGrid">
               {regions.map((region, index) => {
-                const regionImage = fallbackRegions.find((item) => item.slug === region.slug)?.image
+                const regionImage = regionCardPhotos[region.slug] ?? fallbackRegions.find((item) => item.slug === region.slug)?.image
                 return (
                   <Link href={`/regions/${region.slug}`} className="proRegionCard proRegionCardVisual" key={region.slug}>
-                    {regionImage && <img className="proRegionCardImage" src={regionImage} alt={`Paysage de la région de ${region.name}, Niger`} loading="lazy" />}
+                    {regionImage && <img className="proRegionCardImage" src={regionImage} alt="" loading="lazy" />}
                     <span className="proRegionNumber">{String(index + 1).padStart(2, '0')}</span>
                     <div className="proRegionName">{region.name}</div>
                     <span className="proRegionArrow"><ArrowRight size={16} /></span>
