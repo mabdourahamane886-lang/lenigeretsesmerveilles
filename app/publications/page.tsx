@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Compass, Newspaper, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compass, Newspaper, Sparkles } from 'lucide-react'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
-import { normalizePublicationContent } from '../../lib/publications/format'
+import ShareButton from '../../components/site/share-button'
+import styles from './feed.module.css'
+import { getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -48,13 +50,12 @@ type Publication = {
 }
 
 const categories = [
-  { title: 'Actualités', description: 'Les nouvelles, annonces et informations importantes du Niger.', href: '/articles', icon: Newspaper, label: 'Lire les actualités' },
-  { title: 'Événements à venir', description: 'Festivals, rencontres, cérémonies et rendez-vous à noter.', href: '/evenements', icon: CalendarDays, label: 'Voir l’agenda' },
-  { title: 'Gastronomie', description: 'Plats, recettes, produits locaux et mémoire culinaire.', href: '/gastronomie', icon: ChefHat, label: 'Découvrir les saveurs' },
-  { title: 'Merveilles du Niger', description: 'Sites, paysages, monuments et lieux remarquables.', href: '/merveilles', icon: Compass, label: 'Explorer les merveilles' },
-  { title: 'Culture & traditions', description: 'Langues, arts, savoir-faire et traditions des communautés.', href: '/culture', icon: BookOpenText, label: 'Explorer la culture' },
-  { title: 'Les régions', description: 'Découvrez les huit régions et leurs richesses.', href: '/regions', icon: Sparkles, label: 'Explorer les régions' },
-  { title: 'Toutes les publications', description: 'Retrouvez les textes, photos et vidéos publiés par la plateforme.', href: '#publications-recentes', icon: Camera, label: 'Voir les publications' },
+  { title: 'Actualités', href: '/articles', icon: Newspaper },
+  { title: 'Événements à venir', href: '/evenements', icon: CalendarDays },
+  { title: 'Gastronomie', href: '/gastronomie', icon: ChefHat },
+  { title: 'Merveilles du Niger', href: '/merveilles', icon: Compass },
+  { title: 'Culture & traditions', href: '/culture', icon: BookOpenText },
+  { title: 'Les régions', href: '/regions', icon: Sparkles },
 ]
 
 export default async function PublicationsPage() {
@@ -82,81 +83,76 @@ export default async function PublicationsPage() {
   const groups = groupPublications(publications)
 
   return (
-    <>
-      <main className="page">
-        <div className="container">
-          <section style={{padding:'36px 0 24px'}}>
-            <span className="kicker">Le Niger et ses Merveilles</span>
-            <h1 style={{fontSize:'clamp(2rem,5vw,3.5rem)',maxWidth:850,marginTop:10}}>Publications</h1>
+    <main className={styles.page}>
+      <div className={styles.shell}>
+        <header className={styles.hero}>
+          <p>Le Niger et ses Merveilles</p>
+          <h1>Publications</h1>
+          <div>Photos, vidéos et récits du Niger.</div>
+        </header>
+
+        <div className={styles.layout}>
+          <section id="publications-recentes" aria-label="Fil de publication" className={styles.feed}>
+            <p className={styles.clock}><Clock3 size={16} aria-hidden="true" /> Heure du Niger · UTC+1</p>
+            {loadError || !groups.length ? (
+              <div className={styles.empty} role="status">
+                <Camera size={24} aria-hidden="true" />
+                {loadError ? 'Le fil est temporairement indisponible.' : 'Aucune publication publique pour le moment.'}
+              </div>
+            ) : groups.map(group => (
+              <section key={group.key} aria-labelledby={`publications-day-${group.key}`} className={styles.group}>
+                <h2 id={`publications-day-${group.key}`}><CalendarDays size={18} aria-hidden="true" /> {group.label}</h2>
+                {group.entries.map(({ publication, date }) => {
+                  const href = `/publications/${publication.id}`
+                  const title = getPublicationTitle(publication.content)
+                  const content = normalizePublicationContent(publication.content)
+                  const tags = [publication.location, publication.mood, publication.activity, ...(publication.tagged_people ?? [])]
+                    .filter((tag): tag is string => Boolean(tag))
+                  return (
+                    <article className={styles.card} key={publication.id}>
+                      <header className={styles.byline}>
+                        <span className={styles.avatar} aria-hidden="true">NM</span>
+                        <div>
+                          <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
+                          {date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}
+                        </div>
+                      </header>
+                      {content && <p className={styles.text}>{content}</p>}
+                      {publication.media_url && publication.media_type === 'photo' && (
+                        <img className={styles.media} src={publication.media_url} alt={title} loading="lazy" decoding="async" />
+                      )}
+                      {publication.media_url && publication.media_type === 'video' && (
+                        <video className={styles.media} src={publication.media_url} controls preload="metadata" playsInline />
+                      )}
+                      {publication.music_url && <audio className={styles.audio} src={publication.music_url} controls preload="none" />}
+                      {tags.length > 0 && <ul className={styles.tags} aria-label="Repères de la publication">
+                        {[...new Set(tags)].map(tag => <li key={tag}>{tag}</li>)}
+                      </ul>}
+                      <footer className={styles.actions}>
+                        <Link className={styles.read} href={href}>Ouvrir la publication <ArrowRight size={16} aria-hidden="true" /></Link>
+                        <ShareButton title={title} href={href} />
+                      </footer>
+                    </article>
+                  )
+                })}
+              </section>
+            ))}
           </section>
 
-          <section id="publications-recentes" className="catalogSection" style={{scrollMarginTop:90}}>
-            <div className="contentHeader">
-              <div><h2>Fil de publication</h2><p>Heure du Niger · UTC+1</p></div>
-            </div>
-
-            {loadError ? (
-              <div className="catalogEmpty large" role="status">
-                <Camera size={25}/>
-                <div><strong>Le fil des publications est temporairement indisponible.</strong><span>Les rubriques ci-dessous restent accessibles. Réessayez plus tard pour le fil des publications récentes.</span></div>
-              </div>
-            ) : !publications.length ? (
-              <div className="catalogEmpty large">
-                <Camera size={25}/>
-                <div><strong>Aucune publication publique pour le moment.</strong><span>Les nouvelles publications apparaîtront ici après leur mise en ligne.</span></div>
-              </div>
-            ) : (
-              <div style={{display:'grid',gap:22,maxWidth:900,margin:'0 auto'}}>
-                {groups.map(group => (
-                  <section key={group.key} aria-labelledby={`publications-day-${group.key}`} style={{ display: 'grid', gap: 16 }}>
-                    <h3 id={`publications-day-${group.key}`} style={{ margin: 0, padding: '8px 0', borderBottom: '1px solid #d8e5dc', color: '#145c43', textTransform: 'capitalize' }}>{group.label}</h3>
-                    {group.entries.map(({ publication, date }) => {
-                      const content = normalizePublicationContent(publication.content)
-                      return (
-                        <article className="card publicationFeedCard" key={publication.id}>
-                          <div className="cardbody">
-                            <div style={{display:'flex',alignItems:'center',gap:12}}>
-                              <div className="publicationAvatar" aria-hidden="true">NM</div>
-                              <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}</div></div>
-                            </div>
-                            {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
-                            {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
-                            {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
-                            {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
-                            <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
-                              {publication.location && <span className="tag">{publication.location}</span>}
-                              {publication.mood && <span className="tag">{publication.mood}</span>}
-                              {publication.activity && <span className="tag">{publication.activity}</span>}
-                              {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
-                            </div>
-                            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
-                              <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
-                            </div>
-                          </div>
-                        </article>
-                      )
-                    })}
-                  </section>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section aria-label="Catégories de publication" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,260px),1fr))',gap:18,margin:'18px 0 48px'}}>
-            {categories.map((category) => {
-              const Icon = category.icon
-              return (
-                <article key={category.title} className="card" style={{display:'flex',flexDirection:'column',padding:24,minHeight:230,borderRadius:20}}>
-                  <div style={{width:48,height:48,borderRadius:15,display:'grid',placeItems:'center',background:'#e8f3ed',color:'#145c43',marginBottom:16}}><Icon size={24}/></div>
-                  <h2 style={{fontSize:21,margin:'0 0 8px'}}>{category.title}</h2>
-                  <p className="muted" style={{lineHeight:1.7,margin:'0 0 20px',flex:1}}>{category.description}</p>
-                  <Link className="proButton proButtonDark" href={category.href} style={{alignSelf:'flex-start',display:'inline-flex',alignItems:'center',gap:8,textDecoration:'none'}}>{category.label}<ArrowRight size={16}/></Link>
-                </article>
-              )
-            })}
-          </section>
+          <aside className={styles.sidebar}>
+            <nav aria-labelledby="publication-categories">
+              <h2 id="publication-categories">Explorer le Niger</h2>
+              {categories.map(({title, href, icon: Icon}) => (
+                <Link key={href} href={href}>
+                  <Icon size={18} aria-hidden="true" />
+                  <span>{title}</span>
+                  <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              ))}
+            </nav>
+          </aside>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   )
 }

@@ -21,12 +21,16 @@ async function copyToClipboard(value: string) {
   if (!copied) throw new Error('Copie indisponible')
 }
 
-export default function ShareButton({ title }: { title: string }) {
+export default function ShareButton({ title, href }: { title: string; href?: string }) {
   const [copied, setCopied] = useState(false)
+
+  function shareUrl() {
+    return href ? new URL(href, window.location.origin).href : window.location.href
+  }
 
   async function copyLink() {
     try {
-      await copyToClipboard(window.location.href)
+      await copyToClipboard(shareUrl())
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1800)
     } catch {
@@ -35,7 +39,7 @@ export default function ShareButton({ title }: { title: string }) {
   }
 
   async function share() {
-    const url = window.location.href
+    const url = shareUrl()
     if (navigator.share) {
       try {
         await navigator.share({ title, url })
