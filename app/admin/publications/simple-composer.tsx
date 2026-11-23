@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { Globe, ImagePlus, Settings2, X } from 'lucide-react'
+import styles from './composer.module.css'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPublicPost } from '../actions'
@@ -49,13 +51,40 @@ export default function SimpleComposer() {
     } finally { setProgress(''); pending.current = false }
   }
 
-  return <form onSubmit={submit} className="adminForm">
-    <fieldset className="editorFields" disabled={!!progress}>
-      <label>Description<textarea rows={5} name="content" placeholder="Que veux-tu partager ?" /></label>
-      <label>Ajouter une photo<input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={event => setPhoto(event.target.files?.[0] || null)}/></label>
-      {preview && <div><img alt="Photo sélectionnée" src={preview} style={{display:'block', maxHeight:280,maxWidth:'100%',objectFit:'contain'}}/>
-        <button className="btn" type="button" onClick={() => { setPhoto(null); if(fileInput.current) fileInput.current.value='' }}>Retirer la photo</button></div>}
-      <button type="submit" className="btn primary">{progress || 'Publier'}</button>
+  return <form onSubmit={submit} className={styles.composer}>
+    <fieldset className={styles.fields} disabled={!!progress}>
+      <div className={styles.identity}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- Local SVG brand mark. */}
+        <img src="/images/niger-merveilles-mark.svg" alt="" width={48} height={48} />
+        <div>
+          <strong>Le Niger et ses Merveilles</strong>
+          <span className={styles.audience}><Globe size={14} aria-hidden="true" /> Public</span>
+        </div>
+      </div>
+      <label className={styles.description}>
+        <span>Description</span>
+        <textarea rows={6} name="content" placeholder="Quelle histoire du Niger souhaitez-vous partager ?" />
+      </label>
+      {preview && <div className={styles.preview}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- Preview uses a browser object URL. */}
+        <img alt="Photo sélectionnée" src={preview} />
+        <button type="button" className={styles.remove} onClick={() => {
+          setPhoto(null)
+          if (fileInput.current) fileInput.current.value = ''
+        }}><X size={16} aria-hidden="true" /> Retirer la photo</button>
+      </div>}
+      <div className={styles.options}>
+        <button type="button" className={styles.option} onClick={() => fileInput.current?.click()}>
+          <ImagePlus size={22} aria-hidden="true" />
+          <span><strong>{photo ? 'Remplacer la photo' : 'Ajouter une photo'}</strong>{photo && <small>{photo.name}</small>}</span>
+        </button>
+        <input ref={fileInput} type="file" hidden accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={event => setPhoto(event.target.files?.[0] || null)} />
+        <Link href="/admin/publications?mode=avance" className={styles.option}>
+          <Settings2 size={22} aria-hidden="true" />
+          <span><strong>Vidéo, musique et programmation</strong><small>Ouvrir les options avancées</small></span>
+        </Link>
+      </div>
+      <button type="submit" className={styles.publish}>{progress || 'Publier'}</button>
     </fieldset>
     {error && <p role="alert" className="editorFeedback">{error}</p>}
     {link && <div role="status" className="editorFeedback"><strong>Ta publication est en ligne.</strong>

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { adminDatabase } from '../../../lib/admin/database'
 import SimpleComposer from './simple-composer'
 import PublicationComposer from './publication-composer'
+import styles from './composer.module.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -15,17 +16,16 @@ export default async function AdminPublications({searchParams}: {searchParams: P
 
   return (
     <main className="section">
-      <div className="container" style={{paddingBottom:100}}>
+      <div className={`container ${styles.workspace}`}>
         <Link className="textlink" href="/admin">← Administration</Link>
-        <div className="adminHero">
+        <div className={styles.heading}>
           <div>
-            <span className="kicker">Publications</span>
             <h1>Créer une publication</h1>
           </div>
         </div>
 
         {advanced ? <PublicationComposer /> : <SimpleComposer />}
-        <Link className="textlink" href={advanced ? '/admin/publications' : '/admin/publications?mode=avance'}>{advanced ? 'Publication simple' : 'Programmation et options avancées'}</Link>
+        {advanced && <Link className="textlink" href="/admin/publications">Revenir à la publication simple</Link>}
 
         <section className="adminList" style={{marginTop:24}}>
           <div className="sectionHead">

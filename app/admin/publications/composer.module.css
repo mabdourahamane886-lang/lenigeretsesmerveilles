@@ -1,0 +1,25 @@
+.workspace { max-width: 60rem; padding-bottom: 5rem; }
+.heading { margin: 1rem 0 1.35rem; }
+.heading h1 { margin: 0; color: #143d31; font-size: clamp(1.8rem,5vw,2.65rem); }
+.composer { padding: clamp(.85rem,4vw,1.65rem); background: #fff; border: 1px solid #dce8df; border-radius: 1.2rem; box-shadow: 0 12px 35px #173e3310; }
+.fields { display: grid; gap: 1rem; margin: 0; padding: 0; border: 0; min-width: 0; }
+.identity { display: flex; gap: .75rem; align-items: center; color: #123d31; }
+.identity img, .logo { flex: 0 0 auto; object-fit: contain; border: 1px solid #e2ebe2; border-radius: .85rem; background: #fff; }
+.identity strong { display: block; font-size: 1.05rem; line-height: 1.25; }
+.audience { display: inline-flex; align-items: center; gap: .35rem; margin-top: .4rem; padding: .2rem .55rem; border-radius: 2rem; background: #e8f3e9; font-size: .8rem; font-weight: 700; }
+.description { display: grid; gap: .5rem; color: #143d31; font-weight: 700; }
+.description textarea { min-height: 9rem; width: 100%; padding: .9rem; border: 1px solid #dce8df; border-radius: .8rem; background: #f5f8f3; color: #183b30; font: inherit; font-weight: 400; resize: vertical; }
+.description textarea::placeholder { color: #536b60; }
+.options { border: 1px solid #dce8df; border-radius: .8rem; overflow: hidden; }
+.option { display: flex; align-items: center; gap: .75rem; padding: .7rem .85rem; width: 100%; min-height: 52px; border: 0; background: #fff; color: #143d31; text-align: left; cursor: pointer; font: inherit; }
+.option + .option, .option:last-child { border-top: 1px solid #dce8df; }
+.option:hover { background: #f1f7ef; }
+.option svg { color: #267449; flex: 0 0 auto; }
+.option small { display: block; color: #536b60; overflow-wrap: anywhere; }
+.publish { min-height: 50px; width: 100%; padding: .7rem 1rem; border: 0; border-radius: .8rem; background: #164b38; color: white; cursor: pointer; font: inherit; font-weight: 800; }
+.publish:hover { background: #103a2a; }
+.publish:disabled { opacity: .65; cursor: wait; }
+.preview { position: relative; background: #eef3ec; border-radius: .8rem; overflow: hidden; }
+.preview img { display: block; width: 100%; max-height: 23rem; object-fit: contain; }
+.remove { display: inline-flex; align-items: center; gap: .35rem; margin: .55rem; min-height: 44px; padding: .4rem .65rem; background: white; border: 1px solid #dce8df; border-radius: .5rem; color: #143d31; cursor: pointer; }
+.composer :is(a, textarea, button):focus-visible { outline: 3px solid #b46c28; outline-offset: -3px; }

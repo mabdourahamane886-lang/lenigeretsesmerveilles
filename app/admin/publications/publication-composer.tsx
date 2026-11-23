@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import styles from './composer.module.css'
 import { createPublication } from '../actions'
 
 type Result = { id: string; scheduled?: boolean; targets?: string[]; public: boolean; deliveryWarning: boolean }
@@ -43,11 +44,12 @@ export default function PublicationComposer() {
 
   return (
     <div>
-      <form className="adminForm publicationComposer" action={submit} encType="multipart/form-data">
+      <form className={`adminForm publicationComposer ${styles.composer}`} action={submit} encType="multipart/form-data">
         <div className="publicationIdentity">
-          <div className="publicationAvatar">🇳🇪</div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- Local SVG brand mark. */}
+          <img className={styles.logo} src="/images/niger-merveilles-mark.svg" alt="" width={48} height={48} />
           <div>
-            <strong>Le Niger et ses Merveilles NE</strong>
+            <strong>Le Niger et ses Merveilles</strong>
             <select name="visibility" defaultValue="public" aria-label="Visibilité">
               <option value="public">🌐 Public</option>
               <option value="private">🔒 Privé</option>
@@ -66,7 +68,7 @@ export default function PublicationComposer() {
             <span>{photoName || 'Ajoutez une photo ou une vidéo depuis votre appareil.'}</span>
           </div>
           <button type="button" className="btn" onClick={() => photoRef.current?.click()}>📷 Choisir</button>
-          <input ref={photoRef} hidden name="media_file" type="file" accept="image/*,video/*" capture="environment" onChange={(e) => setPhotoName(e.target.files?.[0]?.name || '')} />
+          <input ref={photoRef} hidden name="media_file" type="file" accept="image/*,video/*" onChange={(e) => setPhotoName(e.target.files?.[0]?.name || '')} />
         </div>
 
         <div className="publicationOption">
