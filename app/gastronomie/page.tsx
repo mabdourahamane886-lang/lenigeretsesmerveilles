@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowRight, ChefHat, History, Utensils } from 'lucide-react'
 import styles from './gallery.module.css'
 import Header from '../../components/site/header'
 import { createClient } from '../../lib/supabase/server'
-import { brochettesPhoto, gastronomyPhoto, tamarinPhoto } from './photos'
+import { brochettesPhoto, gastronomyPhoto } from './photos'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +11,7 @@ const platsNigériens: { nom: string; description: string; image: string; fichie
   { nom: 'Dambou', description: 'Couscous de riz accompagné de feuilles de moringa, une spécialité très appréciée au Niger.', image: '/images/gastronomie/dambou.webp', fichier: "Couscous de riz au légumes.jpg", credit: "Habibou Souley Hajara · CC BY-SA 4.0 · Redimensionnée" },
   { nom: 'Kilishi', description: 'Viande finement assaisonnée et séchée.', image: '/images/gastronomie/kilishi-niger.webp', enhance: true },
   { nom: "Galettes dorées", description: "Petites galettes dorées servies avec leur accompagnement.", image: '/images/gastronomie/galettes.webp', enhance: true, credit: "Tahoua Lélé Birnin Ader" },
-  { nom: "Sauce onctueuse", description: "Une sauce ambrée à la texture lisse.", image: '/images/gastronomie/sauce.webp', enhance: true, credit: "La cuisine de Maria" },
+  { nom: "Jus de tamarin", description: "Boisson traditionnelle préparée à partir du tamarin, appréciée pour sa saveur acidulée.", image: '/images/gastronomie/sauce.webp', enhance: true, credit: "La cuisine de Maria" },
   { nom: "Confiseries en carrés", description: "Petites bouchées sucrées présentées dans un panier.", image: '/images/gastronomie/confiseries.webp', enhance: true },
   { nom: "Tripes en sauce", description: "Tripes servies dans un bouillon relevé.", image: '/images/gastronomie/tripes.webp', enhance: true },
   { nom: "Fruits du marché", description: "Petits fruits orangés présentés sur un étal.", image: '/images/gastronomie/fruits.webp', enhance: true },
@@ -23,7 +22,6 @@ const platsNigériens: { nom: string; description: string; image: string; fichie
   { nom: 'Plats au moringa', description: 'Feuilles de moringa cuisinées avec des ingrédients et assaisonnements locaux.', image: '/images/gastronomie/moringa.webp', fichier: "Plat à base de feuilles de moringa dans la ville de Niamey au Niger.jpg", credit: "Saliousoft · CC BY-SA 4.0 · Redimensionnée" },
   { nom: 'Brochettes', description: 'À Filingué, les brochettes de viande cuisent autour d’un feu lent, près du marché central.', image: brochettesPhoto, fichier: 'Niger, Filingué (26), street scene.jpg', credit: 'NigerTZai · CC BY-SA 4.0 · Redimensionnée', license: 'https://creativecommons.org/licenses/by-sa/4.0/' },
   { nom: 'Toubani', description: 'Préparation populaire à base de haricots, servie avec son assaisonnement.', image: '/images/gastronomie/toubani.webp', fichier: "Toubani.jpg", credit: "Didia07 · CC BY-SA 4.0 · Redimensionnée" },
-  { nom: 'Jus de tamarin', description: 'Boisson traditionnelle préparée à partir du tamarin, appréciée pour sa fraîcheur.', image: tamarinPhoto, href: '/gastronomie/jus-de-tamarin', fichier: "Le boisson naturel de tamarin.jpg", credit: "Tawaye · CC BY-SA 4.0 · Redimensionnée", license: "https://creativecommons.org/licenses/by-sa/4.0/" },
   { nom: 'Waina', description: 'Petites galettes de riz cuites dans un moule spécial.', image: '/images/gastronomie/waina.webp', fichier: "Waina chinkafa.jpg", credit: "Abdoulgirafe · CC BY-SA 4.0 · Redimensionnée" },
 ]
 
@@ -36,15 +34,6 @@ export default async function GastronomiePage() {
       <Header />
       <main className="page">
         <div className="container">
-          <section className={styles.tamarinBanner} aria-labelledby="tamarin-banner-title">
-            <Image className={styles.bannerPhoto} src={tamarinPhoto} alt="" fill priority sizes="(max-width: 1200px) 100vw, 1200px" />
-            <Image className={styles.bannerLogo} src="/images/gastronomie/logo.webp" alt="Le Niger et ses Merveilles" width={84} height={43} />
-            <div className={styles.bannerCopy}>
-              <h1 id="tamarin-banner-title">Gastronomie nigérienne</h1>
-              <Link href="/gastronomie/jus-de-tamarin">Découvrir le jus de tamarin <ArrowRight size={15} aria-hidden="true" /></Link>
-            </div>
-          </section>
-
           <section id="galerie" className="foodPhotoSection" aria-labelledby="food-photo-title">
             <div className="sectionHeading"><span className="kicker">Patrimoine culinaire</span><h2 id="food-photo-title">Les saveurs du Niger en images</h2><p>Quelques plats, préparations et boissons qui racontent la diversité de nos tables.</p></div>
             <div className="foodPhotoGrid">
