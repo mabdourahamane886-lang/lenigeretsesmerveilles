@@ -1,4 +1,5 @@
-import mobile from './home-mobile.module.css'
+import styles from './home-mobile.module.css'
+import Image from 'next/image'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -163,38 +164,36 @@ export default async function Home() {
     <>
 
       <main className="homePageWide">
-        <section className={`proHero ${mobile.hero}`}>
-          <div className="proHeroBackdrop" style={{ backgroundImage: `url(${nigerMedia.niamey.image})` }} />
-          <div className="proHeroShade" />
-          <div className="container proHeroGrid">
+        <section className={styles.panorama} aria-labelledby="home-title">
+          <Image className={styles.panoramaPhoto} src="/images/regions/agadez.webp" alt="Vue d’Agadez, au Niger" fill priority sizes="100vw" />
+          <div className={`container ${styles.panoramaContent}`}>
             <div className="proHeroCopy">
-              <div className="proEyebrow">
-                <span className="proEyebrowDot" />
-                Votre guide numérique pour découvrir le Niger
-              </div>
-              <h1>Le Niger, <em>à découvrir</em> dans toute sa richesse.</h1>
-              <p>
-                Des dunes du Sahara aux rives du fleuve Niger, partez à la rencontre des huit régions, des peuples,
-                des patrimoines, des traditions et des initiatives qui font vivre le pays.
-              </p>
-              <div className="proHeroProof">
-                <span><strong>8</strong> régions</span>
-                <span><strong>∞</strong> récits à découvrir</span>
-                <span>un patrimoine à transmettre</span>
-              </div>
+              <h1 id="home-title" className={styles.headline}>Le Niger, terre de merveilles.</h1>
+              <p>Des portes du Sahara aux rives du fleuve, découvrez huit régions et les cultures qui les font vivre.</p>
+              <Link className={styles.action} href="#univers">Parcourir les univers <ArrowRight size={17} aria-hidden="true" /></Link>
             </div>
-
+            <aside className={styles.mission} aria-labelledby="home-mission">
+              <h2 id="home-mission">Notre mission</h2>
+              <p>Documenter et transmettre les paysages, les savoir-faire et les histoires du Niger.</p>
+              <Link className={styles.sideLink} href="/a-propos">Découvrir le projet <ArrowRight size={15} aria-hidden="true" /></Link>
+            </aside>
           </div>
         </section>
 
-        <section className="section proSection">
+        <section id="univers" className="section proSection" aria-labelledby="univers-title">
           <div className="container">
-            <div className="proSectionIntro">
+            <div className={styles.editorialIntro}>
+              <span className="kicker">Les univers du Niger</span>
               <div>
-                <div className="kicker">Explorer par univers</div>
-                <h2>Explorez le Niger, univers après univers.</h2>
+                <h2 id="univers-title">Huit régions, des histoires à découvrir.</h2>
+                <p>Explorez les paysages du pays, les traditions de ses communautés et les saveurs qui se partagent autour d’une table.</p>
+                <nav className={styles.quickLinks} aria-label="Accès rapides aux univers">
+                  <Link href="/regions">Régions</Link>
+                  <Link href="/culture">Culture</Link>
+                  <Link href="/gastronomie">Gastronomie</Link>
+                  <Link href="/publications">Publications</Link>
+                </nav>
               </div>
-              <p>Choisissez un univers et accédez directement aux régions, aux merveilles, aux cultures, aux saveurs, aux événements et aux images du Niger.</p>
             </div>
 
             <div className="proExplorerGrid">
