@@ -1,0 +1,15 @@
+.visual { position: relative; }
+.visual .photo { filter: contrast(1.035) saturate(1.055) brightness(1.04); }
+.visual .logo {
+  position: absolute;
+  top: .65rem;
+  right: .65rem;
+  width: 3.3rem;
+  height: 2.75rem;
+  object-fit: contain;
+  padding: .16rem;
+  border-radius: .4rem;
+  background: #fffffff0;
+  pointer-events: none;
+  transform: none;
+}
