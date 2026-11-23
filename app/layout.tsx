@@ -4,6 +4,7 @@ import './brand-refresh.css'
 import './refonte-2026.css'
 import Header from '../components/site/header'
 import BackButton from '../components/site/back-button'
+import AppEnvironment from '../components/site/app-environment'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'
 
@@ -31,6 +32,8 @@ export const metadata: Metadata = {
     'Ténéré',
   ],
   applicationName: 'Le Niger et ses Merveilles',
+  appleWebApp: { capable: true, title: 'Niger Merveilles', statusBarStyle: 'default' },
+  icons: { apple: [{ url: '/app-icons/apple-touch.png', sizes: '180x180', type: 'image/png' }] },
   authors: [{ name: 'Le Niger et ses Merveilles' }],
   creator: 'Le Niger et ses Merveilles',
   publisher: 'Le Niger et ses Merveilles',
@@ -66,7 +69,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#073b2b',
+  themeColor: '#ffffff',
   colorScheme: 'light',
 }
 
@@ -76,7 +79,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body><PageBannerController /><Header /><div className="siteGlobalContent"><BackButton />{children}</div><Footer /></body>
+      <body>
+        <AppEnvironment>
+          <PageBannerController />
+          <Header />
+          <div className="siteGlobalContent"><BackButton />{children}</div>
+          <Footer />
+        </AppEnvironment>
+      </body>
     </html>
   )
 }

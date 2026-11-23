@@ -11,6 +11,7 @@ import {
   Send,
   Sparkles,
   Utensils,
+  Smartphone,
   ShieldCheck,
   PlusCircle,
   Map,
@@ -26,6 +27,7 @@ const primaryItems = [
 ]
 
 const secondaryItems = [
+  { label: 'L’application', href: '/application', icon: Smartphone },
   { label: 'Accueil', href: '/', icon: Compass },
   { label: 'Régions', href: '/regions', icon: Compass },
   { label: 'Merveilles', href: '/merveilles', icon: Sparkles },

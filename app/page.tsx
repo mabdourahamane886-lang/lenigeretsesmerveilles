@@ -192,6 +192,7 @@ export default async function Home() {
                   <Link href="/culture">Culture</Link>
                   <Link href="/gastronomie">Gastronomie</Link>
                   <Link href="/publications">Publications</Link>
+                  <Link href="/application">Ouvrir l’application</Link>
                 </nav>
               </div>
             </div>

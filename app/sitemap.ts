@@ -6,7 +6,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://lenigeretsesmerveil
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
   const staticRoutes = [
-    '', '/regions', '/merveilles', '/culture', '/gastronomie', '/evenements',
+    '', '/application', '/regions', '/merveilles', '/culture', '/gastronomie', '/evenements',
     '/media', '/media/explorer', '/carte', '/articles', '/publications', '/recherche', '/explorer',
     '/contribution', '/a-propos', '/methodologie', '/contact', '/signaler',
     '/autour-de-moi', '/favoris', '/plan-du-site', '/mentions-legales',

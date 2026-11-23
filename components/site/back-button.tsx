@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useAppEnvironment } from './app-environment'
 import { ArrowLeft } from 'lucide-react'
 
 const sections: Record<string, { href: string; label: string }> = {
@@ -19,10 +20,11 @@ const sections: Record<string, { href: string; label: string }> = {
 export default function BackButton() {
   const [section, child] = usePathname().split('/').filter(Boolean)
 
-  if (!section || section === 'admin' || section === 'admin-login') return null
+  const { appHome } = useAppEnvironment()
+  if (section === 'application' || !section || section === 'admin' || section === 'admin-login') return null
 
   const parent = child ? sections[section] : undefined
-  const { href, label } = parent ?? { href: '/', label: 'Retour à l’accueil' }
+  const { href, label } = parent ?? { href: appHome, label: appHome === '/application' ? 'Retour à l’application' : 'Retour à l’accueil' }
 
   return (
     <div className="container siteBackButtonWrap">

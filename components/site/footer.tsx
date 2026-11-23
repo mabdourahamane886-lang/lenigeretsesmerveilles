@@ -21,6 +21,7 @@ export default function Footer() {
 
           <div className="siteFooterColumn">
             <h3>Explorer</h3>
+            <Link href="/application">L’application mobile et PC</Link>
             <Link href="/regions">Les 8 régions</Link>
             <Link href="/merveilles">Sites & merveilles</Link>
             <Link href="/culture">Culture & traditions</Link>

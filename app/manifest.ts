@@ -2,16 +2,22 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: '/',
     name: 'Le Niger et ses Merveilles',
     short_name: 'Niger Merveilles',
-    description: 'Plateforme numérique dédiée aux régions, patrimoines, cultures, gastronomie et histoires du Niger.',
-    start_url: '/',
+    description: 'Les régions, les cultures, les langues et les histoires du Niger.',
+    start_url: '/application',
+    scope: '/',
     display: 'standalone',
-    background_color: '#f8faf9',
-    theme_color: '#0b5d3b',
-    icons: [{ src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' }],
+    background_color: '#ffffff',
+    theme_color: '#ffffff',
+    icons: [
+      { src: '/app-icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: '/app-icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/app-icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+    ],
     lang: 'fr',
     dir: 'ltr',
-    categories: ['travel', 'culture', 'education'],
+    categories: ['travel', 'education'],
   }
 }

@@ -1,6 +1,7 @@
 'use client'
 import './niger-ai.css'
 import Link from 'next/link'
+import { useAppEnvironment } from '../../components/site/app-environment'
 import { NIGER_DICTIONARY, NIGER_LANGUAGES } from '../../lib/niger-dictionaries'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp } from 'lucide-react'
@@ -64,6 +65,7 @@ function renderMessageContent(text: string) {
 
 
 export default function AssistantPage() {
+ const { appHome } = useAppEnvironment()
  const [chats,setChats] = useState<Chat[]>([])
  const [activeId,setActiveId] = useState('')
  const [input,setInput] = useState('')
@@ -115,7 +117,7 @@ export default function AssistantPage() {
    <div className="nigerAiSideFoot">Connaissances centrées sur le Niger</div>
   </aside>
   <section className="nigerAiWorkspace">
-   <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div><Link href="/" className="nigerAiBack">Retour au site</Link></header>
+   <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div><Link href={appHome} className="nigerAiBack">{appHome === '/application' ? 'Retour à l’application' : 'Retour au site'}</Link></header>
    <div className="nigerAiMessages" key={activeId}>
     {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>Bonjour, que souhaitez-vous découvrir ?</h1><p className="nigerAiWelcomeText">Explorez les régions, l’histoire, les langues, les traditions, la gastronomie et le patrimoine du Niger.</p><div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking" role="status" aria-live="polite"><span className="nigerAiDots" aria-hidden="true"><i/><i/><i/></span><span key={thinkingStatus} className="nigerAiThinkingLabel">{thinkingStatus}</span></div>}<div ref={end}/></div>}
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
