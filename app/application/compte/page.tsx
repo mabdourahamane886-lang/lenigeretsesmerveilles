@@ -33,14 +33,14 @@ function translatedError(error: unknown, channel: Channel) {
     case 'invalid_credentials':
       return channel === 'phone'
         ? 'Utilisez le numéro déjà associé à votre compte ou connectez-vous par e-mail.'
-        : 'Connexion impossible avec cette adresse et ce mot de passe. Vous pouvez réinitialiser votre mot de passe.'
+        : 'Vérifiez votre adresse e-mail et votre mot de passe.'
     case 'email_not_confirmed':
       return 'Confirmez votre adresse e-mail avant de vous connecter.'
     case 'phone_not_confirmed':
       return 'Votre numéro doit être confirmé avant la connexion.'
     case 'phone_provider_disabled':
     case 'sms_send_failed':
-      return 'L’accès par téléphone est indisponible. Utilisez votre adresse e-mail.'
+      return 'La connexion par SMS n’est pas disponible pour le moment.'
     case 'over_email_send_rate_limit':
     case 'over_sms_send_rate_limit':
     case 'over_request_rate_limit':
@@ -54,8 +54,6 @@ function translatedError(error: unknown, channel: Channel) {
 
 export default function AuthPage() {
   const supabase = useMemo(() => createClient(), [])
-  const [appEntry, setAppEntry] = useState(false)
-  const destination = appEntry ? '/application' : '/application/profil'
   const [mode, setMode] = useState<Mode>('login')
   const [channel, setChannel] = useState<Channel>('email')
   const [contact, setContact] = useState('')
@@ -73,7 +71,6 @@ export default function AuthPage() {
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search)
-    setAppEntry(query.get('entry') === 'app')
     const requestedMode = query.get('mode')
     if (requestedMode === 'reset') setMode('reset')
     else if (requestedMode === 'signup') setMode('signup')
@@ -110,9 +107,10 @@ export default function AuthPage() {
       if (mode === 'login') {
         if (!password) throw new Error('Le mot de passe est obligatoire.')
         const credentials = channel === 'phone' ? { phone: phone!, password } : { email, password }
-        const { error } = await supabase.auth.signInWithPassword(credentials)
+        const { data, error } = await supabase.auth.signInWithPassword(credentials)
         if (error) throw error
-        window.location.assign(destination)
+        if (!data.session) throw new Error('La session n’a pas été ouverte. Réessayez.')
+        window.location.replace('/application/profil')
         return
       }
 
@@ -127,12 +125,12 @@ export default function AuthPage() {
               email, password,
               options: {
                 data: { full_name: fullName.trim() },
-                emailRedirectTo: window.location.origin + '/auth/callback?next=' + encodeURIComponent(destination),
+                emailRedirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fprofil',
               },
             })
         if (error) throw error
         if (data.session) {
-          window.location.assign(destination)
+          window.location.replace('/application/profil')
           return
         }
         if (channel === 'phone') {
@@ -149,9 +147,7 @@ export default function AuthPage() {
       if (mode === 'recover') {
         if (channel === 'email') {
           const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + '/auth/callback?next=' + encodeURIComponent(
-              appEntry ? '/application/compte?mode=reset&entry=app' : '/application/compte?mode=reset',
-            ),
+            redirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fcompte%3Fmode%3Dreset',
           })
           if (error) throw error
           setNotice('Si cette adresse correspond à un compte, vous recevrez un lien de réinitialisation.')
@@ -174,7 +170,7 @@ export default function AuthPage() {
           switchMode('reset')
           setNotice('Numéro vérifié. Définissez maintenant votre nouveau mot de passe.')
         } else {
-          window.location.assign(destination)
+          window.location.replace('/application/profil')
         }
         return
       }
