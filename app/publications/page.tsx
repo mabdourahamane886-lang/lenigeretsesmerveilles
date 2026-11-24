@@ -112,7 +112,6 @@ export default async function PublicationsPage() {
                     <article className="card publicationFeedCard" key={publication.id}>
                       <div className="cardbody">
                         <div style={{display:'flex',alignItems:'center',gap:12}}>
-                          <div className="publicationAvatar" aria-hidden="true">NM</div>
                           <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, Boolean(publication.pinned_at))}</time>}</div></div>
                           <PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
                         </div>
