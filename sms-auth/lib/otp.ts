@@ -61,16 +61,22 @@ export async function checkOtp(projectId: string, challengeId: unknown, code: un
       .eq('id', row.id).eq('status', 'sent')
     throw new ApiProblem(400, 'code_expired')
   }
+  // Réserver atomiquement UNE tentative avant de comparer le code.
+  // Sinon, 100 requêtes parallèles peuvent tester 100 codes pour une seule tentative.
+  const { data: claimed, error: claimError } = await admin.from('sms_auth_challenges')
+    .update({ attempts: row.attempts + 1 })
+    .eq('id', row.id).eq('project_id', projectId)
+    .eq('attempts', row.attempts).eq('status', 'sent')
+    .is('verified_at', null).select('id').maybeSingle()
+  if (claimError || !claimed) throw new ApiProblem(409, 'retry_required')
+
   const valid = equalsHash(row.code_hash, hmacCode(row.id, row.phone, code))
-  if (!valid) {
-    await admin.from('sms_auth_challenges').update({ attempts: row.attempts + 1 })
-      .eq('id', row.id).eq('attempts', row.attempts).eq('status', 'sent')
-    throw new ApiProblem(400, 'code_invalid_or_used')
-  }
-  // Consommation unique optimiste : 2 validations concurrentes ne peuvent pas réussir.
+  if (!valid) throw new ApiProblem(400, 'code_invalid_or_used')
+
+  // Consommation unique : seul celui qui a réservé la tentative peut confirmer.
   const { data: updated, error } = await admin.from('sms_auth_challenges')
     .update({ status: 'verified', verified_at: new Date().toISOString() })
-    .eq('id', row.id).eq('project_id', projectId).eq('attempts', row.attempts)
+    .eq('id', row.id).eq('project_id', projectId).eq('attempts', row.attempts + 1)
     .eq('status', 'sent').is('verified_at', null)
     .select('id').maybeSingle()
   if (error || !updated) throw new ApiProblem(409, 'already_verified')
