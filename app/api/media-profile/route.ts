@@ -9,6 +9,12 @@ export async function POST(request: Request) {
   const form = await request.formData()
   const kind = form.get('kind')
   const file = form.get('file')
+  if (kind === 'description') {
+    const description = form.get('description')
+    if (typeof description !== 'string' || description.length > 1000) return NextResponse.json({ error: 'Description invalide (1000 caractères maximum)' }, { status: 400 })
+    const { error } = await db.from('niger_media_profile').update({ description: description.trim(), updated_at: new Date().toISOString() }).eq('id', 1).select('id').single()
+    return error ? NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 }) : NextResponse.json({ ok: true })
+  }
   if ((kind !== 'avatar' && kind !== 'cover') || !(file instanceof File)) return NextResponse.json({ error: 'Fichier invalide' }, { status: 400 })
   if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 5_000_000 || file.size === 0) return NextResponse.json({ error: 'Image JPEG, PNG ou WebP de 5 Mo maximum' }, { status: 400 })
   const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg'
