@@ -13,6 +13,8 @@ import styles from '../account.module.css'
 type Mode = 'login' | 'signup' | 'recover' | 'verify' | 'reset'
 type Channel = 'email' | 'phone'
 
+const profilePath = '/application/profil'
+
 function normalizedPhone(value: string) {
   const compact = value.trim().replace(/[\s().-]/g, '')
   const international = compact.startsWith('00') ? '+' + compact.slice(2) : compact
@@ -79,7 +81,16 @@ export default function AuthPage() {
       setNotice('Le lien de vérification est invalide ou expiré. Demandez un nouveau lien.')
       setIsError(true)
     }
-  }, [])
+
+    if (!supabase || callbackError || requestedMode) return
+    let active = true
+    void supabase.auth.getUser().then(({ data, error }) => {
+      if (active && !error && data.user) window.location.replace(profilePath)
+    }).catch(() => {
+      // A failed session check leaves the sign-in form available.
+    })
+    return () => { active = false }
+  }, [supabase])
 
   const switchMode = (next: Mode) => {
     setMode(next)
@@ -109,7 +120,7 @@ export default function AuthPage() {
         const { data, error } = await supabase.auth.signInWithPassword(credentials)
         if (error) throw error
         if (!data.session) throw new Error('La session n’a pas été ouverte. Réessayez.')
-        window.location.replace('/application/profil')
+        window.location.replace(profilePath)
         return
       }
 
@@ -129,7 +140,7 @@ export default function AuthPage() {
             })
         if (error) throw error
         if (data.session) {
-          window.location.replace('/application/profil')
+          window.location.replace(profilePath)
           return
         }
         if (channel === 'phone') {
@@ -163,13 +174,14 @@ export default function AuthPage() {
 
       if (mode === 'verify') {
         if (!/^\d{6,8}$/.test(token.trim())) throw new Error('Saisissez le code numérique reçu par SMS.')
-        const { error } = await supabase.auth.verifyOtp({ phone: pendingPhone, token: token.trim(), type: 'sms' })
+        const { data, error } = await supabase.auth.verifyOtp({ phone: pendingPhone, token: token.trim(), type: 'sms' })
         if (error) throw error
+        if (!data.session) throw new Error('La session n’a pas été ouverte. Réessayez.')
         if (verifyPurpose === 'recovery') {
           switchMode('reset')
           setNotice('Numéro vérifié. Définissez maintenant votre nouveau mot de passe.')
         } else {
-          window.location.replace('/application/profil')
+          window.location.replace(profilePath)
         }
         return
       }
@@ -180,9 +192,8 @@ export default function AuthPage() {
         if (userError || !user) throw new Error('Session de récupération expirée. Redemandez un lien ou un code de vérification.')
         const { error } = await supabase.auth.updateUser({ password })
         if (error) throw error
-        setPassword('')
-        setPasswordConfirm('')
-        setNotice('Mot de passe enregistré. Votre compte est prêt.')
+        window.location.replace(profilePath)
+        return
       }
     } catch (error) {
       setIsError(true)
