@@ -139,7 +139,7 @@ export default async function ApplicationPage() {
 
         <section className={styles.aiSection} aria-labelledby="ai-title">
           <span className={styles.aiIcon}><Sparkles size={25}/></span>
-          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l'histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
+          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
         </section>
 
         <section className={styles.section} aria-label="Autres outils">
