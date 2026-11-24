@@ -2,98 +2,156 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  ArrowRight, ArrowUpRight, BookOpen, Bookmark, CalendarDays, Camera, ChevronRight,
-  Compass, Feather, Languages, Landmark, Map, MapPin, Navigation, Newspaper,
-  Search, Send, Sparkles, Utensils, Users, Home, User, Settings, Bell, type LucideIcon,
+  ArrowRight, BookOpenText, Camera, ChevronRight, Compass, Globe2, History,
+  Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles,
+  Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
 import InstallButton from './install-button'
+import { createAdminClient } from '../../lib/supabase/admin'
+import { getPublicationTitle, getPublicationExcerpt } from '../../lib/publications/format'
 import styles from './application.module.css'
 
 export const metadata: Metadata = {
-  title: 'L’application',
-  description: 'Retrouvez les régions, les publications, les langues et la carte du Niger dans une application à installer sur téléphone ou ordinateur.',
+  title: 'Application | Le Niger et ses Merveilles',
+  description: 'Découvrez les huit régions du Niger, les cultures, les traditions, les publications et Niger IA.',
+}
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+type Universe = { href: string; title: string; subtitle: string; image: string; icon: LucideIcon }
+const universes: Universe[] = [
+  { href: '/application/histoire', title: 'Histoire', subtitle: 'Mémoire et archives', image: '/images/regions/agadez.webp', icon: History },
+  { href: '/culture', title: 'Culture', subtitle: 'Peuples et traditions', image: '/images/regions/zinder.webp', icon: BookOpenText },
+  { href: '/application/tourisme', title: 'Tourisme', subtitle: 'Sites et paysages', image: '/images/accueil/fleuve-niger-niamey.webp', icon: Compass },
+  { href: '/gastronomie', title: 'Gastronomie', subtitle: 'Saveurs du Niger', image: '/images/regions/maradi.webp', icon: Utensils },
+  { href: '/dictionnaire', title: 'Langues', subtitle: 'Dictionnaire vivant', image: '/images/regions/tahoua.webp', icon: Languages },
+  { href: '/application/fossiles', title: 'Fossiles', subtitle: 'Préhistoire du Niger', image: '/images/regions/agadez.webp', icon: Landmark },
+]
+const regions = ['Niamey', 'Agadez', 'Zinder', 'Maradi', 'Tahoua', 'Tillabéri', 'Dosso', 'Diffa']
+const tools = [
+  { href: '/carte', label: 'Carte interactive', icon: Map },
+  { href: '/media', label: 'Photothèque', icon: Camera },
+  { href: '/articles', label: 'Articles', icon: Newspaper },
+  { href: '/evenements', label: 'Agenda', icon: Globe2 },
+  { href: '/application/parametres', label: 'Paramètres', icon: Menu },
+]
+type Publication = {
+  id: string
+  content: string | null
+  media_url: string | null
+  media_type: string | null
+  published_at: string | null
+  pinned_at: string | null
+}
+async function recentPublications(): Promise<Publication[]> {
+  try {
+    const client = createAdminClient()
+    if (!client) return []
+    const { data, error } = await client.from('niger_publications')
+      .select('id,content,media_url,media_type,published_at,pinned_at')
+      .eq('published', true).eq('visibility', 'public')
+      .order('pinned_at', { ascending: false, nullsFirst: false })
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .limit(3)
+    if (error) return []
+    return data || []
+  } catch {
+    return []
+  }
 }
 
-type Entry = [href: string, title: string, icon: LucideIcon]
-const explore: Entry[] = [
-  ['/regions', 'Les 8 régions', Compass], ['/merveilles', 'Sites et merveilles', Landmark],
-  ['/culture', 'Culture et traditions', Users], ['/gastronomie', 'Gastronomie', Utensils],
-  ['/publications', 'Publications', Newspaper], ['/articles', 'Articles', BookOpen],
-  ['/evenements', 'Agenda culturel', CalendarDays], ['/media', 'Photothèque', Camera],
-  ['/application/histoire', 'Histoire et archives', Landmark], ['/application/fossiles', 'Fossiles', Compass],
-  ['/application/bibliotheque', 'Bibliothèque', BookOpen], ['/application/tourisme', 'Tourisme', Navigation],
-]
-const tools: Entry[] = [
-  ['/carte', 'Carte du Niger', Map], ['/assistant', 'Niger IA', Sparkles],
-  ['/dictionnaire', 'Dictionnaire des langues', Languages], ['/autour-de-moi', 'Autour de moi', Navigation],
-  ['/favoris', 'Mes favoris', Bookmark], ['/contribution', 'Contribuer', Send],
-]
-
-const personal: Entry[] = [
-  ['/application/profil', 'Mon profil local', User], ['/favoris', 'Mes favoris', Bookmark],
-  ['/application/notifications', 'Actualités et alertes', Bell], ['/application/parametres', 'Paramètres', Settings],
-]
-
-function Directory({ title, entries }: { title: string; entries: Entry[] }) {
-  return (
-    <section className={styles.directory} aria-label={title}>
-      <h2>{title}</h2>
-      <div className={styles.entries}>
-        {entries.map(([href, label, Icon]) => (
-          <Link key={href} href={href} className={styles.entry}>
-            <span className={styles.glyph}><Icon size={19} aria-hidden="true" /></span>
-            <span>{label}</span><ChevronRight size={14} aria-hidden="true" />
-          </Link>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-export default function ApplicationPage() {
+export default async function ApplicationPage() {
+  const publications = await recentPublications()
   return (
     <main className={styles.app}>
       <header className={styles.bar}>
         <div className={styles.barInner}>
-          <Link className={styles.brand} href="/application" aria-label="Accueil de l’application">
-            <Image src="/images/niger-merveilles-mark.svg" alt="" width={68} height={44} priority />
-            <span>Le Niger et ses Merveilles</span>
+          <Link className={styles.brand} href="/application" aria-label="Accueil de l'application">
+            <Image src="/images/niger-merveilles-mark.svg" alt="" width={54} height={48} priority />
+            <span>Le Niger <small>et ses Merveilles</small></span>
           </Link>
-          <InstallButton />
+          <div className={styles.headerActions}>
+            <InstallButton />
+            <Link href="/application/parametres" aria-label="Menu et paramètres" className={styles.roundAction}><Menu size={21} /></Link>
+          </div>
         </div>
       </header>
+
       <div className={styles.canvas}>
-        <div className={styles.titleRow}>
-          <h1>Découvrir le Niger</h1>
-          <form role="search" action="/recherche" className={styles.search}>
-            <input name="q" type="search" maxLength={80} aria-label="Rechercher sur le site" placeholder="Rechercher au Niger…" />
-            <button type="submit" aria-label="Lancer la recherche"><Search size={19} /></button>
-          </form>
-        </div>
-        <Link className={styles.feature} href="/regions/agadez">
-          <div className={styles.photo}>
-            <Image src="/images/regions/agadez.webp" alt="Arche rouge et ocre à l’entrée d’Agadez" fill priority sizes="(min-width: 800px) 58vw, 100vw" />
+        <form role="search" action="/recherche" className={styles.search}>
+          <Search size={20} aria-hidden="true" />
+          <input name="q" type="search" maxLength={80} aria-label="Rechercher une merveille" placeholder="Rechercher une merveille, une région..." />
+          <button type="submit" aria-label="Rechercher"><ArrowRight size={18} /></button>
+        </form>
+
+        <section className={styles.hero} aria-labelledby="app-hero-title">
+          <Image className={styles.heroImage} src="/images/accueil/fleuve-niger-niamey.webp" alt="Le fleuve Niger à Niamey" fill priority sizes="(max-width: 700px) 100vw, 1152px" />
+          <div className={styles.heroContent}>
+            <span className={styles.heroEyebrow}>🇳🇪 Patrimoine · Culture · Découvertes</span>
+            <h1 id="app-hero-title">Découvrez le Niger</h1>
+            <p>Une terre d’histoire, de culture et de merveilles uniques, des portes du Sahara aux rives du fleuve.</p>
+            <span className={styles.heroDots} aria-hidden="true"><i /><i /><i /></span>
           </div>
-          <div className={styles.featureCopy}>
-            <span className={styles.location}><MapPin size={15} /> Région d’Agadez</span>
-            <h2>Aux portes d’Agadez</h2>
-            <p>Partez à la découverte de l’Aïr, de ses paysages et de ses traditions.</p>
-            <span className={styles.featureAction}>Explorer la région <ArrowRight size={16} /></span>
+        </section>
+
+        <section className={styles.welcome}>
+          <span className={styles.eyebrow}>Bienvenue dans notre univers</span>
+          <h2>Un pays, mille histoires à partager.</h2>
+          <p>Explorez les richesses du Niger, ses peuples, ses traditions et son patrimoine exceptionnel à travers une expérience immersive.</p>
+        </section>
+
+        <section className={styles.section} aria-labelledby="univers-title">
+          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>À découvrir</span><h2 id="univers-title">Explorer par univers</h2></div><Link href="/explorer" aria-label="Tout explorer"><ChevronRight /></Link></div>
+          <div className={styles.universeGrid}>
+            {universes.map(({ href, title, subtitle, image, icon: Icon }) => (
+              <Link className={styles.universeCard} href={href} key={href}>
+                <span className={styles.universeImage} style={{ backgroundImage: `linear-gradient(180deg,transparent 22%,rgba(5,18,30,.82) 100%),url("${image}")` }} />
+                <span className={styles.universeContent}><Icon size={22} aria-hidden="true" /><strong>{title}</strong><small>{subtitle}</small></span>
+              </Link>
+            ))}
           </div>
-        </Link>
-        <div className={styles.columns}>
-          <Directory title="Explorer" entries={explore} />
-          <Directory title="Outils et services" entries={tools.filter(([href]) => href !== '/favoris')} />
-          <Directory title="Espace personnel" entries={personal} />
-        </div>
-        <nav className={styles.foot} aria-label="À propos de l’application">
-          <Link href="/a-propos"><Feather size={16} /> Le projet</Link>
-          <Link href="/plan-du-site">Toutes les rubriques <ChevronRight size={14} /></Link>
-          <Link href="/">Accueil du site <ArrowUpRight size={15} /></Link>
-        </nav>
+        </section>
+
+        <section className={styles.section} aria-labelledby="regions-title">
+          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>Les territoires</span><h2 id="regions-title">Les 8 régions du Niger</h2></div><Link href="/regions" className={styles.seeAll}>Tout voir <ArrowRight size={16} /></Link></div>
+          <div className={styles.regionRail}>
+            {regions.map((region) => <Link key={region} href={`/regions/${region.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}`} className={styles.regionPill}>{region}<ChevronRight size={15} /></Link>)}
+          </div>
+        </section>
+
+        <section className={styles.section} aria-labelledby="editorial-title">
+          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>Notre sélection</span><h2 id="editorial-title">Sélection éditoriale</h2></div><Link href="/merveilles" className={styles.seeAll}>Découvrir <ArrowRight size={16} /></Link></div>
+          <Link href="/merveilles" className={styles.editorialCard}>
+            <Image src="/images/regions/agadez.webp" alt="Architecture et patrimoine d’Agadez" fill sizes="(max-width: 700px) 100vw, 1152px" />
+            <span className={styles.editorialCopy}><small>Patrimoine du Niger</small><strong>Agadez, aux portes du Sahara</strong><span>Explorez les lieux emblématiques et les histoires qui façonnent notre patrimoine. <ArrowRight size={16}/></span></span>
+          </Link>
+        </section>
+
+        <section className={styles.section} aria-labelledby="publications-title">
+          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>À la une</span><h2 id="publications-title">Publications récentes</h2></div><Link href="/publications" className={styles.seeAll}>Tout voir <ArrowRight size={16} /></Link></div>
+          {publications.length ? <div className={styles.publicationGrid}>
+            {publications.map((publication) => <Link key={publication.id} className={styles.publicationCard} href={`/publications/${encodeURIComponent(publication.id)}`}>
+              {publication.media_url && publication.media_type === 'photo' ? <span className={styles.publicationMedia} style={{backgroundImage: `url("${publication.media_url.replace(/"/g, '%22')}")`}} /> : <span className={styles.publicationMediaFallback}><Newspaper size={36} /></span>}
+              <div className={styles.publicationText}>{publication.pinned_at && <small>📌 Épinglée</small>}<strong>{getPublicationTitle(publication.content)}</strong><p>{getPublicationExcerpt(publication.content, 100)}</p><span>Lire la publication <ArrowRight size={15}/></span></div>
+            </Link>)}
+          </div> : <div className={styles.emptyPublications}><Newspaper size={24}/><p>Les prochaines publications seront disponibles ici.</p><Link href="/publications">Voir les publications <ArrowRight size={16}/></Link></div>}
+        </section>
+
+        <section className={styles.aiSection} aria-labelledby="ai-title">
+          <span className={styles.aiIcon}><Sparkles size={25}/></span>
+          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l'histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
+        </section>
+
+        <section className={styles.section} aria-label="Autres outils">
+          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>À votre disposition</span><h2>Outils et services</h2></div></div>
+          <div className={styles.toolGrid}>{tools.map(({href,label,icon:Icon})=><Link key={href} href={href}><Icon size={20}/><span>{label}</span><ChevronRight size={17}/></Link>)}</div>
+        </section>
       </div>
-      <nav className={styles.appNav} aria-label="Navigation de l’application">
-        {([['/application','Accueil',Home],['/publications','Publications',Newspaper],['/assistant','Niger IA',Sparkles],['/carte','Carte',Map],['/application/profil','Profil',User]] as Entry[]).map(([href,label,Icon]) => <Link key={href} href={href}><Icon size={21} aria-hidden="true"/><span>{label}</span></Link>)}
+      <nav className={styles.appNav} aria-label="Navigation de l'application">
+        {([
+          ['/application','Accueil',Home],['/explorer','Explorer',Compass],['/publications','Publications',Newspaper],
+          ['/assistant','Niger IA',Sparkles],['/application/profil','Profil',UserRound],
+        ] as [string,string,LucideIcon][]).map(([href,label,Icon])=><Link key={href} href={href} aria-current={href === '/application' ? 'page' : undefined}><Icon size={21} aria-hidden="true"/><span>{label}</span></Link>)}
       </nav>
     </main>
   )
