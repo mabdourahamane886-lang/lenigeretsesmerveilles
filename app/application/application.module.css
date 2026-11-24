@@ -78,3 +78,25 @@
 @media(max-width:750px){.hero{min-height:385px}.universeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.publicationGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.canvas{padding-bottom:38px}}
 @media(max-width:520px){.barInner{min-height:66px}.brand{font-size:.89rem}.brand img{width:43px;height:39px}.install{font-size:.72rem;padding:0 10px}.roundAction{width:37px;height:37px}.canvas{width:93%;padding-top:17px}.search{height:49px;margin-bottom:15px}.hero{min-height:355px;border-radius:18px}.heroContent{padding:24px}.hero h1{font-size:2.65rem}.welcome{margin:32px auto 20px}.welcome p{font-size:.9rem}.section{margin-top:34px}.sectionHeading{margin-bottom:15px}.universeGrid{gap:10px}.universeCard{min-height:174px;border-radius:14px}.universeContent{padding:13px}.universeContent strong{font-size:1.03rem}.universeContent small{font-size:.73rem}.editorialCard{height:280px;border-radius:16px}.publicationGrid{grid-template-columns:1fr}.publicationCard{display:grid;grid-template-columns:105px 1fr;min-height:140px}.publicationMedia,.publicationMediaFallback{height:100%;min-height:140px}.publicationText{padding:12px;gap:5px}.publicationText strong{font-size:.95rem}.publicationText p{font-size:.78rem}.aiSection{grid-template-columns:1fr;gap:12px;margin-top:36px;padding:23px}.aiIcon{width:47px;height:47px}.toolGrid{grid-template-columns:1fr}.appNav{position:fixed;left:0;right:0}}
 @media(prefers-reduced-motion:reduce){.app *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Compatibility with the existing application sections. */
+.titleRow{display:flex;align-items:center;justify-content:space-between;margin:16px 0 19px;gap:16px}
+.titleRow h1{font-family:Georgia,serif;font-size:clamp(2rem,4vw,3rem);color:var(--navy);margin:0}
+.featureAction{color:#164d75;display:inline-flex;align-items:center;gap:8px;font-weight:750}
+.directory{margin-top:24px}
+.directory h2{font-family:Georgia,serif;font-size:1.5rem;margin:0 0 12px;color:var(--navy)}
+.entries{display:grid;gap:9px}
+.entry{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;padding:15px;color:var(--navy);background:#f8fafc;text-decoration:none}
+:global(html[data-niger-theme="dark"]) .app{--navy:#eaf2fa;--border:#324b60;background:#102235;color:#eaf2fa}
+:global(html[data-niger-theme="dark"]) .app .bar,
+:global(html[data-niger-theme="dark"]) .app .appNav{background:#102235ed}
+:global(html[data-niger-theme="dark"]) .app .search,
+:global(html[data-niger-theme="dark"]) .app .regionPill,
+:global(html[data-niger-theme="dark"]) .app .toolGrid a,
+:global(html[data-niger-theme="dark"]) .app .publicationCard,
+:global(html[data-niger-theme="dark"]) .app .entry{background:#1a3045;color:#eaf2fa}
+:global(html[data-niger-theme="dark"]) .app .search input{color:#eaf2fa}
+:global(html[data-niger-theme="dark"]) .app .welcome p,
+:global(html[data-niger-theme="dark"]) .app .publicationText p{color:#b8c9d9}
+:global(html[data-niger-theme="dark"]) .app .appNav a{color:#c1d0de}
+:global(html[data-niger-theme="dark"]) .app .search button{background:#386587;color:#fff}
