@@ -76,3 +76,22 @@ Documentation : Meta WhatsApp Business Platform et Supabase Auth (https://supaba
 - **Vercel** : projet `sms-auth` créé avec `Root Directory = sms-auth` ; le premier build a échoué à cause du plugin PostCSS hérité. La configuration a été corrigée dans la branche `sms-auth-platform`, mais une nouvelle publication a été bloquée par la limite quotidienne des déploiements API Vercel. Ne pas déclarer Vercel opérationnel avant un déploiement READY.
 - **Supabase** : URL publique liée à `https://okdohokhlkxrmxpevees.supabase.co`. Migration des trois tables et isolation RLS confirmées. Les secrets `SUPABASE_SERVICE_ROLE_KEY` et Meta doivent être définis dans chaque plateforme avant d'activer les envois réels.
 - Dans Supabase Auth → URL Configuration, autoriser les URL de callback des domaines déployés (Cloudflare et Vercel) pour terminer la confirmation d'e-mail.
+
+
+## Connexion administrateur et récupération du mot de passe
+
+SMS AUTH partage **l'authentification Supabase du projet Bickri Service Agency** (`okdohokhlkxrmxpevees`). La connexion accepte tout mot de passe déjà enregistré, même s'il a moins de 10 caractères ; seuls les **nouveaux** mots de passe doivent respecter 10 caractères minimum.
+
+- `/login` : connexion, création d'un compte, demande de réinitialisation et demande de lien de connexion par e-mail.
+- `/auth/callback` : échange sécurisé du code de session PKCE.
+- `/reset-password` : saisie d'un **nouveau** mot de passe après ouverture du lien de réinitialisation.
+- `invalid_login_credentials` : le compte peut être absent, la combinaison e-mail/mot de passe peut être incorrecte ou l'identité peut nécessiter une autre méthode ; **ne jamais contourner le contrôle du mot de passe**.
+
+Configurer dans Supabase **Authentication > URL Configuration** :
+- Site URL : l'adresse de production retenue.
+- Additional Redirect URLs : `https://sms-auth-bickri-service-agency.vercel.app/auth/callback` et `https://sms-auth.bickriservice-agency.workers.dev/auth/callback`.
+- Le paramètre `next=/reset-password` est utilisé exclusivement après un lien de récupération.
+
+Vérifier le SMTP d'envoi des e-mails (limites possibles du fournisseur Supabase). Aucun mot de passe administrateur n'est stocké ou généré par SMS AUTH. Un compte de Bickri Service Agency existant fonctionne avec **ses vrais identifiants** seulement.
+
+Le correctif est enregistré dans la branche `sms-auth-platform`. Avant de considérer l'erreur corrigée **en production**, contrôler que Vercel et Cloudflare exécutent une version compilée incluant ces commits. Un commit GitHub n'est pas un déploiement.
