@@ -5,6 +5,7 @@ import './refonte-2026.css'
 import Header from '../components/site/header'
 import BackButton from '../components/site/back-button'
 import AppEnvironment from '../components/site/app-environment'
+import AppThemeSync from '../components/site/app-theme-sync'
 import Footer from '../components/site/footer'
 import PageBannerController from '../components/site/page-banner-controller'
 
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <AppEnvironment>
+          <AppThemeSync />
           <PageBannerController />
           <Header />
           <div className="siteGlobalContent"><BackButton />{children}</div>
