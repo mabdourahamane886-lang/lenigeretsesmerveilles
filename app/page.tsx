@@ -165,7 +165,14 @@ export default async function Home() {
 
       <main className="homePageWide">
         <section className={styles.panorama} aria-labelledby="home-title">
-          <Image className={styles.panoramaPhoto} src="/images/regions/agadez.webp" alt="Vue d’Agadez, au Niger" fill priority sizes="100vw" />
+          <Image
+            className={styles.panoramaPhoto}
+            src="https://cdn.smoothbundle.com/abdourahamane-mohamed/le-niger-et-ses-merveilles-media/accueil/niamey-accueil-2026.jpg"
+            alt="Vue panoramique de Niamey, au Niger"
+            fill
+            priority
+            unoptimized
+          />
           <div className={`container ${styles.panoramaContent}`}>
             <div className="proHeroCopy">
               <h1 id="home-title" className={styles.headline}>Le Niger, terre de merveilles.</h1>
