@@ -79,7 +79,21 @@ export default async function ApplicationPage() {
           </Link>
           <div className={styles.headerActions}>
             <InstallButton />
-            <Link href="/application/parametres" aria-label="Menu et paramètres" className={styles.roundAction}><Menu size={21} /></Link>
+            <details className={styles.appMenu}>
+              <summary className={styles.roundAction} aria-label="Ouvrir le menu de l'application" title="Menu de l'application">
+                <Menu size={21} aria-hidden="true" />
+              </summary>
+              <nav className={styles.menuPanel} aria-label="Outils et services de l'application">
+                <div className={styles.menuTitle}>Outils et services</div>
+                {tools.map(({ href, label, icon: Icon }) => (
+                  <Link href={href} key={href} className={styles.menuItem}>
+                    <Icon size={19} aria-hidden="true" />
+                    <span>{label}</span>
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </Link>
+                ))}
+              </nav>
+            </details>
           </div>
         </div>
       </header>
@@ -157,10 +171,6 @@ export default async function ApplicationPage() {
           <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
         </section>
 
-        <section className={styles.section} aria-label="Autres outils">
-          <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>À votre disposition</span><h2>Outils et services</h2></div></div>
-          <div className={styles.toolGrid}>{tools.map(({href,label,icon:Icon})=><Link key={href} href={href}><Icon size={20}/><span>{label}</span><ChevronRight size={17}/></Link>)}</div>
-        </section>
       </div>
       <nav className={styles.appNav} aria-label="Navigation de l'application">
         {([
