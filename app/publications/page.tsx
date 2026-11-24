@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compass, Newspaper, Sparkles } from 'lucide-react'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
+import PublicationActions from './publication-actions'
 import styles from './feed.module.css'
-import { normalizePublicationContent } from '../../lib/publications/format'
+import { getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../lib/supabase/server'
 
@@ -109,6 +110,7 @@ export default async function PublicationsPage() {
                         <div style={{display:'flex',alignItems:'center',gap:12}}>
                           <div className="publicationAvatar" aria-hidden="true">NM</div>
                           <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}</div></div>
+                          <PublicationActions id={publication.id} title={getPublicationTitle(content)} />
                         </div>
                         {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
                         {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}

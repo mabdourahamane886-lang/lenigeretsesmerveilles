@@ -1,0 +1,28 @@
+.actions { flex: none; margin-inline-start: auto; }
+.trigger, .close {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border: 1px solid #dce6df; border-radius: 50%; color: #214735; background: white; cursor: pointer;
+}
+.trigger:hover, .close:hover, .option:hover { background: #eff5f0; }
+.dialog {
+  position: fixed; inset: 0; width: min(25rem, calc(100% - 2rem)); max-height: 85dvh;
+  margin: auto; padding: 0; border: 0; border-radius: 18px;
+  color: #193c2c; background: #fff; box-shadow: 0 20px 68px #122d2330;
+}
+.dialog::backdrop { background: #112a2059; }
+.sheet { padding: 18px; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.heading h2 { margin: 0; padding: 0; border: 0; color: #193c2c; font: 700 1.1rem/1.3 system-ui, sans-serif; letter-spacing: normal; }
+.close { flex: none; }
+.title { margin: 2px 0 14px; font: 400 .9rem/1.45 system-ui, sans-serif; color: #52645a; overflow-wrap: anywhere; }
+.option {
+  width: 100%; min-height: 48px; display: flex; align-items: center; gap: 12px;
+  padding: 8px 10px; border: 0; border-top: 1px solid #e4ece5; text-align: start;
+  background: white; color: #193c2c; font: 650 .94rem/1.4 system-ui, sans-serif; cursor: pointer;
+}
+.feedback:not(:empty) { margin: 12px 0 0; font: 550 .87rem/1.45 system-ui, sans-serif; }
+.url { display: block; width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #97ac9e; border-radius: 8px; color: #193c2c; background: white; }
+@media (max-width: 600px) {
+  .dialog { inset: auto 0 0; width: 100%; max-width: 100%; margin: 0; border-radius: 20px 20px 0 0; }
+  .sheet { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+}

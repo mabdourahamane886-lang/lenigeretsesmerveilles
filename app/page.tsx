@@ -1,5 +1,6 @@
 import styles from './home-mobile.module.css'
 import Image from 'next/image'
+import PublicationActions from './publications/publication-actions'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -167,11 +168,11 @@ export default async function Home() {
         <section className={styles.panorama} aria-labelledby="home-title">
           <Image
             className={styles.panoramaPhoto}
-            src="https://cdn.smoothbundle.com/abdourahamane-mohamed/le-niger-et-ses-merveilles-media/accueil/niamey-accueil-2026.jpg"
-            alt="Vue panoramique de Niamey, au Niger"
+            src="/images/accueil/fleuve-niger-niamey.webp"
+            alt={nigerMedia.niamey.alt}
             fill
             priority
-            unoptimized
+            sizes="100vw"
           />
           <div className={`container ${styles.panoramaContent}`}>
             <div className="proHeroCopy">
@@ -186,6 +187,11 @@ export default async function Home() {
             </aside>
           </div>
         </section>
+
+        <div className={styles.photoCredit}>
+          <a href={nigerMedia.niamey.sourceUrl}>Photo du fleuve Niger · {nigerMedia.niamey.author}</a>
+          {' · '}<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+        </div>
 
         <section id="univers" className="section proSection" aria-labelledby="univers-title">
           <div className="container">
@@ -384,7 +390,10 @@ export default async function Home() {
                       <video src={publication.media_url} controls preload="metadata" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
                     <div className="proArticleBody">
-                      <span className="proMiniLabel">{publication.location || 'Niger'}</span>
+                      <div className={styles.publicationHeader}>
+                        <span className="proMiniLabel">{publication.location || 'Niger'}</span>
+                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} />
+                      </div>
                       <h3>{getPublicationTitle(publication.content)}</h3>
                       <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
                       <small>{publication.author_name || 'Le Niger et ses Merveilles'}</small>

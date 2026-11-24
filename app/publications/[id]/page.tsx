@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import Breadcrumbs from '../../../components/site/breadcrumbs'
-import ShareButton from '../../../components/site/share-button'
+import PublicationActions from '../publication-actions'
 import { normalizePublicationContent, getPublicationTitle } from '../../../lib/publications/format'
 import { createAdminClient } from '../../../lib/supabase/admin'
 import { createClient as createServerClient } from '../../../lib/supabase/server'
@@ -165,6 +165,7 @@ export default async function PublicationDetailPage({
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
                 <div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, true)}</time>}</div>
               </div>
+              <PublicationActions id={publication.id} title={title} />
             </div>
 
             <h1 className="publicationScreenReaderTitle">{title}</h1>
@@ -210,9 +211,6 @@ export default async function PublicationDetailPage({
               <p className="muted" style={{ marginTop: 16 }}>💬 Cette publication accepte les messages.</p>
             )}
 
-            <div className="articleShare" style={{ marginTop: 24 }}>
-              <ShareButton title={title} />
-            </div>
           </article>
         </div>
       </main>

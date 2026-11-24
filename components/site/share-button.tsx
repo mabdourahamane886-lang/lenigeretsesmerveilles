@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Check, Copy, Share2 } from 'lucide-react'
 
-async function copyToClipboard(value: string) {
+export async function copyToClipboard(value: string) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value)
     return

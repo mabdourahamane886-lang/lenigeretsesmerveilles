@@ -204,3 +204,13 @@
     translate: 0 2px;
   }
 }
+
+.photoCredit {
+  padding: 8px 4%;
+  text-align: end;
+  color: #52655a;
+  background: white;
+  font-size: .75rem;
+}
+.photoCredit a:hover { text-decoration: underline; }
+.publicationHeader { display: flex; align-items: center; gap: 8px; }
