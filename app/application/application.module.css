@@ -148,3 +148,16 @@
 :global(html[data-niger-theme="dark"]) .menuItem:hover,
 :global(html[data-niger-theme="dark"]) .menuItem:focus-visible{background:#25445e}
 @media(max-width:520px){.menuPanel{top:calc(100% + 10px);right:0;border-radius:15px}}
+
+.launchScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: #fff;
+}
+
+.launchScreen img {
+  object-fit: contain;
+}

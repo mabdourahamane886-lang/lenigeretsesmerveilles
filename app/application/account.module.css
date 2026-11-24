@@ -41,7 +41,7 @@
 .primary:disabled{opacity:.6;cursor:wait}
 .secondary{display:flex;justify-content:center;align-items:center;gap:10px;min-height:46px;padding:0 15px;border:1px solid var(--account-line);border-radius:12px;color:var(--account-navy);background:var(--account-surface);text-decoration:none;font-weight:750;cursor:pointer}
 .formHeader{text-align:center;margin-bottom:25px}
-.formLogo{height:60px;width:60px;margin:0 auto 16px;border-radius:19px;display:grid;place-items:center;background:#102a43;color:#fff}
+.formLogo{display:block;width:84px;height:74px;object-fit:contain;margin:0 auto 16px}
 .formHeader h1{font-family:Georgia,serif;font-size:clamp(2rem,4vw,2.6rem);line-height:1.14;letter-spacing:-.03em;margin:0 0 9px}
 .formHeader p{color:var(--account-muted);line-height:1.65;margin:0 auto;max-width:35ch}
 .authCard{padding:clamp(19px,4vw,32px)}

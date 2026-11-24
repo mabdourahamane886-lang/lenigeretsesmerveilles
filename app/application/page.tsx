@@ -7,6 +7,7 @@ import {
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
 import InstallButton from './install-button'
+import AppLaunch from './app-launch'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { getPublicationTitle, getPublicationExcerpt } from '../../lib/publications/format'
 import styles from './application.module.css'
@@ -70,6 +71,7 @@ async function recentPublications(): Promise<Publication[]> {
 export default async function ApplicationPage() {
   const publications = await recentPublications()
   return (
+    <AppLaunch>
     <main className={styles.app}>
       <header className={styles.bar}>
         <div className={styles.barInner}>
@@ -179,5 +181,6 @@ export default async function ApplicationPage() {
         ] as [string,string,LucideIcon][]).map(([href,label,Icon])=><Link key={href} href={href} aria-current={href === '/application' ? 'page' : undefined}><Icon size={21} aria-hidden="true"/><span>{label}</span></Link>)}
       </nav>
     </main>
+    </AppLaunch>
   )
 }

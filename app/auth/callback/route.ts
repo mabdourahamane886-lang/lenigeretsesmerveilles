@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 
 export async function GET(request: NextRequest) {
   const requestedNext = request.nextUrl.searchParams.get('next') || '/application/profil'
-  const safeNext = requestedNext.startsWith('/application/') && !requestedNext.startsWith('//') && !requestedNext.includes('\\')
+  const safeNext = (requestedNext === '/application' || requestedNext.startsWith('/application/')) && !requestedNext.startsWith('//') && !requestedNext.includes('\\')
     ? requestedNext : '/application/profil'
   const target = new URL(safeNext, request.url)
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL

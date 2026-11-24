@@ -2,10 +2,11 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { isAuthError } from '@supabase/supabase-js'
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole,
-  Mail, Phone, ShieldCheck, UserRound, AlertCircle, LoaderCircle,
+  Mail, Phone, UserRound, AlertCircle, LoaderCircle,
 } from 'lucide-react'
 import { createClient } from '../../../lib/supabase/client'
 import styles from '../account.module.css'
@@ -53,6 +54,8 @@ function translatedError(error: unknown, channel: Channel) {
 
 export default function AuthPage() {
   const supabase = useMemo(() => createClient(), [])
+  const [appEntry, setAppEntry] = useState(false)
+  const destination = appEntry ? '/application' : '/application/profil'
   const [mode, setMode] = useState<Mode>('login')
   const [channel, setChannel] = useState<Channel>('email')
   const [contact, setContact] = useState('')
@@ -69,11 +72,13 @@ export default function AuthPage() {
   const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    const requestedMode = new URLSearchParams(window.location.search).get('mode')
+    const query = new URLSearchParams(window.location.search)
+    setAppEntry(query.get('entry') === 'app')
+    const requestedMode = query.get('mode')
     if (requestedMode === 'reset') setMode('reset')
     else if (requestedMode === 'signup') setMode('signup')
     else if (requestedMode === 'recover') setMode('recover')
-    const callbackError = new URLSearchParams(window.location.search).get('error')
+    const callbackError = query.get('error')
     if (callbackError) {
       setNotice('Le lien de vérification est invalide ou expiré. Demandez un nouveau lien.')
       setIsError(true)
@@ -107,7 +112,7 @@ export default function AuthPage() {
         const credentials = channel === 'phone' ? { phone: phone!, password } : { email, password }
         const { error } = await supabase.auth.signInWithPassword(credentials)
         if (error) throw error
-        window.location.assign('/application/profil')
+        window.location.assign(destination)
         return
       }
 
@@ -122,12 +127,12 @@ export default function AuthPage() {
               email, password,
               options: {
                 data: { full_name: fullName.trim() },
-                emailRedirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fprofil',
+                emailRedirectTo: window.location.origin + '/auth/callback?next=' + encodeURIComponent(destination),
               },
             })
         if (error) throw error
         if (data.session) {
-          window.location.assign('/application/profil')
+          window.location.assign(destination)
           return
         }
         if (channel === 'phone') {
@@ -144,7 +149,9 @@ export default function AuthPage() {
       if (mode === 'recover') {
         if (channel === 'email') {
           const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fcompte%3Fmode%3Dreset',
+            redirectTo: window.location.origin + '/auth/callback?next=' + encodeURIComponent(
+              appEntry ? '/application/compte?mode=reset&entry=app' : '/application/compte?mode=reset',
+            ),
           })
           if (error) throw error
           setNotice('Si cette adresse correspond à un compte, vous recevrez un lien de réinitialisation.')
@@ -167,7 +174,7 @@ export default function AuthPage() {
           switchMode('reset')
           setNotice('Numéro vérifié. Définissez maintenant votre nouveau mot de passe.')
         } else {
-          window.location.assign('/application/profil')
+          window.location.assign(destination)
         }
         return
       }
@@ -202,7 +209,7 @@ export default function AuthPage() {
     <div className={styles.narrow}>
       <Link href="/application/parametres" className={styles.back}><ArrowLeft size={17} /> Paramètres</Link>
       <header className={styles.formHeader}>
-        <div className={styles.formLogo}><ShieldCheck size={30} aria-hidden="true" /></div>
+        <Image className={styles.formLogo} src="/images/niger-merveilles-mark.svg" width={84} height={74} alt="" priority />
         <span className={styles.eyebrow}>Le Niger et ses Merveilles</span>
         <h1>{title}</h1>
         <p>Un espace personnel sécurisé pour découvrir, enregistrer et partager le patrimoine du Niger.</p>
