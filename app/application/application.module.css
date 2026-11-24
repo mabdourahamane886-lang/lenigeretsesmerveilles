@@ -32,7 +32,7 @@
 .sectionHeading>a{flex:none;color:#174c70;display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:.87rem}
 .universeGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .universeCard{min-height:225px;position:relative;overflow:hidden;isolation:isolate;border-radius:19px;color:#fff;display:flex;align-items:flex-end;transition:transform .23s ease,box-shadow .23s ease;background:#254258}
-.universeImage{position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center;transition:transform .35s ease}
+.universeImage{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center;transition:transform .35s ease}
 .universeCard:hover{transform:translateY(-3px);box-shadow:0 12px 28px #102a4326}
 .universeCard:hover .universeImage{transform:scale(1.04)}
 .universeContent{padding:20px;display:flex;flex-direction:column;align-items:start;gap:5px}
@@ -100,3 +100,11 @@
 :global(html[data-niger-theme="dark"]) .app .publicationText p{color:#b8c9d9}
 :global(html[data-niger-theme="dark"]) .app .appNav a{color:#c1d0de}
 :global(html[data-niger-theme="dark"]) .app .search button{background:#386587;color:#fff}
+
+/* Shared website images: authentic framing with strong caption contrast. */
+.universeCard::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(5,18,30,.03) 0%,rgba(5,18,30,.27) 34%,rgba(5,18,30,.91) 100%)}
+.universeCollage{position:absolute;inset:0;z-index:-2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;overflow:hidden}
+.universeCollageTile{min-width:0;min-height:0;background-position:center;background-size:cover;background-repeat:no-repeat;transition:transform .35s ease}
+.universeCard:hover .universeCollageTile{transform:scale(1.045)}
+.universeContent{position:relative;z-index:1;text-shadow:0 1px 12px rgba(0,0,0,.3)}
+@media(prefers-reduced-motion:reduce){.universeCollageTile{transition:none}}
