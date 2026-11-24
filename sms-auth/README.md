@@ -78,20 +78,20 @@ Documentation : Meta WhatsApp Business Platform et Supabase Auth (https://supaba
 - Dans Supabase Auth → URL Configuration, autoriser les URL de callback des domaines déployés (Cloudflare et Vercel) pour terminer la confirmation d'e-mail.
 
 
-## Connexion administrateur et récupération du mot de passe
 
-SMS AUTH partage **l'authentification Supabase du projet Bickri Service Agency** (`okdohokhlkxrmxpevees`). La connexion accepte tout mot de passe déjà enregistré, même s'il a moins de 10 caractères ; seuls les **nouveaux** mots de passe doivent respecter 10 caractères minimum.
+## Connexion SMS AUTH : création de compte automatique
 
-- `/login` : connexion, création d'un compte, demande de réinitialisation et demande de lien de connexion par e-mail.
-- `/auth/callback` : échange sécurisé du code de session PKCE.
-- `/reset-password` : saisie d'un **nouveau** mot de passe après ouverture du lien de réinitialisation.
-- `invalid_login_credentials` : le compte peut être absent, la combinaison e-mail/mot de passe peut être incorrecte ou l'identité peut nécessiter une autre méthode ; **ne jamais contourner le contrôle du mot de passe**.
+L'utilisateur n'a **pas besoin d'un compte Supabase préexistant** ni de connaître Supabase. Les comptes sont créés et vérifiés directement depuis SMS AUTH.
 
-Configurer dans Supabase **Authentication > URL Configuration** :
-- Site URL : l'adresse de production retenue.
-- Additional Redirect URLs : `https://sms-auth-bickri-service-agency.vercel.app/auth/callback` et `https://sms-auth.bickriservice-agency.workers.dev/auth/callback`.
-- Le paramètre `next=/reset-password` est utilisé exclusivement après un lien de récupération.
+- /login : saisir son adresse e-mail et appuyer sur **Continuer avec mon e-mail**.
+- SMS AUTH appelle `supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo } })`.
+- Si l'utilisateur est nouveau, son identité est créée automatiquement en arrière-plan, sans mot de passe obligatoire.
+- Si l'utilisateur possède déjà un compte, il reçoit également un lien personnel à usage unique.
+- Après ouverture du lien, `/auth/callback` confirme la session et redirige vers `/dashboard`.
+- Une option secondaire **Utiliser mon mot de passe** est conservée pour les comptes existants.
+- Une récupération de mot de passe reste disponible pour cette option.
+- Le serveur vérifie toujours la session avant toute opération sensible. L'authentification n'est jamais désactivée.
 
-Vérifier le SMTP d'envoi des e-mails (limites possibles du fournisseur Supabase). Aucun mot de passe administrateur n'est stocké ou généré par SMS AUTH. Un compte de Bickri Service Agency existant fonctionne avec **ses vrais identifiants** seulement.
+**Configuration impérative :** le fournisseur Email doit être activé dans Supabase Auth, et les URL de callback de Vercel et Cloudflare doivent être autorisées dans **Authentication > URL Configuration**. L'envoi des e-mails dépend des limites et du SMTP du projet Supabase. Pour le public, configurer un serveur SMTP transactionnel fiable.
 
-Le correctif est enregistré dans la branche `sms-auth-platform`. Avant de considérer l'erreur corrigée **en production**, contrôler que Vercel et Cloudflare exécutent une version compilée incluant ces commits. Un commit GitHub n'est pas un déploiement.
+**Précision :** Supabase Auth reste la technologie de fond (projet Bickri Service Agency) ; seuls l'inscription et la connexion depuis l'interface SMS AUTH sont requis. Cette solution ne signifie pas que le projet est indépendant de Supabase sur le plan de l'infrastructure.
