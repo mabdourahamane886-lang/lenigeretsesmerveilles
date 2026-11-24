@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   const path = 'media-profile/' + kind + '-' + crypto.randomUUID() + '.' + ext
   const { error } = await db.storage.from('niger-media').upload(path, file, { contentType: file.type, upsert: false })
   if (error) return NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 })
-  const { error: saveError } = await db.from('niger_media_profile').upsert({ id: 1, [kind === 'avatar' ? 'avatar_path' : 'cover_path']: path }, { onConflict: 'id' })
+  const { error: saveError } = await db.from('niger_media_profile').update({ [kind === 'avatar' ? 'avatar_path' : 'cover_path']: path, updated_at: new Date().toISOString() }).eq('id', 1).select('id').single()
   if (saveError) {
     await db.storage.from('niger-media').remove([path])
     return NextResponse.json({ error: 'Profil non configuré dans Supabase' }, { status: 500 })
