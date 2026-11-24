@@ -80,3 +80,7 @@
   .entries { grid-template-columns: 1fr; }
   .entry { min-height: 54px; }
 }
+
+.appNav{position:sticky;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#fff;border-top:1px solid #dce5df;padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom));}
+.appNav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:48px;color:#154e38;font-size:clamp(10px,2vw,13px);font-weight:650;}
+.appNav a:focus-visible,.entry:focus-visible{outline:2px solid #154e38;outline-offset:-2px;}
