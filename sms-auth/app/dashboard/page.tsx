@@ -184,7 +184,7 @@ export default function DashboardPage() {
     </aside>
 
     <div className="consoleMain">
-      <header className="consoleHeader"><div className="headerLeft"><button className="mobileToggle" onClick={()=>setMobileMenu(true)} aria-label="Ouvrir le menu"><Menu size={21}/></button><span>Console</span><ChevronRight size={16}/><strong>{titles[tab]}</strong></div><div className="headerRight"><span className="environment"><span className="liveDot"/> Production</span><span className="userAvatar"><UserRound size={20}/></span><span className="headerUsername">{userLabel}</span></div></header>
+      <header className="consoleHeader"><div className="headerLeft"><button className="mobileToggle" onClick={()=>setMobileMenu(true)} aria-label="Ouvrir le menu"><Menu size={21}/></button><span>Console</span><ChevronRight size={16}/><strong>{titles[tab]}</strong></div><div className="headerRight"><span className="environment"><span className="liveDot"/> Console sécurisée</span><span className="userAvatar"><UserRound size={20}/></span><span className="headerUsername">{userLabel}</span></div></header>
       <main className="consoleContent">
         <div className="consoleTitle"><div><div className="titleEyebrow"><span className="liveDot"/> SMS AUTH PLATFORM <span>/</span> V1.0</div><h1>{titles[tab]}</h1><p>{descriptions[tab]}</p></div>{tab==='overview'&&<button className="button buttonLight" type="button" disabled={loading} onClick={()=>void act(refresh)}><RefreshCcw size={17}/> Actualiser</button>}</div>
         {error&&<div className="dashboardAlert errorAlert" role="alert"><CircleHelp size={18}/>{error}<button onClick={()=>setError('')} aria-label="Fermer"><X size={16}/></button></div>}
