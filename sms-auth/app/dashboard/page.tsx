@@ -54,7 +54,7 @@ const errors: Record<string,string> = {
   code_invalid_or_used:'Code incorrect, expiré ou déjà utilisé.',
   already_verified:'Ce code a déjà été vérifié.',
   project_limit_reached:'Vous pouvez créer jusqu’à cinq projets.',
-  supabase_not_configured:'La base de données Supabase n’est pas encore configurée.',
+  supabase_not_configured:'Connexion réussie. Pour activer le tableau de bord et les clés API, configurez la clé serveur SUPABASE_SERVICE_ROLE_KEY du projet Bickri Service Agency dans les paramètres de l’hébergement.',
 }
 function niceError(code:string) { return errors[code] || code.replaceAll('_',' ') }
 function formatDate(value:string) {
