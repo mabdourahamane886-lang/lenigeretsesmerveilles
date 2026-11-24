@@ -54,7 +54,7 @@ const errors: Record<string,string> = {
   code_invalid_or_used:'Code incorrect, expiré ou déjà utilisé.',
   already_verified:'Ce code a déjà été vérifié.',
   project_limit_reached:'Vous pouvez créer jusqu’à cinq projets.',
-  supabase_not_configured:'Connexion réussie. Pour activer le tableau de bord et les clés API, configurez la clé serveur SUPABASE_SERVICE_ROLE_KEY du projet Bickri Service Agency dans les paramètres de l’hébergement.',
+  supabase_not_configured:'Connexion réussie. Le tableau de bord est en cours de configuration côté serveur.',
 }
 function niceError(code:string) { return errors[code] || code.replaceAll('_',' ') }
 function formatDate(value:string) {
@@ -97,7 +97,7 @@ export default function DashboardPage() {
   useEffect(() => {
     let alive=true
     const supabase=getBrowserClient()
-    if (!supabase) { setError('Configurez votre projet Supabase avant d’utiliser le dashboard.');setLoading(false);return }
+    if (!supabase) { setError('Le service de connexion est momentanément indisponible.');setLoading(false);return }
     void (async()=>{
       const {data}=await supabase.auth.getUser()
       if(!alive)return
@@ -242,8 +242,8 @@ export default function DashboardPage() {
           ].map(([title,text])=><div key={title}><Check size={18}/><span><strong>{title}</strong><small>{text}</small></span></div>)}</div></section>
         </div>}
 
-        {!loading&&tab==='settings'&&<div className="consoleStack"><div className="settingsGrid"><section className="panel"><div className="panelHead"><div><h2>État des services</h2><p>Disponibilité des paramètres côté serveur.</p></div><Settings2 size={20}/></div><div className="serviceRow"><span className="serviceIcon"><Globe2 size={20}/></span><span><strong>Supabase</strong><small>Base de données et authentification</small></span><span className={'stateBadge '+(health?.database_ready?'verified':'failed')}>{health?.database_ready?'Configuré':'À configurer'}</span></div><div className="serviceRow"><span className="serviceIcon"><MessageCircle size={20}/></span><span><strong>Meta WhatsApp Cloud API</strong><small>Envoi des modèles d’authentification</small></span><span className={'stateBadge '+(health?.whatsapp_ready?'verified':'failed')}>{health?.whatsapp_ready?'Paramètres présents':'À configurer'}</span></div><div className="serviceRow"><span className="serviceIcon"><KeyRound size={20}/></span><span><strong>Secrets et clés</strong><small>Conservés sur votre serveur</small></span><span className="stateBadge verified">Serveur</span></div></section>
-          <section className="panel"><div className="panelHead"><div><h2>Compte administrateur</h2><p>Accès à votre console.</p></div><UserRound size={21}/></div><div className="accountBlock"><span className="accountAvatar"><UserRound size={25}/></span><div><strong>{overview?.user.email||'Compte sécurisé'}</strong><small>Authentification Supabase</small></div></div><button className="button buttonOutline" onClick={logout}><LogOut size={18}/> Se déconnecter</button><p className="formHint">Les identifiants Meta et les clés secrètes sont définis dans les variables d’environnement, pas dans cette interface.</p></section></div></div>}
+        {!loading&&tab==='settings'&&<div className="consoleStack"><div className="settingsGrid"><section className="panel"><div className="panelHead"><div><h2>État des services</h2><p>Disponibilité des paramètres côté serveur.</p></div><Settings2 size={20}/></div><div className="serviceRow"><span className="serviceIcon"><Globe2 size={20}/></span><span><strong>Service sécurisé</strong><small>Comptes et données de l’application</small></span><span className={'stateBadge '+(health?.database_ready?'verified':'failed')}>{health?.database_ready?'Configuré':'À configurer'}</span></div><div className="serviceRow"><span className="serviceIcon"><MessageCircle size={20}/></span><span><strong>Meta WhatsApp Cloud API</strong><small>Envoi des modèles d’authentification</small></span><span className={'stateBadge '+(health?.whatsapp_ready?'verified':'failed')}>{health?.whatsapp_ready?'Paramètres présents':'À configurer'}</span></div><div className="serviceRow"><span className="serviceIcon"><KeyRound size={20}/></span><span><strong>Secrets et clés</strong><small>Conservés sur votre serveur</small></span><span className="stateBadge verified">Serveur</span></div></section>
+          <section className="panel"><div className="panelHead"><div><h2>Compte administrateur</h2><p>Accès à votre console.</p></div><UserRound size={21}/></div><div className="accountBlock"><span className="accountAvatar"><UserRound size={25}/></span><div><strong>{overview?.user.email||'Compte sécurisé'}</strong><small>Compte SMS AUTH</small></div></div><button className="button buttonOutline" onClick={logout}><LogOut size={18}/> Se déconnecter</button><p className="formHint">Les identifiants Meta et les clés secrètes sont définis dans les variables d’environnement, pas dans cette interface.</p></section></div></div>}
       </main>
       <footer className="consoleFooter"><span>© 2026 SMS AUTH</span><span><ShieldCheck size={15}/> Authentification sécurisée · Niger & international</span></footer>
     </div>
