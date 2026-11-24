@@ -42,3 +42,13 @@
 .authRecoveryPrompt button{width:100%;min-height:41px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #bfdcd3;border-radius:8px;background:white;color:#147c6e;font-weight:800;font-size:12px;margin:7px 0}
 .authRecoveryPrompt button:first-of-type{background:#157e71;color:#fff;border-color:#157e71}
 .authRecoveryPrompt button:hover:not(:disabled){filter:brightness(.96)}
+
+
+/* Connexion SMS AUTH : parcours e-mail autonome et sans mot de passe obligatoire. */
+.authSimpleAlternate{margin-top:24px;display:flex;justify-content:center;align-items:center}
+.authSimpleAlternate button{display:inline-flex;gap:9px;align-items:center;justify-content:center;border:0;background:transparent;color:#177d74;font-size:12px;font-weight:800;padding:11px 13px;border-radius:9px}
+.authSimpleAlternate button:hover:not(:disabled){background:#eef8f5}
+.authEmailHint{margin:13px 0 0;color:#8196a2;font-size:11px;line-height:1.7}
+.authForm .successMessage{display:flex;align-items:flex-start;gap:9px;line-height:1.7}
+.authForm .successMessage svg{flex:none;color:#199d75;margin-top:1px}
+@media(max-width:520px){.authSimpleAlternate button{min-height:44px;font-size:12px}.authEmailHint{text-align:center}}
