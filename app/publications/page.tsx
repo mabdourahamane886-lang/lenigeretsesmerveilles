@@ -4,6 +4,7 @@ import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compas
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
 import PublicationActions from './publication-actions'
+import MediaProfileEditor from './media-profile-editor'
 import styles from './feed.module.css'
 import { getPublicationTitle, normalizePublicationContent } from '../../lib/publications/format'
 import { createAdminClient } from '../../lib/supabase/admin'
@@ -84,11 +85,31 @@ export default async function PublicationsPage() {
   }
 
   const canPin = await isAdminAuthenticated()
+  const { data: mediaProfile } = supabase ? await supabase.from('niger_media_profile').select('avatar_path,cover_path').eq('id', 1).maybeSingle() : { data: null }
+  const mediaUrl = (path: string | null | undefined) => path && supabase ? supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl : null
+  const avatarUrl = mediaUrl(mediaProfile?.avatar_path)
+  const coverUrl = mediaUrl(mediaProfile?.cover_path)
   const groups = groupPublications(publications)
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
+        <section aria-label="Profil du média" style={{background:'#fff',borderRadius:18,overflow:'hidden',marginBottom:24,border:'1px solid #e5e7eb'}}>
+          <div style={{height:210,background:'#e8edf2',position:'relative'}}>
+            {coverUrl && <img src={coverUrl} alt="Couverture du média" style={{width:'100%',height:'100%',objectFit:'cover'}} />}
+          </div>
+          <div style={{padding:'12px 22px 22px'}}>
+            <div style={{display:'flex',alignItems:'end',gap:18,marginTop:-40,position:'relative'}}>
+              <div style={{width:90,height:90,borderRadius:'50%',border:'4px solid white',background:'#e8edf2',overflow:'hidden',display:'grid',placeItems:'center',flexShrink:0}}>
+                {avatarUrl ? <img src={avatarUrl} alt="Logo Le Niger et ses Merveilles" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : <span aria-hidden="true" style={{fontWeight:700,color:'#1d4d3a'}}>NM</span>}
+              </div>
+              <h2 style={{marginBottom:8}}>Le Niger et ses Merveilles</h2>
+            </div>
+            <p style={{marginTop:10}}>Média culturel et touristique du Niger</p>
+            {canPin && <MediaProfileEditor />}
+            {canPin && <p style={{marginTop:12}}><Link href="/admin/publications">Créer une publication</Link></p>}
+          </div>
+        </section>
         <header className={styles.hero}>
           <p>Le Niger et ses Merveilles</p>
           <h1>Publications</h1>
