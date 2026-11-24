@@ -183,7 +183,6 @@ export default async function Home() {
             <div className="proHeroCopy">
               <h1 id="home-title" className={styles.headline}>Le Niger, terre de merveilles.</h1>
               <p>Des portes du Sahara aux rives du fleuve, découvrez huit régions et les cultures qui les font vivre.</p>
-              <Link className={styles.action} href="#univers">Parcourir les univers <ArrowRight size={17} aria-hidden="true" /></Link>
             </div>
             <aside className={styles.mission} aria-labelledby="home-mission">
               <h2 id="home-mission">Notre mission</h2>
