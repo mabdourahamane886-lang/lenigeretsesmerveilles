@@ -95,3 +95,31 @@ L'utilisateur n'a **pas besoin d'un compte Supabase préexistant** ni de connaî
 **Configuration impérative :** le fournisseur Email doit être activé dans Supabase Auth, et les URL de callback de Vercel et Cloudflare doivent être autorisées dans **Authentication > URL Configuration**. L'envoi des e-mails dépend des limites et du SMTP du projet Supabase. Pour le public, configurer un serveur SMTP transactionnel fiable.
 
 **Précision :** Supabase Auth reste la technologie de fond (projet Bickri Service Agency) ; seuls l'inscription et la connexion depuis l'interface SMS AUTH sont requis. Cette solution ne signifie pas que le projet est indépendant de Supabase sur le plan de l'infrastructure.
+
+
+## Diagnostic réel : envoi d'e-mails bloqué dans le projet Supabase partagé
+
+Constat dans les journaux Auth du projet \`okdohokhlkxrmxpevees\` le 24 novembre 2026 :
+
+\`\`\`text
+error_code: unexpected_failure
+POST /otp -> HTTP 500
+dial tcp: address https://nour-al-fuaad.nouroul-fuaad.workers.dev/**:6555: too many colons in address
+\`\`\`
+
+Ce message prouve que la configuration SMTP de l'ensemble du projet **Bickri Service Agency** contient une URL HTTP Cloudflare comme hôte SMTP. Un hôte SMTP doit être un **nom de serveur SMTP réel** (sans \`https://\`, barre oblique, chemin, ni joker \`**\`) et le port/identifiant/mot de passe doivent correspondre au fournisseur d'envoi réellement utilisé.
+
+**À corriger dans le Dashboard Supabase**, car le connecteur ne permet pas de modifier les paramètres du serveur SMTP et cette configuration est partagée avec toutes les applications utilisant le projet :
+
+1. Projet Bickri Service Agency > Authentication > Emails > SMTP Settings.
+2. Remplacer l'hôte erroné par le **SMTP Host** réel de votre fournisseur transactionnel (Resend, Brevo, Postmark, etc.) et utiliser exclusivement son port, nom d'utilisateur, mot de passe et adresse expéditrice.
+3. N'utilisez pas une URL Workers comme serveur SMTP. Ne désactivez pas la confirmation d'e-mail pour contourner ce problème.
+4. Dans Authentication > URL Configuration, ajouter les URL autorisées ci-dessous et choisir l'URL principale de SMS AUTH comme Site URL si cela convient à toutes les applications partageant le projet :
+   - \`https://sms-auth.bickriservice-agency.workers.dev/auth/callback\`
+   - \`https://sms-auth-bickri-service-agency.vercel.app/auth/callback\`
+   - Attention : modifier la **Site URL** du projet partagé peut impacter ses autres applications; privilégier l'ajout d'URL à la liste de redirections sans modifier la valeur existante.
+5. Tester un nouveau lien de connexion et consulter les logs Auth pour confirmer \`POST /otp\` en \`200\` puis la validation de session.
+
+L'interface SMS AUTH signale désormais explicitement les erreurs d'envoi (500/SMTP) au lieu de les présenter comme des erreurs d'identifiants. Aucun nouveau lien ne peut être garanti tant que le SMTP partagé n'est pas corrigé.
+
+Guide officiel : https://supabase.com/docs/guides/auth/auth-smtp
