@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { isAuthError } from '@supabase/supabase-js'
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole,
   Mail, Phone, ShieldCheck, UserRound, AlertCircle, LoaderCircle,
@@ -13,20 +14,41 @@ type Mode = 'login' | 'signup' | 'recover' | 'verify' | 'reset'
 type Channel = 'email' | 'phone'
 
 function normalizedPhone(value: string) {
-  const digits = value.replace(/[^\d]/g, '')
-  const prepared = digits.length === 8 ? '227' + digits : digits
-  if (!/^[1-9]\d{7,14}$/.test(prepared)) return null
-  return '+' + prepared
+  const compact = value.trim().replace(/[\s().-]/g, '')
+  const international = compact.startsWith('00') ? '+' + compact.slice(2) : compact
+  if (/^\d{8}$/.test(international)) return '+227' + international
+  if (/^227\d{8}$/.test(international)) return '+' + international
+  if (!/^\+[1-9]\d{7,14}$/.test(international)) return null
+  if (international.startsWith('+227') && international.length !== 12) return null
+  return international
 }
 
-function translatedError(message: string) {
-  const m = message.toLowerCase()
-  if (m.includes('invalid login credentials')) return 'E-mail, numéro ou mot de passe incorrect.'
-  if (m.includes('email not confirmed')) return 'Veuillez confirmer votre adresse e-mail avant de vous connecter.'
-  if (m.includes('phone provider') || m.includes('sms provider') || m.includes('phone signups are disabled')) return 'La connexion par téléphone nécessite l’activation du fournisseur SMS dans Supabase.'
-  if (m.includes('email rate limit') || m.includes('over_email_send_rate_limit') || m.includes('rate limit')) return 'Trop de tentatives. Réessayez plus tard.'
-  if (m.includes('otp') || m.includes('token has expired')) return 'Code invalide ou expiré. Demandez un nouveau code.'
-  return message || 'Une erreur s’est produite. Veuillez réessayer.'
+function translatedError(error: unknown, channel: Channel) {
+  if (!isAuthError(error)) {
+    return error instanceof Error ? error.message : 'Une erreur est survenue. Réessayez.'
+  }
+
+  switch (error.code) {
+    case 'invalid_credentials':
+      return channel === 'phone'
+        ? 'Utilisez le numéro déjà associé à votre compte ou connectez-vous par e-mail.'
+        : 'Connexion impossible avec cette adresse et ce mot de passe. Vous pouvez réinitialiser votre mot de passe.'
+    case 'email_not_confirmed':
+      return 'Confirmez votre adresse e-mail avant de vous connecter.'
+    case 'phone_not_confirmed':
+      return 'Votre numéro doit être confirmé avant la connexion.'
+    case 'phone_provider_disabled':
+    case 'sms_send_failed':
+      return 'L’accès par téléphone est indisponible. Utilisez votre adresse e-mail.'
+    case 'over_email_send_rate_limit':
+    case 'over_sms_send_rate_limit':
+    case 'over_request_rate_limit':
+      return 'Trop de tentatives. Réessayez plus tard.'
+    case 'otp_expired':
+      return 'Code invalide ou expiré. Demandez un nouveau code.'
+    default:
+      return 'Impossible de terminer cette opération. Réessayez dans quelques instants.'
+  }
 }
 
 export default function AuthPage() {
@@ -53,7 +75,7 @@ export default function AuthPage() {
     else if (requestedMode === 'recover') setMode('recover')
     const callbackError = new URLSearchParams(window.location.search).get('error')
     if (callbackError) {
-      setNotice(callbackError)
+      setNotice('Le lien de vérification est invalide ou expiré. Demandez un nouveau lien.')
       setIsError(true)
     }
   }, [])
@@ -112,7 +134,7 @@ export default function AuthPage() {
           setPendingPhone(phone!)
           setVerifyPurpose('signup')
           setMode('verify')
-          setNotice('Un code de confirmation a été envoyé par SMS si le fournisseur est activé.')
+          setNotice('Un code de confirmation vous a été envoyé par SMS.')
         } else {
           setNotice('Compte créé. Consultez votre boîte e-mail pour confirmer votre adresse avant la connexion.')
         }
@@ -162,7 +184,7 @@ export default function AuthPage() {
       }
     } catch (error) {
       setIsError(true)
-      setNotice(translatedError(error instanceof Error ? error.message : 'Une erreur est survenue.'))
+      setNotice(translatedError(error, channel))
     } finally {
       setBusy(false)
     }
@@ -186,7 +208,7 @@ export default function AuthPage() {
         <p>Un espace personnel sécurisé pour découvrir, enregistrer et partager le patrimoine du Niger.</p>
       </header>
       <section className={[styles.card, styles.authCard].join(' ')}>
-        {!supabase && <p className={[styles.status, styles.err].join(' ')} role="alert">Authentification indisponible : les variables publiques Supabase doivent être configurées.</p>}
+        {!supabase && <p className={[styles.status, styles.err].join(' ')} role="alert">La connexion est temporairement indisponible. Réessayez plus tard.</p>}
         <form onSubmit={submit} className={styles.form}>
           {(mode === 'login' || mode === 'signup' || mode === 'recover') && <>
             <div className={styles.fieldGroup}>
@@ -227,7 +249,6 @@ export default function AuthPage() {
           {(mode === 'recover' || mode === 'verify' || mode === 'reset') && <button type="button" className={styles.textLink} onClick={()=>switchMode('login')}>Revenir à la connexion</button>}
         </form>
       </section>
-      <div className={styles.notice}><ShieldCheck size={20} style={{flexShrink:0}}/><span>Les mots de passe sont gérés par Supabase Auth et ne sont jamais enregistrés dans le profil. Les confirmations SMS exigent un fournisseur SMS actif et la couverture du numéro au Niger.</span></div>
     </div>
   </main>
 }

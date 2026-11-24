@@ -87,7 +87,7 @@ export default function SettingsPage() {
       <div className={styles.card}>
         <Link className={styles.row} href="/application/profil"><span className={styles.rowIcon}><UserRound size={21}/></span><span className={styles.rowText}><strong>Mon profil</strong><small>Nom, biographie et informations du compte</small></span><ChevronRight size={18} className={styles.arrow}/></Link>
         <Link className={styles.row} href={user ? '/application/compte?mode=reset' : '/application/compte'}><span className={styles.rowIcon}><LockKeyhole size={21}/></span><span className={styles.rowText}><strong>Sécurité et connexion</strong><small>Mot de passe et gestion de l’accès</small></span><ChevronRight size={18} className={styles.arrow}/></Link>
-        <a className={styles.row} href="#confidentialite"><span className={styles.rowIcon}><ShieldCheck size={21}/></span><span className={styles.rowText}><strong>Confidentialité</strong><small>Comprendre la gestion de vos données</small></span><ChevronRight size={18} className={styles.arrow}/></a>
+        <Link className={styles.row} href="/politique-confidentialite"><span className={styles.rowIcon}><ShieldCheck size={21}/></span><span className={styles.rowText}><strong>Confidentialité</strong><small>Comprendre la gestion de vos données</small></span><ChevronRight size={18} className={styles.arrow}/></Link>
       </div>
 
       <h2 className={styles.sectionTitle}>Affichage et accessibilité</h2>
@@ -132,7 +132,6 @@ export default function SettingsPage() {
         <Link href="/plan-du-site" className={styles.row}><span className={styles.rowIcon}><Globe2 size={21}/></span><span className={styles.rowText}><strong>Plan de l’application</strong><small>Accéder à toutes les rubriques</small></span><ExternalLink size={17} className={styles.arrow}/></Link>
         <div className={styles.row}><span className={styles.rowIcon}><Info size={21}/></span><span className={styles.rowText}><strong>Le Niger et ses Merveilles</strong><small>Interface de l’application · Version 2.1</small></span></div>
       </div>
-      <section id="confidentialite" className={styles.notice}><ShieldCheck size={20} style={{flexShrink:0}}/><div><strong>Confidentialité</strong><br/>La connexion est assurée par Supabase Auth. Les préférences d’affichage sont conservées localement ; elles ne sont pas des données publiques. Les favoris restent enregistrés sur cet appareil.</div></section>
       {saved && <p className={styles.hint} role="status" style={{marginTop:13,display:'flex',gap:6,alignItems:'center'}}><CheckCircle2 size={16}/> Préférences enregistrées.</p>}
     </div>
   </main>
