@@ -51,6 +51,11 @@ export default function AuthPage() {
     if (requestedMode === 'reset') setMode('reset')
     else if (requestedMode === 'signup') setMode('signup')
     else if (requestedMode === 'recover') setMode('recover')
+    const callbackError = new URLSearchParams(window.location.search).get('error')
+    if (callbackError) {
+      setNotice(callbackError)
+      setIsError(true)
+    }
   }, [])
 
   const switchMode = (next: Mode) => {
