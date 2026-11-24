@@ -33,3 +33,12 @@
 .authRecoveryActions .forgotLink:hover{text-decoration:underline}
 .authRecoveryActions .forgotLink:disabled{color:#a4b5bd;text-decoration:none}
 .authForm .configNote{display:flex;align-items:center;gap:9px}
+
+
+/* Aide immédiate après refus des identifiants par Supabase. */
+.authRecoveryPrompt{margin-top:13px;padding:15px;background:#f0f8f6;border:1px solid #d6ebe5;border-radius:11px;color:#365f5c}
+.authRecoveryPrompt p{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.65;margin:0 0 13px}
+.authRecoveryPrompt p svg{color:#188675;margin-top:1px}
+.authRecoveryPrompt button{width:100%;min-height:41px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #bfdcd3;border-radius:8px;background:white;color:#147c6e;font-weight:800;font-size:12px;margin:7px 0}
+.authRecoveryPrompt button:first-of-type{background:#157e71;color:#fff;border-color:#157e71}
+.authRecoveryPrompt button:hover:not(:disabled){filter:brightness(.96)}
