@@ -81,12 +81,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta charSet="utf-8" />
       </head>
       <body>
-        <AppEnvironment>
+        <AppEnvironment siteFooter={<Footer />}>
           <AppThemeSync />
           <PageBannerController />
           <Header />
           <div className="siteGlobalContent"><BackButton />{children}</div>
-          <Footer />
         </AppEnvironment>
       </body>
     </html>

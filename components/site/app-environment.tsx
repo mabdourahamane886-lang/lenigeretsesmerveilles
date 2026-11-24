@@ -16,8 +16,9 @@ const AppContext = createContext({
 
 export const useAppEnvironment = () => useContext(AppContext)
 
-export default function AppEnvironment({ children }: { children: ReactNode }) {
+export default function AppEnvironment({ children, siteFooter }: { children: ReactNode; siteFooter: ReactNode }) {
   const path = usePathname()
+  const appRoute = path === '/application' || path?.startsWith('/application/')
   const [appTab, setAppTab] = useState(false)
   const [standalone, setStandalone] = useState(false)
   const [installed, setInstalled] = useState(false)
@@ -52,13 +53,13 @@ export default function AppEnvironment({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      if (path === '/application') sessionStorage.setItem('niger-app-navigation', '1')
+      if (appRoute) sessionStorage.setItem('niger-app-navigation', '1')
       if (path === '/') sessionStorage.removeItem('niger-app-navigation')
       setAppTab(sessionStorage.getItem('niger-app-navigation') === '1')
     } catch {
-      if (path === '/' || path === '/application') setAppTab(path === '/application')
+      if (path === '/' || appRoute) setAppTab(Boolean(appRoute))
     }
-  }, [path])
+  }, [appRoute, path])
 
   async function requestInstall() {
     if (!promptEvent) return false
@@ -75,6 +76,7 @@ export default function AppEnvironment({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{ appHome: standalone || appTab ? '/application' : '/', installed: standalone || installed, requestInstall }}>
       {children}
+      {!appRoute && (path === '/' ? !standalone : !standalone && !appTab) && siteFooter}
     </AppContext.Provider>
   )
 }
