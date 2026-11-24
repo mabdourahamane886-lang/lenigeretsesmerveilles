@@ -24,6 +24,12 @@ function friendlyAuthError(error: unknown): string {
   if (code === 'over_email_send_rate_limit' || code === 'over_request_rate_limit' || authError?.status === 429) {
     return 'Trop de demandes de connexion. Réessayez dans quelques minutes.'
   }
+  if (code === 'email_address_not_authorized') {
+    return 'L’envoi d’e-mails à cette adresse n’est pas encore autorisé. Le service d’envoi doit être configuré par l’administrateur.'
+  }
+  if (code === 'unexpected_failure' || (authError?.status ?? 0) >= 500 || message.includes('error sending') || message.includes('smtp')) {
+    return 'Impossible d’envoyer le lien de connexion : le service d’envoi d’e-mails est mal configuré ou indisponible. Aucun lien n’a pu être envoyé. Contactez l’administrateur de SMS AUTH.'
+  }
   if (code === 'email_provider_disabled') return 'La connexion par e-mail est momentanément indisponible.'
   if (code === 'email_address_invalid') return 'Vérifiez votre adresse e-mail.'
   if (code === 'otp_disabled' || code === 'otp_expired') return 'Ce lien a expiré. Demandez un nouveau lien.'
@@ -43,6 +49,13 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false)
   const [notice, setNotice] = useState('')
   const supabase = getBrowserClient()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('error') === 'confirmation' || params.get('error_description')) {
+      setError('Le lien de connexion a expiré ou n’a pas pu être validé. Demandez un nouveau lien depuis cette page.')
+    }
+  }, [])
 
   useEffect(() => {
     if (!supabase) return
@@ -120,7 +133,15 @@ export default function LoginPage() {
       router.replace('/dashboard')
       router.refresh()
     } catch (e) {
-      setError(friendlyAuthError(e))
+      const authError = e as { code?: string; message?: string } | null
+      const invalid = /invalid.*credentials/i.test((authError?.code || '') + ' ' + (authError?.message || ''))
+      if (invalid) {
+        setMode('email')
+        setPassword('')
+        setError('Ce mot de passe n’a pas été reconnu. Vous pouvez essayer la connexion avec votre adresse e-mail, sans mot de passe.')
+      } else {
+        setError(friendlyAuthError(e))
+      }
     } finally {
       setBusy(false)
     }
