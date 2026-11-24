@@ -15,12 +15,12 @@ Plateforme indépendante d'authentification par numéro, WhatsApp et API de vér
 
 ## Installation
 
-Prérequis : Node.js 22, un projet Supabase **dédié à SMS AUTH**, une application Meta Business avec un numéro WhatsApp Business Platform autorisé.
+Prérequis : Node.js 22, le projet Supabase **Bickri service agency** (tables indépendantes `sms_auth_*`), une application Meta Business avec un numéro WhatsApp Business Platform autorisé.
 
 1. Copier les fichiers du dossier sms-auth dans un dépôt GitHub distinct ou définir **Root Directory = sms-auth** sur Vercel.
 2. Exécuter npm install et npm run dev depuis le dossier sms-auth.
-3. Créer un projet Supabase dédié. Dans SQL Editor, exécuter supabase/schema.sql. Activer l'authentification e-mail et la confirmation d'e-mail.
-4. Copier .env.example en .env.local, puis compléter les variables d'environnement (ne jamais publier de secrets).
+3. Le projet Supabase **Bickri service agency** (`okdohokhlkxrmxpevees`) possède déjà les trois tables `sms_auth_*`, créées avec RLS et sans accès public aux OTP ni aux clés. Ne pas réexécuter les migrations sans vérifier leur état. Activer l'authentification e-mail et la confirmation d'e-mail.
+4. Configurer les variables d'environnement dans Vercel et dans les secrets Cloudflare : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (serveur seulement), `OTP_PEPPER`, les identifiants Meta. Le service role possède des accès très étendus aux autres données du projet partagé : le limiter aux environnements de production contrôlés et ne jamais le divulguer.
 5. Créer un modèle Meta de catégorie **AUTHENTICATION** avec bouton **COPY_CODE**, le faire approuver. Renseigner son nom et sa langue.
 6. Définir le webhook Meta avec l'URL https://VOTRE-DOMAINE/api/webhooks/whatsapp, le même WHATSAPP_VERIFY_TOKEN et s'abonner aux événements messages.
 7. Configurer le token Meta de longue durée avec les permissions adéquates, puis tester l'envoi sur un numéro WhatsApp réel ayant consenti à recevoir un code.
@@ -69,3 +69,10 @@ Les OTP émis par SMS AUTH prouvent **la possession du numéro** après validati
 - Pour un usage à grande échelle, ajouter des quotas par IP, un suivi antifraude avancé et des alertes de dépenses.
 
 Documentation : Meta WhatsApp Business Platform et Supabase Auth (https://supabase.com/docs/guides/auth/phone-login).
+
+## Déploiements du 24 novembre 2026
+
+- **Cloudflare Workers** : `https://sms-auth.bickriservice-agency.workers.dev` — version Next.js/OpenNext publiée sur le compte Cloudflare `bickriservice-agency` et vérifiée via Cloudflare Browser Rendering. La plateforme est visible, mais les API sécurisées attendent les secrets serveur et la configuration Meta.
+- **Vercel** : projet `sms-auth` créé avec `Root Directory = sms-auth` ; le premier build a échoué à cause du plugin PostCSS hérité. La configuration a été corrigée dans la branche `sms-auth-platform`, mais une nouvelle publication a été bloquée par la limite quotidienne des déploiements API Vercel. Ne pas déclarer Vercel opérationnel avant un déploiement READY.
+- **Supabase** : URL publique liée à `https://okdohokhlkxrmxpevees.supabase.co`. Migration des trois tables et isolation RLS confirmées. Les secrets `SUPABASE_SERVICE_ROLE_KEY` et Meta doivent être définis dans chaque plateforme avant d'activer les envois réels.
+- Dans Supabase Auth → URL Configuration, autoriser les URL de callback des domaines déployés (Cloudflare et Vercel) pour terminer la confirmation d'e-mail.
