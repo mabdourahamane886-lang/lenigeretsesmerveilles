@@ -3,6 +3,7 @@ create table if not exists public.niger_media_profile (
   id integer primary key default 1 check (id = 1),
   avatar_path text,
   cover_path text,
+  description text not null default 'Média culturel et touristique du Niger',
   updated_at timestamptz not null default now()
 );
 alter table public.niger_media_profile enable row level security;
