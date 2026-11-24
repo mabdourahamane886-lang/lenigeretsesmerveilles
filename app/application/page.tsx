@@ -4,7 +4,7 @@ import Link from 'next/link'
 import {
   ArrowRight, ArrowUpRight, BookOpen, Bookmark, CalendarDays, Camera, ChevronRight,
   Compass, Feather, Languages, Landmark, Map, MapPin, Navigation, Newspaper,
-  Search, Send, Sparkles, Utensils, Users, type LucideIcon,
+  Search, Send, Sparkles, Utensils, Users, Home, User, Settings, Bell, type LucideIcon,
 } from 'lucide-react'
 import InstallButton from './install-button'
 import styles from './application.module.css'
@@ -20,11 +20,18 @@ const explore: Entry[] = [
   ['/culture', 'Culture et traditions', Users], ['/gastronomie', 'Gastronomie', Utensils],
   ['/publications', 'Publications', Newspaper], ['/articles', 'Articles', BookOpen],
   ['/evenements', 'Agenda culturel', CalendarDays], ['/media', 'Photothèque', Camera],
+  ['/application/histoire', 'Histoire et archives', Landmark], ['/application/fossiles', 'Fossiles', Compass],
+  ['/application/bibliotheque', 'Bibliothèque', BookOpen], ['/application/tourisme', 'Tourisme', Navigation],
 ]
 const tools: Entry[] = [
   ['/carte', 'Carte du Niger', Map], ['/assistant', 'Niger IA', Sparkles],
   ['/dictionnaire', 'Dictionnaire des langues', Languages], ['/autour-de-moi', 'Autour de moi', Navigation],
   ['/favoris', 'Mes favoris', Bookmark], ['/contribution', 'Contribuer', Send],
+]
+
+const personal: Entry[] = [
+  ['/application/profil', 'Mon profil local', User], ['/favoris', 'Mes favoris', Bookmark],
+  ['/application/notifications', 'Actualités et alertes', Bell], ['/application/parametres', 'Paramètres', Settings],
 ]
 
 function Directory({ title, entries }: { title: string; entries: Entry[] }) {
@@ -76,7 +83,8 @@ export default function ApplicationPage() {
         </Link>
         <div className={styles.columns}>
           <Directory title="Explorer" entries={explore} />
-          <Directory title="Outils et services" entries={tools} />
+          <Directory title="Outils et services" entries={tools.filter(([href]) => href !== '/favoris')} />
+          <Directory title="Espace personnel" entries={personal} />
         </div>
         <nav className={styles.foot} aria-label="À propos de l’application">
           <Link href="/a-propos"><Feather size={16} /> Le projet</Link>
@@ -84,6 +92,9 @@ export default function ApplicationPage() {
           <Link href="/">Accueil du site <ArrowUpRight size={15} /></Link>
         </nav>
       </div>
+      <nav className={styles.appNav} aria-label="Navigation de l’application">
+        {([['/application','Accueil',Home],['/publications','Publications',Newspaper],['/assistant','Niger IA',Sparkles],['/carte','Carte',Map],['/application/profil','Profil',User]] as Entry[]).map(([href,label,Icon]) => <Link key={href} href={href}><Icon size={21} aria-hidden="true"/><span>{label}</span></Link>)}
+      </nav>
     </main>
   )
 }
