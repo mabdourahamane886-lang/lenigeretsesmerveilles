@@ -1,4 +1,7 @@
-.actions { flex: none; margin-inline-start: auto; }
+.actions { flex: none; margin-inline-start: auto; display: flex; align-items: center; gap: 6px; }
+.pinMark { display: inline-flex; align-items: center; gap: 4px; color: #256046; font: 650 .75rem system-ui, sans-serif; }
+.option:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 600px) { .pinMark span { display: none; } }
 .trigger, .close {
   width: 44px; height: 44px; display: grid; place-items: center;
   border: 1px solid #dce6df; border-radius: 50%; color: #214735; background: white; cursor: pointer;

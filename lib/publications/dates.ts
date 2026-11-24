@@ -17,21 +17,27 @@ export function publicationTime(date: Date, includeDay = false) {
   return includeDay ? `${dayLabel.format(date)} à ${time}` : time
 }
 
-export function groupPublications<T extends { published_at: string | null; created_at: string | null }>(publications: T[], now = new Date()) {
+export function groupPublications<T extends { published_at: string | null; created_at: string | null; pinned_at?: string | null }>(publications: T[], now = new Date()) {
   const today = dayKey.format(now)
   const yesterday = dayKey.format(new Date(now.getTime() - 86_400_000))
   const entries = publications.map(publication => ({
     publication,
+    pinnedTime: publication.pinned_at ? Date.parse(publication.pinned_at) : NaN,
     date: publicationDate(publication.published_at, publication.created_at),
   }))
-  entries.sort((a, b) => (b.date?.getTime() ?? -Infinity) - (a.date?.getTime() ?? -Infinity))
+  entries.sort((a, b) => {
+    const pinA = Number.isFinite(a.pinnedTime) ? a.pinnedTime : -Infinity
+    const pinB = Number.isFinite(b.pinnedTime) ? b.pinnedTime : -Infinity
+    if (pinA !== pinB) return pinB - pinA
+    return (b.date?.getTime() ?? -Infinity) - (a.date?.getTime() ?? -Infinity)
+  })
 
   const groups = new Map<string, { key: string; label: string; entries: typeof entries }>()
   for (const entry of entries) {
-    const key = entry.date ? dayKey.format(entry.date) : 'undated'
+    const key = Number.isFinite(entry.pinnedTime) ? 'pinned' : entry.date ? dayKey.format(entry.date) : 'undated'
     let group = groups.get(key)
     if (!group) {
-      const label = key === today ? 'Aujourd’hui' : key === yesterday ? 'Hier'
+      const label = key === 'pinned' ? 'Publications épinglées' : key === today ? 'Aujourd’hui' : key === yesterday ? 'Hier'
         : entry.date ? dayLabel.format(entry.date) : 'Date inconnue'
       group = { key, label, entries: [] }
       groups.set(key, group)

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compass, Newspaper, Sparkles } from 'lucide-react'
+import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
 import PublicationActions from './publication-actions'
 import styles from './feed.module.css'
@@ -35,6 +36,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 type Publication = {
+  pinned_at: string | null
   id: string
   author_name: string | null
   content: string | null
@@ -66,10 +68,11 @@ export default async function PublicationsPage() {
   if (supabase) {
     const { data, error } = await supabase
       .from('niger_publications')
-      .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,published_at,created_at')
+      .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,published_at,created_at,pinned_at')
       .eq('published', true)
       .eq('visibility', 'public')
-      .order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+      .order('pinned_at', { ascending: false, nullsFirst: false })
+      .order('published_at', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false }).order('id')
     if (error) {
       console.error('[publications] Impossible de charger les publications:', error.message)
       loadError = true
@@ -80,6 +83,7 @@ export default async function PublicationsPage() {
     loadError = true
   }
 
+  const canPin = await isAdminAuthenticated()
   const groups = groupPublications(publications)
 
   return (
@@ -109,8 +113,8 @@ export default async function PublicationsPage() {
                       <div className="cardbody">
                         <div style={{display:'flex',alignItems:'center',gap:12}}>
                           <div className="publicationAvatar" aria-hidden="true">NM</div>
-                          <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date)}</time>}</div></div>
-                          <PublicationActions id={publication.id} title={getPublicationTitle(content)} />
+                          <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, Boolean(publication.pinned_at))}</time>}</div></div>
+                          <PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
                         </div>
                         {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
                         {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}

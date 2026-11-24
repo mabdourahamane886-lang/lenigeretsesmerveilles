@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from '../lib/admin-auth'
 import styles from './home-mobile.module.css'
 import Image from 'next/image'
 import PublicationActions from './publications/publication-actions'
@@ -52,6 +53,7 @@ type HomeArticle = {
 }
 
 type HomePublication = {
+  pinned_at: string | null
   id: string
   author_name?: string | null
   content?: string | null
@@ -125,10 +127,13 @@ async function getHomeData() {
       .limit(3),
     supabase
       .from('niger_publications')
-      .select('id,author_name,content,media_url,media_type,location,published_at')
+      .select('id,author_name,content,media_url,media_type,location,published_at,pinned_at')
       .eq('published', true)
       .eq('visibility', 'public')
-      .order('published_at', { ascending: false })
+      .order('pinned_at', { ascending: false, nullsFirst: false })
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .order('id')
       .limit(3),
     supabase.from('niger_articles').select('*', { count: 'exact', head: true }).eq('published', true),
   ])
@@ -158,7 +163,7 @@ function formatDate(value?: string | null) {
 }
 
 export default async function Home() {
-  const { wonders: homeWonders, events, articles, publications, articlesCount } = await getHomeData()
+  const [{ wonders: homeWonders, events, articles, publications, articlesCount }, canPin] = await Promise.all([getHomeData(), isAdminAuthenticated()])
   const featuredWonder = homeWonders[0]
 
   return (
@@ -187,11 +192,6 @@ export default async function Home() {
             </aside>
           </div>
         </section>
-
-        <div className={styles.photoCredit}>
-          <a href={nigerMedia.niamey.sourceUrl}>Photo du fleuve Niger · {nigerMedia.niamey.author}</a>
-          {' · '}<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
-        </div>
 
         <section id="univers" className="section proSection" aria-labelledby="univers-title">
           <div className="container">
@@ -392,7 +392,7 @@ export default async function Home() {
                     <div className="proArticleBody">
                       <div className={styles.publicationHeader}>
                         <span className="proMiniLabel">{publication.location || 'Niger'}</span>
-                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} />
+                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
                       </div>
                       <h3>{getPublicationTitle(publication.content)}</h3>
                       <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>

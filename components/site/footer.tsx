@@ -42,6 +42,7 @@ export default function Footer() {
         <div className="siteFooterBottom">
           <span>© {new Date().getFullYear()} Le Niger et ses Merveilles. Tous droits réservés.</span>
           <span className="footerMade">Une fenêtre ouverte sur le Niger.</span>
+          <Link href="/mentions-legales">Mentions légales</Link>
           <Link href="/recherche">Recherche <ArrowUpRight size={13} /></Link>
         </div>
       </div>

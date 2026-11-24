@@ -1,8 +1,9 @@
 'use client'
 
-import { useId, useRef, useState } from 'react'
-import { Bookmark, BookmarkCheck, Copy, Ellipsis, Share2, X } from 'lucide-react'
+import { useId, useRef, useState, useTransition } from 'react'
+import { Bookmark, BookmarkCheck, Copy, Ellipsis, Pin, PinOff, Share2, X } from 'lucide-react'
 import { copyToClipboard } from '../../components/site/share-button'
+import { setPublicationPin } from './pin-action'
 import styles from './publication-actions.module.css'
 
 const favoritesKey = 'niger-favoris'
@@ -14,7 +15,13 @@ function readFavorites(): Favorite[] {
   return stored
 }
 
-export default function PublicationActions({ id, title }: { id: string; title: string }) {
+export default function PublicationActions({ id, title, pinned, canPin }: {
+  id: string
+  title: string
+  pinned: boolean
+  canPin: boolean
+}) {
+  const [pinPending, startPinChange] = useTransition()
   const dialog = useRef<HTMLDialogElement>(null)
   const dialogId = useId()
   const [saved, setSaved] = useState(false)
@@ -46,6 +53,18 @@ export default function PublicationActions({ id, title }: { id: string; title: s
     }
   }
 
+  function togglePin() {
+    startPinChange(async () => {
+      try {
+        const result = await setPublicationPin(id, !pinned)
+        if (result.error) setMessage(result.error)
+        else dialog.current?.close()
+      } catch {
+        setMessage('Vérifiez votre connexion et votre session administrateur.')
+      }
+    })
+  }
+
   async function copyLink() {
     const url = new URL(path, window.location.origin).href
     try {
@@ -75,6 +94,7 @@ export default function PublicationActions({ id, title }: { id: string; title: s
 
   return (
     <div className={styles.actions}>
+      {pinned && <span className={styles.pinMark} aria-label="Publication épinglée" title="Publication épinglée"><Pin size={16} aria-hidden="true" /><span>Épinglée</span></span>}
       <button className={styles.trigger} type="button" onClick={openActions} aria-label={'Options de la publication : ' + title} aria-haspopup="dialog" aria-controls={dialogId}>
         <Ellipsis size={23} aria-hidden="true" />
       </button>
@@ -86,6 +106,12 @@ export default function PublicationActions({ id, title }: { id: string; title: s
             <button type="button" className={styles.close} onClick={() => dialog.current?.close()} aria-label="Fermer"><X size={19} /></button>
           </div>
           <div className={styles.title}>{title}</div>
+          {canPin && (
+            <button className={styles.option} type="button" onClick={togglePin} disabled={pinPending}>
+              {pinned ? <PinOff size={18} /> : <Pin size={18} />}
+              {pinPending ? 'Enregistrement…' : pinned ? 'Désépingler la publication' : 'Épingler la publication'}
+            </button>
+          )}
           <button className={styles.option} type="button" onClick={share}><Share2 size={18} /> Partager</button>
           <button className={styles.option} type="button" onClick={copyLink}><Copy size={18} /> Copier le lien</button>
           <button className={styles.option} type="button" onClick={toggleFavorite}>

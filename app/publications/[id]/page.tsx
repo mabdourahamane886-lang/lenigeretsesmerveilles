@@ -1,3 +1,4 @@
+import { isAdminAuthenticated } from '../../../lib/admin-auth'
 import { cache } from 'react'
 import { publicationDate, publicationTime } from '../../../lib/publications/dates'
 import { publicationPreview } from '../../../lib/publications/photo'
@@ -30,7 +31,7 @@ const getPublicPublication = cache(async (id: string) => {
 
   const { data, error } = await supabase
     .from('niger_publications')
-    .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published,published_at,created_at,visibility')
+    .select('id,author_name,content,media_url,media_type,music_url,tagged_people,location,mood,activity,allow_messages,published,published_at,created_at,visibility,pinned_at')
     .eq('id', id)
     .eq('published', true)
     .eq('visibility', 'public')
@@ -114,6 +115,7 @@ export default async function PublicationDetailPage({
   const publication = await getPublicPublication(id)
 
   if (!publication) notFound()
+  const canPin = await isAdminAuthenticated()
   const date = publicationDate(publication.published_at, publication.created_at)
 
   const title = getPublicationTitle(publication.content)
@@ -165,7 +167,7 @@ export default async function PublicationDetailPage({
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
                 <div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, true)}</time>}</div>
               </div>
-              <PublicationActions id={publication.id} title={title} />
+              <PublicationActions id={publication.id} title={title} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
             </div>
 
             <h1 className="publicationScreenReaderTitle">{title}</h1>

@@ -3015,7 +3015,7 @@ body:not(.home-page) .proArticleHero {
 /* Accueil : largeur éditoriale plus généreuse sur grands écrans.
    Les pages intérieures conservent leur largeur actuelle. */
 .homePageWide .container{
-  width:min(1380px,calc(100% - 72px));
+  width:min(1600px,calc(100% - clamp(32px,3vw,52px)));
 }
 .homePageWide .proHeroCopy{
   max-width:900px;
@@ -3028,7 +3028,7 @@ body:not(.home-page) .proArticleHero {
 }
 @media(max-width:700px){
   .homePageWide .container{
-    width:calc(100% - 28px);
+    width:calc(100% - 24px);
   }
 }
 
@@ -3155,7 +3155,7 @@ body:not(.home-page) .proArticleHero {
   .homePageWide .proContribution .proButton{width:100%;justify-content:center}
 }
 @media(max-width:390px){
-  .homePageWide .container{width:calc(100% - 24px)}
+  .homePageWide .container{width:calc(100% - 20px)}
   .homePageWide .proExplorerGrid{gap:8px}
   .homePageWide .proExplorerCard,.homePageWide .proExplorerCardMedia{min-height:205px}
   .homePageWide .proExplorerCardContent{padding:11px}

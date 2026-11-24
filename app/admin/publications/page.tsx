@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { adminDatabase } from '../../../lib/admin/database'
+import PublicationActions from '../../publications/publication-actions'
+import { getPublicationTitle } from '../../../lib/publications/format'
 import SimpleComposer from './simple-composer'
 import PublicationComposer from './publication-composer'
 import styles from './composer.module.css'
@@ -11,7 +13,8 @@ export default async function AdminPublications({searchParams}: {searchParams: P
   const advanced = (await searchParams).mode === 'avance'
   const s = await adminDatabase()
   const { data: publications } = await s.from('niger_publications')
-    .select('id,content,media_url,media_type,location,mood,activity,published,published_at,visibility,scheduled_at,automation_status,distribution_targets,created_at')
+    .select('id,content,media_url,media_type,location,mood,activity,published,published_at,visibility,scheduled_at,automation_status,distribution_targets,created_at,pinned_at')
+    .order('pinned_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending:false }).throwOnError()
 
   return (
@@ -40,7 +43,12 @@ export default async function AdminPublications({searchParams}: {searchParams: P
                   {p.media_url && p.media_type === 'photo' && <img src={p.media_url} alt="" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover'}} />}
                   {p.media_url && p.media_type === 'video' && <video src={p.media_url} controls preload="metadata" style={{width:'100%',aspectRatio:'16/9',objectFit:'cover'}} />}
                   <div className="cardbody">
-                    <span className="tag">{p.automation_status === 'scheduled' ? 'Programmé' : p.published ? p.visibility === 'public' ? 'Publié' : 'Privé' : 'Brouillon'} · {p.location || 'Niger'}</span>
+                    <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                      <span className="tag">{p.automation_status === 'scheduled' ? 'Programmé' : p.published ? p.visibility === 'public' ? 'Publié' : 'Privé' : 'Brouillon'} · {p.location || 'Niger'}</span>
+                      {p.published && p.visibility === 'public' && (
+                        <PublicationActions id={p.id} title={getPublicationTitle(p.content)} canPin pinned={Boolean(p.pinned_at)} />
+                      )}
+                    </div>
                     <h3>{p.content ? p.content.slice(0,110) : 'Publication média'}</h3>
                     {p.scheduled_at && <p className="muted">Prévu le {new Date(p.scheduled_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}</p>}
                     {Array.isArray(p.distribution_targets) && p.distribution_targets.length > 0 && <p className="muted">Réseaux sélectionnés : {p.distribution_targets.join(', ')}</p>}
