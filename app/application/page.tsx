@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  ArrowRight, BookOpenText, Camera, ChevronRight, Compass, Globe2, History,
+  ArrowRight, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
   Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Flag, Pin, Settings2,
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
@@ -10,6 +10,7 @@ import InstallButton from './install-button'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { getPublicationTitle, getPublicationExcerpt } from '../../lib/publications/format'
 import styles from './application.module.css'
+import { nigerMedia } from '../../data/media'
 
 export const metadata: Metadata = {
   title: 'Application | Le Niger et ses Merveilles',
@@ -18,14 +19,16 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-type Universe = { href: string; title: string; subtitle: string; image: string; icon: LucideIcon }
+// Réutiliser les mêmes visuels documentaires que la section « Les univers du Niger » du site.
+// Cette source partagée évite les photographies de régions utilisées pour des rubriques sans rapport.
+type Universe = { href: string; title: string; subtitle: string; image?: string; collage?: string[]; alt: string; icon: LucideIcon }
 const universes: Universe[] = [
-  { href: '/application/histoire', title: 'Histoire', subtitle: 'Mémoire et archives', image: '/images/regions/agadez.webp', icon: History },
-  { href: '/culture', title: 'Culture', subtitle: 'Peuples et traditions', image: '/images/regions/zinder.webp', icon: BookOpenText },
-  { href: '/application/tourisme', title: 'Tourisme', subtitle: 'Sites et paysages', image: '/images/accueil/fleuve-niger-niamey.webp', icon: Compass },
-  { href: '/gastronomie', title: 'Gastronomie', subtitle: 'Saveurs du Niger', image: '/images/regions/maradi.webp', icon: Utensils },
-  { href: '/dictionnaire', title: 'Langues', subtitle: 'Dictionnaire vivant', image: '/images/regions/tahoua.webp', icon: Languages },
-  { href: '/application/fossiles', title: 'Fossiles', subtitle: 'Préhistoire du Niger', image: '/images/regions/agadez.webp', icon: Landmark },
+  { href: '/regions', title: 'Les 8 régions', subtitle: 'Territoires et paysages', image: nigerMedia.agadez.image, alt: nigerMedia.agadez.alt, icon: Compass },
+  { href: '/merveilles', title: 'Les merveilles', subtitle: 'Patrimoine du Niger', image: nigerMedia.tenere.image, alt: nigerMedia.tenere.alt, icon: Sparkles },
+  { href: '/culture', title: 'Culture & traditions', subtitle: 'Peuples et savoir-faire', image: nigerMedia.touareg.image, alt: nigerMedia.touareg.alt, icon: BookOpenText },
+  { href: '/gastronomie', title: 'Gastronomie', subtitle: 'Saveurs du Niger', image: nigerMedia.gastronomie.image, alt: nigerMedia.gastronomie.alt, icon: Utensils },
+  { href: '/evenements', title: 'Les rendez-vous', subtitle: 'Agenda culturel', image: nigerMedia.parcW.image, alt: nigerMedia.parcW.alt, icon: CalendarDays },
+  { href: '/media', title: 'Photothèque', subtitle: 'Images du Niger', collage: [nigerMedia.agadez.image, nigerMedia.zinder.image, nigerMedia.tenere.image, nigerMedia.parcW.image], alt: 'Photographies du patrimoine et des paysages du Niger', icon: Camera },
 ]
 const regions = ['Niamey', 'Agadez', 'Zinder', 'Maradi', 'Tahoua', 'Tillabéri', 'Dosso', 'Diffa']
 const tools = [
@@ -33,6 +36,10 @@ const tools = [
   { href: '/media', label: 'Photothèque', icon: Camera },
   { href: '/articles', label: 'Articles', icon: Newspaper },
   { href: '/evenements', label: 'Agenda', icon: Globe2 },
+  { href: '/application/histoire', label: 'Histoire et archives', icon: Landmark },
+  { href: '/application/tourisme', label: 'Tourisme', icon: Compass },
+  { href: '/dictionnaire', label: 'Dictionnaire des langues', icon: Languages },
+  { href: '/application/fossiles', label: 'Fossiles du Niger', icon: Landmark },
   { href: '/application/parametres', label: 'Paramètres', icon: Settings2 },
 ]
 type Publication = {
@@ -103,9 +110,17 @@ export default async function ApplicationPage() {
         <section className={styles.section} aria-labelledby="univers-title">
           <div className={styles.sectionHeading}><div><span className={styles.eyebrow}>À découvrir</span><h2 id="univers-title">Explorer par univers</h2></div><Link href="/explorer" aria-label="Tout explorer"><ChevronRight /></Link></div>
           <div className={styles.universeGrid}>
-            {universes.map(({ href, title, subtitle, image, icon: Icon }) => (
+            {universes.map(({ href, title, subtitle, image, collage, alt, icon: Icon }) => (
               <Link className={styles.universeCard} href={href} key={href}>
-                <span className={styles.universeImage} style={{ backgroundImage: `linear-gradient(180deg,transparent 22%,rgba(5,18,30,.82) 100%),url("${image}")` }} />
+                {collage ? (
+                  <span className={styles.universeCollage} role="img" aria-label={alt}>
+                    {collage.map((src, index) => (
+                      <span key={src + index} className={styles.universeCollageTile} style={{ backgroundImage: `url("${src}")` }} />
+                    ))}
+                  </span>
+                ) : (
+                  <span className={styles.universeImage} role="img" aria-label={alt} style={{ backgroundImage: `url("${image}")` }} />
+                )}
                 <span className={styles.universeContent}><Icon size={22} aria-hidden="true" /><strong>{title}</strong><small>{subtitle}</small></span>
               </Link>
             ))}
