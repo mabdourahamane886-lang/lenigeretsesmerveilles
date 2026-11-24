@@ -1,11 +1,10 @@
 'use client'
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { isAuthError } from '@supabase/supabase-js'
 import {
-  ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole,
+  ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole,
   Mail, Phone, UserRound, AlertCircle, LoaderCircle,
 } from 'lucide-react'
 import { createClient } from '../../../lib/supabase/client'
@@ -203,7 +202,6 @@ export default function AuthPage() {
 
   return <main className={styles.shell}>
     <div className={styles.narrow}>
-      <Link href="/application/parametres" className={styles.back}><ArrowLeft size={17} /> Paramètres</Link>
       <header className={styles.formHeader}>
         <Image className={styles.formLogo} src="/images/niger-merveilles-mark.svg" width={84} height={74} alt="" priority />
         <span className={styles.eyebrow}>Le Niger et ses Merveilles</span>
