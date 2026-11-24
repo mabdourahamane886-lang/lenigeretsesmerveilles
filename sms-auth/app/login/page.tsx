@@ -39,6 +39,7 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
+  const [showRecovery, setShowRecovery] = useState(false)
   const supabase = getBrowserClient()
 
   // Ne pas obliger une personne déjà connectée à saisir ses identifiants.
@@ -62,7 +63,7 @@ export default function LoginPage() {
       setError('Pour créer un compte, choisissez un mot de passe d’au moins 10 caractères.')
       return
     }
-    setBusy(true); setError(''); setNotice('')
+    setBusy(true); setError(''); setNotice(''); setShowRecovery(false)
     try {
       if (signup) {
         const { data, error } = await supabase.auth.signUp({
@@ -84,6 +85,9 @@ export default function LoginPage() {
       router.replace('/dashboard')
       router.refresh()
     } catch (e) {
+      const auth = e as { code?: string; message?: string } | null
+      const invalid = /invalid.*credentials/i.test((auth?.code || '') + ' ' + (auth?.message || ''))
+      setShowRecovery(!signup && invalid)
       setError(errorMessage(e))
     } finally {
       setBusy(false)
@@ -95,7 +99,7 @@ export default function LoginPage() {
       setError('Renseignez votre adresse e-mail avant de demander un lien sécurisé.')
       return
     }
-    setBusy(true); setError(''); setNotice('')
+    setBusy(true); setError(''); setNotice(''); setShowRecovery(false)
     const cleanEmail = email.trim().toLowerCase()
     try {
       if (mode === 'recovery') {
@@ -146,6 +150,7 @@ export default function LoginPage() {
         <label className="formLabel" htmlFor="auth-password">Mot de passe</label>
         <div className="inputFrame"><LockKeyhole size={19}/><input id="auth-password" type={visible?'text':'password'} autoComplete={signup?'new-password':'current-password'} minLength={signup?10:undefined} placeholder={signup?'10 caractères minimum':'Votre mot de passe'} value={password} required onChange={e=>setPassword(e.target.value)}/><button className="iconButton" type="button" aria-label={visible?'Masquer':'Afficher'} onClick={()=>setVisible(!visible)}>{visible?<EyeOff size={18}/>:<Eye size={18}/>}</button></div>
         {error && <div className="errorMessage" role="alert">{error}</div>}
+        {showRecovery && !signup && <div className="authRecoveryPrompt"><p><KeyRound size={18}/> Le compte Supabase ne peut pas être ouvert avec ces identifiants. Utilisez un lien sécurisé reçu par e-mail, sans modifier votre compte.</p><button type="button" disabled={busy || !supabase} onClick={() => void emailAccess('link')}>Recevoir un lien de connexion <ArrowRight size={16}/></button><button type="button" disabled={busy || !supabase} onClick={() => void emailAccess('recovery')}>Définir un nouveau mot de passe</button></div>}
         {notice && <div className="successMessage" role="status">{notice}</div>}
         <button disabled={busy||!supabase} type="submit" className="button buttonPrimary authSubmit">{busy?<LoaderCircle size={18} className="spin"/>:null}{signup?'Créer mon compte':'Se connecter'}<ArrowRight size={18}/></button>
       </form>
