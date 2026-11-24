@@ -85,7 +85,7 @@ export default async function PublicationsPage() {
   }
 
   const canPin = await isAdminAuthenticated()
-  const { data: mediaProfile } = supabase ? await supabase.from('niger_media_profile').select('avatar_path,cover_path').eq('id', 1).maybeSingle() : { data: null }
+  const { data: mediaProfile } = supabase ? await supabase.from('niger_media_profile').select('avatar_path,cover_path,description').eq('id', 1).maybeSingle() : { data: null }
   const mediaUrl = (path: string | null | undefined) => path && supabase ? supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl : null
   const avatarUrl = mediaUrl(mediaProfile?.avatar_path)
   const coverUrl = mediaUrl(mediaProfile?.cover_path)
@@ -105,8 +105,8 @@ export default async function PublicationsPage() {
               </div>
               <h2 style={{marginBottom:8}}>Le Niger et ses Merveilles</h2>
             </div>
-            <p style={{marginTop:10}}>Média culturel et touristique du Niger</p>
-            {canPin && <MediaProfileEditor />}
+            <p style={{marginTop:10,whiteSpace:'pre-wrap'}}>{mediaProfile?.description ?? 'Média culturel et touristique du Niger'}</p>
+            {canPin && <MediaProfileEditor initialDescription={mediaProfile?.description ?? 'Média culturel et touristique du Niger'} />}
             {canPin && <p style={{marginTop:12}}><Link href="/admin/publications">Créer une publication</Link></p>}
           </div>
         </section>
