@@ -6,3 +6,9 @@
 .close { flex: 0 0 30px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; }
 .results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 60dvh; overflow-y: auto; overflow-wrap: anywhere; padding: 12px; border: 1px solid #dce6df; border-radius: 12px; background: #fff; box-shadow: 0 12px 35px #0002; z-index: 1000; }
 @media (max-width: 600px) { .root { flex: 1 1 100%; max-width: none; min-width: 120px; } .results { min-width: min(300px, calc(100vw - 24px)); } }
+
+/* Clean search focus and rounded field */
+.field { border-radius: 999px; padding: 6px 12px; gap: 10px; }
+.field:focus-within { outline: none; border-color: #16834a; box-shadow: 0 0 0 1px #16834a; }
+.field .input:focus, .field .input:focus-visible { outline: none !important; box-shadow: none !important; border: 0 !important; }
+.close:focus-visible { outline: 2px solid #16834a !important; outline-offset: 2px; }
