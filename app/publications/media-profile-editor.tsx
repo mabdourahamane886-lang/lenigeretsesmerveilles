@@ -1,46 +1,71 @@
 'use client'
-import { useState } from 'react'
 
-export default function MediaProfileEditor({ initialDescription = '' }: { initialDescription?: string }) {
+import { useId, useRef, useState, type FormEvent } from 'react'
+import { Pencil, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import styles from './feed.module.css'
+
+export default function MediaProfileEditor({ initialDescription }: { initialDescription: string }) {
+  const router = useRouter()
+  const dialog = useRef<HTMLDialogElement>(null)
+  const form = useRef<HTMLFormElement>(null)
+  const titleId = useId()
   const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState('')
-  const [description, setDescription] = useState(initialDescription)
-  async function saveDescription() {
-    setBusy(true); setMessage('')
-    const form = new FormData()
-    form.set('kind', 'description'); form.set('description', description)
-    try {
-      const response = await fetch('/api/media-profile', { method: 'POST', body: form })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Enregistrement impossible')
-      window.location.reload()
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Erreur') }
-    finally { setBusy(false) }
+  const [error, setError] = useState('')
+  const [status, setStatus] = useState('')
+
+  function open() {
+    form.current?.reset()
+    setError('')
+    setStatus('')
+    dialog.current?.showModal()
   }
-  async function upload(kind: 'avatar' | 'cover', file?: File) {
-    if (!file) return
-    setBusy(true); setMessage('')
-    const form = new FormData()
-    form.set('kind', kind); form.set('file', file)
+
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (busy) return
+    const data = new FormData(event.currentTarget)
+    data.set('kind', 'profile')
+    setBusy(true)
+    setError('')
     try {
-      const response = await fetch('/api/media-profile', { method: 'POST', body: form })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Enregistrement impossible')
-      window.location.reload()
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Erreur de transfert') }
-    finally { setBusy(false) }
+      const response = await fetch('/api/media-profile', { method: 'POST', body: data })
+      if (response.status === 413) throw new Error('Les images sont trop volumineuses. Réduisez leur taille et réessayez.')
+      const result = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(result?.error || 'Impossible d’enregistrer le profil.')
+      router.refresh()
+      dialog.current?.close()
+      setStatus('Profil enregistré.')
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Impossible d’enregistrer le profil.')
+    } finally {
+      setBusy(false)
+    }
   }
-  return <div style={{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center',marginTop:12}}>
-    {(['avatar','cover'] as const).map(kind => <label key={kind} style={{cursor:busy?'wait':'pointer',border:'1px solid #d1d5db',borderRadius:9,padding:'9px 12px',background:'#fff',color:'#111827',fontWeight:600}}>
-      {kind === 'avatar' ? 'Modifier le logo' : 'Modifier la couverture'}
-      <input disabled={busy} aria-label={kind === 'avatar' ? 'Choisir un logo' : 'Choisir une couverture'} type="file" accept="image/png,image/jpeg,image/webp" style={{display:'none'}} onChange={event => { void upload(kind,event.target.files?.[0]); event.target.value='' }} />
-    </label>)}
-    {busy && <span role="status">Enregistrement en cours…</span>}
-    <div style={{width:'100%',display:'grid',gap:8,marginTop:8}}>
-      <label htmlFor="media-description" style={{fontWeight:600}}>Description du média</label>
-      <textarea id="media-description" value={description} onChange={event => setDescription(event.target.value)} maxLength={1000} rows={3} style={{width:'100%',border:'1px solid #d1d5db',borderRadius:9,padding:12}} />
-      <button type="button" disabled={busy} onClick={() => void saveDescription()} style={{justifySelf:'start',padding:'10px 16px',borderRadius:9,background:'#155e45',color:'white',border:0,cursor:'pointer'}}>Enregistrer la description</button>
-    </div>
-    {message && <span role="alert">{message}</span>}
-  </div>
+
+  return (
+    <>
+      <button type="button" className={styles.profileButton} aria-haspopup="dialog" onClick={open}>
+        <Pencil size={16} aria-hidden="true" /> Éditer le profil
+      </button>
+      <span role="status" className="sr-only">{status}</span>
+      <dialog ref={dialog} className={styles.profileDialog} aria-labelledby={titleId}
+        onCancel={event => { if (busy) event.preventDefault() }}>
+        <form ref={form} onSubmit={save}>
+          <div className={styles.profileDialogHeading}>
+            <h2 id={titleId}>Éditer le profil</h2>
+            <button type="button" className={styles.profileButton} disabled={busy}
+              onClick={() => dialog.current?.close()} aria-label="Fermer"><X size={18} /></button>
+          </div>
+          <fieldset disabled={busy}>
+            <label>Photo de profil<input name="avatar" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+            <label>Photo de couverture<input name="cover" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+            <label>Description<textarea name="description" defaultValue={initialDescription} rows={4} maxLength={1000} /></label>
+            <button type="submit" className={styles.profileButton}>{busy ? 'Enregistrement…' : 'Enregistrer'}</button>
+          </fieldset>
+          {error && <p role="alert">{error}</p>}
+        </form>
+      </dialog>
+    </>
+  )
 }

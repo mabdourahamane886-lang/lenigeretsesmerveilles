@@ -21,7 +21,7 @@ export async function copyToClipboard(value: string) {
   if (!copied) throw new Error('Copie indisponible')
 }
 
-export default function ShareButton({ title, href }: { title: string; href?: string }) {
+export default function ShareButton({ title, href, buttonClassName }: { title: string; href?: string; buttonClassName?: string }) {
   const [copied, setCopied] = useState(false)
 
   function shareUrl() {
@@ -49,6 +49,13 @@ export default function ShareButton({ title, href }: { title: string; href?: str
       }
     }
     await copyLink()
+  }
+
+  if (buttonClassName) {
+    return <button type="button" className={buttonClassName} onClick={share}>
+      {copied ? <Check size={15} aria-hidden="true" /> : <Share2 size={15} aria-hidden="true" />}
+      {copied ? 'Lien copié' : 'Partager'}
+    </button>
   }
 
   return (

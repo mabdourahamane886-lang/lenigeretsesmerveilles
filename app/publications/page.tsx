@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ShareButton from '../../components/site/share-button'
 import { ArrowRight, BookOpenText, CalendarDays, Camera, ChefHat, Clock3, Compass, Newspaper, Sparkles } from 'lucide-react'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { groupPublications, publicationTime } from '../../lib/publications/dates'
@@ -89,35 +90,33 @@ export default async function PublicationsPage() {
   const mediaUrl = (path: string | null | undefined) => path && supabase ? supabase.storage.from('niger-media').getPublicUrl(path).data.publicUrl : null
   const avatarUrl = mediaUrl(mediaProfile?.avatar_path)
   const coverUrl = mediaUrl(mediaProfile?.cover_path)
+  const description = mediaProfile?.description ?? 'Média culturel et touristique du Niger'
   const groups = groupPublications(publications)
 
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
-        <section aria-label="Profil du média" style={{background:'#fff',borderRadius:18,overflow:'hidden',marginBottom:24,border:'1px solid #e5e7eb'}}>
-          <div style={{height:210,background:'#e8edf2',position:'relative'}}>
-            {coverUrl && <img src={coverUrl} alt="Couverture du média" style={{width:'100%',height:'100%',objectFit:'cover'}} />}
+        <header className={styles.profile} aria-label="Profil du média">
+          <div className={styles.profileCover}>
+            <img src={coverUrl ?? '/images/accueil/fleuve-niger-niamey.webp'} alt="Couverture du média" />
           </div>
-          <div style={{padding:'12px 22px 22px'}}>
-            <div style={{display:'flex',alignItems:'end',gap:18,marginTop:-40,position:'relative'}}>
-              <div style={{width:90,height:90,borderRadius:'50%',border:'4px solid white',background:'#e8edf2',overflow:'hidden',display:'grid',placeItems:'center',flexShrink:0}}>
-                {avatarUrl ? <img src={avatarUrl} alt="Logo Le Niger et ses Merveilles" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : <span aria-hidden="true" style={{fontWeight:700,color:'#1d4d3a'}}>NM</span>}
-              </div>
-              <h2 style={{marginBottom:8}}>Le Niger et ses Merveilles</h2>
+          <div className={styles.profileBody}>
+            <div className={styles.profileAvatar}>
+              <img src={avatarUrl ?? '/images/niger-merveilles-mark.svg'} alt="" />
             </div>
-            <p style={{marginTop:10,whiteSpace:'pre-wrap'}}>{mediaProfile?.description ?? 'Média culturel et touristique du Niger'}</p>
-            {canPin && <MediaProfileEditor initialDescription={mediaProfile?.description ?? 'Média culturel et touristique du Niger'} />}
-            {canPin && <p style={{marginTop:12}}><Link href="/admin/publications">Créer une publication</Link></p>}
+            <h1>Le Niger et ses Merveilles</h1>
+            <p>{description}</p>
+            <div className={styles.profileActions}>
+              {canPin && <MediaProfileEditor initialDescription={description} />}
+              <ShareButton title="Le Niger et ses Merveilles" href="/publications" buttonClassName={styles.profileButton} />
+              {canPin && <Link className={styles.profileButton} href="/admin/publications">Créer une publication</Link>}
+            </div>
           </div>
-        </section>
-        <header className={styles.hero}>
-          <p>Le Niger et ses Merveilles</p>
-          <h1>Publications</h1>
-          <div>Photos, vidéos et récits du Niger.</div>
         </header>
 
         <div className={styles.layout}>
           <section id="publications-recentes" aria-label="Fil de publication" className={styles.feed}>
+            <h2 className={styles.feedTitle}>Publications</h2>
             <p className={styles.clock}><Clock3 size={16} aria-hidden="true" /> Heure du Niger · UTC+1</p>
             {loadError || !groups.length ? (
               <div className={styles.empty} role="status">
@@ -130,16 +129,17 @@ export default async function PublicationsPage() {
                 {group.entries.map(({ publication, date }) => {
                   const content = normalizePublicationContent(publication.content)
                   return (
-                    <article className="card publicationFeedCard" key={publication.id}>
-                      <div className="cardbody">
-                        <div style={{display:'flex',alignItems:'center',gap:12}}>
+                    <article className={styles.card} key={publication.id}>
+                      <div>
+                        <div className={styles.byline}>
+                          <img className={styles.avatar} src={avatarUrl ?? '/images/niger-merveilles-mark.svg'} alt="" />
                           <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, Boolean(publication.pinned_at))}</time>}</div></div>
                           <PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
                         </div>
-                        {content && <p className="publicationFeedText" style={{marginTop:8}}>{content}</p>}
-                        {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" style={{width:'100%',borderRadius:14,marginTop:12,objectFit:'cover'}}/>}
-                        {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" style={{width:'100%',borderRadius:14,marginTop:12}}/>}
-                        {publication.music_url && <audio src={publication.music_url} controls preload="metadata" style={{width:'100%',marginTop:12}}/>}
+                        {content && <p className={styles.text}>{content}</p>}
+                        {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" className={styles.media}/>}
+                        {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" className={styles.media}/>}
+                        {publication.music_url && <audio src={publication.music_url} controls preload="metadata" className={styles.audio}/>}
                         <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
                           {publication.location && <span className="tag">{publication.location}</span>}
                           {publication.mood && <span className="tag">{publication.mood}</span>}
@@ -147,7 +147,7 @@ export default async function PublicationsPage() {
                           {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
                         </div>
                         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
-                          <Link className="proButton proButtonDark" href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
+                          <Link className={styles.read} href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
                         </div>
                       </div>
                     </article>
