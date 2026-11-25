@@ -1,9 +1,8 @@
-.root { position: relative; display: flex; align-items: center; }
-.panel { position: absolute; top: calc(100% + 12px); right: 0; width: min(380px, calc(100vw - 24px)); max-height: min(70dvh, 540px); overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 14px; background: #fff; color: #17332b; border: 1px solid #dce6df; border-radius: 14px; box-shadow: 0 12px 35px #0002; z-index: 1000; }
-.field { display: flex; gap: 8px; align-items: center; min-width: 0; }
-.input { flex: 1 1 auto; min-width: 0; width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #dce6df; border-radius: 8px; font-size: 16px; }
-.close { flex: 0 0 36px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; }
-.results { margin-top: 12px; overflow-wrap: anywhere; }
-@media (max-width: 600px) {
-  .panel { position: fixed; top: max(68px, env(safe-area-inset-top, 0px) + 60px); left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 96px); padding: 12px; border-radius: 12px; }
-}
+.root { position: relative; display: flex; align-items: center; flex: 1 1 230px; min-width: 150px; max-width: 360px; }
+.panel { width: 100%; min-width: 0; box-sizing: border-box; padding: 0; background: #fff; color: #17332b; }
+.field { display: flex; gap: 6px; align-items: center; min-width: 0; border: 1px solid #dce6df; border-radius: 12px; padding: 3px 8px; }
+.input { flex: 1; min-width: 0; width: 100%; box-sizing: border-box; padding: 8px 2px; border: 0; outline: none; background: transparent; font-size: 16px; }
+.field:focus-within { outline: 2px solid #16834a; outline-offset: 1px; }
+.close { flex: 0 0 30px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; }
+.results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 60dvh; overflow-y: auto; overflow-wrap: anywhere; padding: 12px; border: 1px solid #dce6df; border-radius: 12px; background: #fff; box-shadow: 0 12px 35px #0002; z-index: 1000; }
+@media (max-width: 600px) { .root { flex: 1 1 100%; max-width: none; min-width: 120px; } .results { min-width: min(300px, calc(100vw - 24px)); } }
