@@ -129,12 +129,13 @@ export default async function PublicationsPage() {
                 {group.entries.map(({ publication, date }) => {
                   const content = normalizePublicationContent(publication.content)
                   return (
-                    <article className={styles.card} key={publication.id}>
+                    <article className={styles.card} key={publication.id} style={{position:"relative"}}>
+                      <Link href={`/publications/${publication.id}`} aria-label={`Ouvrir la publication : ${getPublicationTitle(content)}`} style={{position:"absolute",inset:0,zIndex:1}} />
                       <div>
-                        <div className={styles.byline}>
+                        <div className={styles.byline} style={{position:"relative",zIndex:2,pointerEvents:"none"}}>
                           <img className={styles.avatar} src={avatarUrl ?? '/images/niger-merveilles-mark.svg'} alt="" />
                           <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, Boolean(publication.pinned_at))}</time>}</div></div>
-                          <PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
+                          <span style={{pointerEvents:"auto"}}><PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} /></span>
                         </div>
                         {content && <p className={styles.text}>{content}</p>}
                         {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" className={styles.media}/>}
@@ -146,10 +147,7 @@ export default async function PublicationsPage() {
                           {publication.activity && <span className="tag">{publication.activity}</span>}
                           {publication.tagged_people?.length ? <span className="tag">{publication.tagged_people.join(', ')}</span> : null}
                         </div>
-                        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',marginTop:20}}>
-                          <Link className={styles.read} href={`/publications/${publication.id}`}>Ouvrir la publication <ArrowRight size={15}/></Link>
                         </div>
-                      </div>
                     </article>
                   )
                 })}
