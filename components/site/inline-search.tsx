@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import styles from './inline-search.module.css'
 import { Search, X } from 'lucide-react'
 
 type Result = { title: string; href: string; category: string }
@@ -28,15 +29,15 @@ export default function InlineSearch() {
     return () => { clearTimeout(timer); controller.abort() }
   }, [open, query])
   return (
-    <div style={{ position: 'relative' }}>
+    <div className={styles.root}>
       <button type="button" className="siteSearchButton" aria-label={open ? 'Fermer la recherche' : 'Rechercher sur le site'} aria-expanded={open} onClick={() => setOpen(!open)}><Search size={17}/></button>
-      {open && <div role="search" style={{ position:'absolute', top:'calc(100% + 12px)', right:0, width:'min(90vw, 380px)', maxHeight:'70vh', overflowY:'auto', padding:16, background:'#fff', border:'1px solid #ddd', borderRadius:14, boxShadow:'0 12px 35px #0002', zIndex:100 }}>
-        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+      {open && <div role="search" className={styles.panel}>
+        <div className={styles.field}>
           <Search size={18} aria-hidden="true"/>
-          <input ref={input} aria-label="Rechercher dans Le Niger et ses merveilles" placeholder="Rechercher une merveille, un article…" value={query} onChange={event=>setQuery(event.target.value)} style={{width:'100%',minWidth:0,padding:9,border:'1px solid #ddd',borderRadius:8}}/>
-          <button type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button>
+          <input ref={input} aria-label="Rechercher dans Le Niger et ses merveilles" placeholder="Rechercher une merveille, un article…" value={query} onChange={event=>setQuery(event.target.value)} className={styles.input}/>
+          <button className={styles.close} type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button>
         </div>
-        <div aria-live="polite" style={{marginTop:12}}>
+        <div aria-live="polite" className={styles.results}>
           {loading ? 'Recherche en cours…' : query.trim().length < 2 ? 'Saisissez au moins deux caractères.' : results.length ? results.map(result => <Link key={result.href} href={result.href} onClick={()=>setOpen(false)} style={{display:'block',padding:'10px 4px',borderBottom:'1px solid #eee'}}><strong>{result.title}</strong><small style={{display:'block'}}>{result.category}</small></Link>) : 'Aucun résultat.'}
         </div>
       </div>}
