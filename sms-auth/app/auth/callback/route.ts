@@ -14,5 +14,6 @@ export async function GET(request: NextRequest) {
       if (!error) return NextResponse.redirect(origin + safePath)
     }
   }
-  return NextResponse.redirect(origin + '/login?error=confirmation')
+  const error = params.get('method') === 'google' ? 'oauth' : 'confirmation'
+  return NextResponse.redirect(origin + '/login?error=' + error)
 }

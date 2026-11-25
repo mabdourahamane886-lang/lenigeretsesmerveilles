@@ -10,13 +10,15 @@ import { getBrowserClient } from '@/lib/supabase/browser'
 
 type LoginMode = 'email' | 'password'
 
+const googleEnabled = process.env.NEXT_PUBLIC_SMS_AUTH_GOOGLE_ENABLED === 'true'
+
 function friendlyAuthError(error: unknown): string {
   const authError = error as { code?: string; message?: string; status?: number } | null
   const code = (authError?.code || '').toLowerCase()
   const message = (authError?.message || '').toLowerCase()
 
   if (code === 'invalid_credentials' || code === 'invalid_login_credentials' || message.includes('invalid login credentials')) {
-    return 'Adresse e-mail ou mot de passe incorrect. Utilisez plutôt « Continuer avec mon e-mail » pour recevoir un lien de connexion.'
+    return 'Adresse e-mail ou mot de passe incorrect.'
   }
   if (code === 'email_not_confirmed' || message.includes('email not confirmed')) {
     return 'Votre e-mail doit être confirmé. Utilisez la connexion par lien sécurisé.'
@@ -40,7 +42,7 @@ function friendlyAuthError(error: unknown): string {
 
 export default function LoginPage() {
   const router = useRouter()
-  const [mode, setMode] = useState<LoginMode>('email')
+  const [mode, setMode] = useState<LoginMode>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [visible, setVisible] = useState(false)
@@ -52,7 +54,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('error') === 'confirmation' || params.get('error_description')) {
+    if (params.get('error') === 'oauth') {
+      setError('La connexion avec Google a été interrompue. Réessayez.')
+    } else if (params.get('error') === 'confirmation' || params.get('error_description')) {
       setError('Le lien de connexion a expiré ou n’a pas pu être validé. Demandez un nouveau lien depuis cette page.')
     }
   }, [])
@@ -72,6 +76,23 @@ export default function LoginPage() {
     setNotice('')
     setSent(false)
     setPassword('')
+  }
+
+  async function googleContinue() {
+    if (!supabase) return
+    setBusy(true)
+    setError('')
+    setNotice('')
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/auth/callback?method=google' },
+      })
+      if (authError) throw authError
+    } catch {
+      setError('Impossible de démarrer la connexion avec Google. Réessayez.')
+      setBusy(false)
+    }
   }
 
   async function emailContinue(event: FormEvent) {
@@ -127,7 +148,7 @@ export default function LoginPage() {
       })
       if (authError) throw authError
       if (!data.session) {
-        setError('Impossible d’ouvrir la session. Essayez la connexion par e-mail.')
+        setError('Impossible d’ouvrir la session. Réessayez.')
         return
       }
       router.replace('/dashboard')
@@ -136,9 +157,7 @@ export default function LoginPage() {
       const authError = e as { code?: string; message?: string } | null
       const invalid = /invalid.*credentials/i.test((authError?.code || '') + ' ' + (authError?.message || ''))
       if (invalid) {
-        setMode('email')
-        setPassword('')
-        setError('Ce mot de passe n’a pas été reconnu. Vous pouvez essayer la connexion avec votre adresse e-mail, sans mot de passe.')
+        setError('Adresse e-mail ou mot de passe incorrect.')
       } else {
         setError(friendlyAuthError(e))
       }
@@ -190,7 +209,12 @@ export default function LoginPage() {
       <h2>{sent ? 'Consultez vos e-mails' : 'Bienvenue sur SMS AUTH'}</h2>
       <p>{sent
         ? 'Votre lien de connexion vous permet de confirmer votre adresse et d’ouvrir votre espace personnel.'
-        : 'Connectez-vous ou créez votre compte directement ici. Aucun autre compte n’est nécessaire.'}</p>
+        : 'Connectez-vous pour accéder à votre espace SMS AUTH.'}</p>
+
+      {googleEnabled && <button disabled={busy || !supabase} type="button"
+        className="button buttonOutline authSubmit" onClick={() => void googleContinue()}>
+        Continuer avec Google <ArrowRight size={18}/>
+      </button>}
 
       {mode === 'email'
         ? <form onSubmit={emailContinue}>
@@ -243,7 +267,7 @@ export default function LoginPage() {
             </button>}
       </div>
       <div className="authFinePrint"><ShieldCheck size={17}/>
-        <span>Votre compte est créé automatiquement lors de votre première connexion, après vérification de votre e-mail.</span>
+        <span>La connexion avec un mot de passe est disponible si vous en avez déjà défini un.</span>
       </div>
       {!supabase && <p className="configNote">La connexion est temporairement indisponible.</p>}
     </div></div>
