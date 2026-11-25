@@ -1,9 +1,11 @@
 'use client'
 
 import { useId, useRef, useState, useTransition } from 'react'
-import { Bookmark, BookmarkCheck, Copy, Ellipsis, Pin, PinOff, Share2, X } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Copy, Ellipsis, Pencil, Pin, PinOff, Share2, X } from 'lucide-react'
 import { copyToClipboard } from '../../components/site/share-button'
 import { setPublicationPin } from './pin-action'
+import { updatePublication } from './edit-action'
+import { useRouter } from 'next/navigation'
 import styles from './publication-actions.module.css'
 
 const favoritesKey = 'niger-favoris'
@@ -21,7 +23,10 @@ export default function PublicationActions({ id, title, pinned, canPin }: {
   pinned: boolean
   canPin: boolean
 }) {
+  const router = useRouter()
   const [pinPending, startPinChange] = useTransition()
+  const [editing, setEditing] = useState(false)
+  const [editContent, setEditContent] = useState('')
   const dialog = useRef<HTMLDialogElement>(null)
   const dialogId = useId()
   const [saved, setSaved] = useState(false)
@@ -62,6 +67,14 @@ export default function PublicationActions({ id, title, pinned, canPin }: {
       } catch {
         setMessage('Vérifiez votre connexion et votre session administrateur.')
       }
+    })
+  }
+
+  async function saveEdit() {
+    startPinChange(async () => {
+      const result = await updatePublication(id, editContent)
+      if ('error' in result) setMessage(result.error || 'Modification impossible.')
+      else { setEditing(false); dialog.current?.close(); router.refresh() }
     })
   }
 
@@ -106,6 +119,8 @@ export default function PublicationActions({ id, title, pinned, canPin }: {
             <button type="button" className={styles.close} onClick={() => dialog.current?.close()} aria-label="Fermer"><X size={19} /></button>
           </div>
           <div className={styles.title}>{title}</div>
+          {canPin && <button className={styles.option} type="button" onClick={() => { setEditContent(title); setEditing(true) }}><Pencil size={18}/> Modifier la publication</button>}
+          {editing && <div><label htmlFor={dialogId+'-edit'}>Texte de la publication</label><textarea id={dialogId+'-edit'} value={editContent} onChange={event=>setEditContent(event.target.value)} rows={6} style={{width:'100%'}}/><button type="button" onClick={saveEdit} disabled={pinPending}>Enregistrer les modifications</button></div>}
           {canPin && (
             <button className={styles.option} type="button" onClick={togglePin} disabled={pinPending}>
               {pinned ? <PinOff size={18} /> : <Pin size={18} />}
