@@ -135,7 +135,7 @@ export default async function PublicationsPage() {
                         <div className={styles.byline} style={{position:"relative",zIndex:2,pointerEvents:"none"}}>
                           <img className={styles.avatar} src={avatarUrl ?? '/images/niger-merveilles-mark.svg'} alt="" />
                           <div><strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong><div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, Boolean(publication.pinned_at))}</time>}</div></div>
-                          <span style={{pointerEvents:"auto"}}><PublicationActions id={publication.id} title={getPublicationTitle(content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} /></span>
+                          <span style={{pointerEvents:"auto"}}><PublicationActions id={publication.id} title={getPublicationTitle(content)} content={content} pinned={Boolean(publication.pinned_at)} canPin={canPin} /></span>
                         </div>
                         {content && <p className={styles.text}>{content}</p>}
                         {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" className={styles.media}/>}
