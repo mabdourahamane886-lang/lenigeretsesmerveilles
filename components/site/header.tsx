@@ -51,9 +51,8 @@ export default async function Header() {
       <div className="container siteHeaderInner">
         <Link className="siteBrand" href="/" aria-label="Le Niger et ses Merveilles — Accueil">
           <Image className="siteBrandLogo" src="/images/niger-merveilles-mark.svg" alt="" width={58} height={48} priority />
-          <span className="siteBrandCopy">
+          <span className="siteBrandCopy" style={{justifyContent:"center",alignSelf:"center"}}>
             <strong>Le Niger et ses Merveilles</strong>
-            <small>Explorer · Comprendre · Préserver</small>
           </span>
         </Link>
 
