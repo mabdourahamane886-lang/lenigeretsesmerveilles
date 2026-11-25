@@ -1,7 +1,6 @@
 import { isAdminAuthenticated } from '../lib/admin-auth'
 import styles from './home-mobile.module.css'
 import Image from 'next/image'
-import InlineSearch from '../components/site/inline-search'
 import PublicationActions from './publications/publication-actions'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -182,7 +181,6 @@ export default async function Home() {
           />
           <div className={`container ${styles.panoramaContent}`}>
             <div className="proHeroCopy">
-              <div style={{width:"100%",maxWidth:720,margin:"0 auto 28px",position:"relative",zIndex:3}}><InlineSearch home /></div>
               <h1 id="home-title" className={styles.headline}>Le Niger, terre de merveilles.</h1>
               <p>Des portes du Sahara aux rives du fleuve, découvrez huit régions et les cultures qui les font vivre.</p>
             </div>
