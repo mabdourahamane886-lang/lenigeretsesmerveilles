@@ -192,6 +192,45 @@ export default async function Home() {
           </div>
         </section>
 
+        {publications.length > 0 && (
+          <section className="section proSection">
+            <div className="container">
+              <div className="proSectionIntro">
+                <div>
+                  <div className="kicker">Publications</div>
+                  <h2>Les publications récentes à suivre.</h2>
+                </div>
+                <Link className="proInlineLink" href="/publications">Voir toutes les publications <ArrowRight size={16} /></Link>
+              </div>
+              <div className="proArticleRow">
+                {publications.map((publication) => (
+                  <article className="proArticleCard proPublicationCard" key={publication.id}>
+                    {publication.media_url && publication.media_type === 'photo' && (
+                      <img src={publication.media_url} alt={getPublicationTitle(publication.content)} loading="lazy" decoding="async" className="proArticleImage" style={{objectFit:'cover'}} />
+                    )}
+                    {publication.media_url && publication.media_type === 'video' && (
+                      <video src={publication.media_url} controls preload="none" className="proArticleImage" style={{objectFit:'cover'}} />
+                    )}
+                    <div className="proArticleBody">
+                      <div className={styles.publicationHeader}>
+                        <span className="proMiniLabel">{publication.location || 'Niger'}</span>
+                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
+                      </div>
+                      <h3>{getPublicationTitle(publication.content)}</h3>
+                      <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
+                      <small>{publication.author_name || 'Le Niger et ses Merveilles'}</small>
+                      <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
+                      <Link className="proInlineLink" href={`/publications/${encodeURIComponent(publication.id)}`} aria-label={`Ouvrir la publication : ${getPublicationTitle(publication.content)}`}>
+                        Lire la publication <ArrowRight size={15} />
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <section id="univers" className="section proSection" aria-labelledby="univers-title">
           <div className="container">
             <div className={styles.editorialIntro}>
@@ -368,45 +407,6 @@ export default async function Home() {
               )}
             </div>
           </section>
-
-        {publications.length > 0 && (
-          <section className="section proSection">
-            <div className="container">
-              <div className="proSectionIntro">
-                <div>
-                  <div className="kicker">Publications</div>
-                  <h2>Les publications récentes à suivre.</h2>
-                </div>
-                <Link className="proInlineLink" href="/publications">Voir toutes les publications <ArrowRight size={16} /></Link>
-              </div>
-              <div className="proArticleRow">
-                {publications.map((publication) => (
-                  <article className="proArticleCard proPublicationCard" key={publication.id}>
-                    {publication.media_url && publication.media_type === 'photo' && (
-                      <img src={publication.media_url} alt={getPublicationTitle(publication.content)} loading="lazy" decoding="async" className="proArticleImage" style={{objectFit:'cover'}} />
-                    )}
-                    {publication.media_url && publication.media_type === 'video' && (
-                      <video src={publication.media_url} controls preload="none" className="proArticleImage" style={{objectFit:'cover'}} />
-                    )}
-                    <div className="proArticleBody">
-                      <div className={styles.publicationHeader}>
-                        <span className="proMiniLabel">{publication.location || 'Niger'}</span>
-                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
-                      </div>
-                      <h3>{getPublicationTitle(publication.content)}</h3>
-                      <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
-                      <small>{publication.author_name || 'Le Niger et ses Merveilles'}</small>
-                      <small>{publication.published_at ? formatDate(publication.published_at) : ''}</small>
-                      <Link className="proInlineLink" href={`/publications/${encodeURIComponent(publication.id)}`} aria-label={`Ouvrir la publication : ${getPublicationTitle(publication.content)}`}>
-                        Lire la publication <ArrowRight size={15} />
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         <section className="section proSection homeDiscoverSection">
           <div className="container">
