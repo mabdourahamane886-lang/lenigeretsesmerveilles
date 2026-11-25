@@ -30,17 +30,16 @@ export default function InlineSearch() {
   }, [open, query])
   return (
     <div className={styles.root}>
-      <button type="button" className="siteSearchButton" aria-label={open ? 'Fermer la recherche' : 'Rechercher sur le site'} aria-expanded={open} onClick={() => setOpen(!open)}><Search size={17}/></button>
-      {open && <div role="search" className={styles.panel}>
+      <div role="search" className={styles.panel}>
         <div className={styles.field}>
           <Search size={18} aria-hidden="true"/>
-          <input ref={input} aria-label="Rechercher dans Le Niger et ses merveilles" placeholder="Rechercher une merveille, un article…" value={query} onChange={event=>setQuery(event.target.value)} className={styles.input}/>
-          <button className={styles.close} type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button>
+          <input ref={input} onFocus={()=>setOpen(true)} aria-label="Rechercher dans Le Niger et ses merveilles" placeholder="Rechercher une merveille, un article…" value={query} onChange={event=>setQuery(event.target.value)} className={styles.input}/>
+          {open && <button className={styles.close} type="button" aria-label="Fermer" onClick={()=>setOpen(false)}><X size={18}/></button>}
         </div>
-        <div aria-live="polite" className={styles.results}>
+        {open && <div aria-live="polite" className={styles.results}>
           {loading ? 'Recherche en cours…' : query.trim().length < 2 ? 'Saisissez au moins deux caractères.' : results.length ? results.map(result => <Link key={result.href} href={result.href} onClick={()=>setOpen(false)} style={{display:'block',padding:'10px 4px',borderBottom:'1px solid #eee'}}><strong>{result.title}</strong><small style={{display:'block'}}>{result.category}</small></Link>) : 'Aucun résultat.'}
-        </div>
-      </div>}
+        </div>}
+      </div>
     </div>
   )
 }
