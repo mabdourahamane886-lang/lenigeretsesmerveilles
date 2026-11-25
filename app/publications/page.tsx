@@ -139,8 +139,8 @@ export default async function PublicationsPage() {
                         </div>
                         {content && <p className={styles.text}>{content}</p>}
                         {publication.media_url && publication.media_type === 'photo' && <img src={publication.media_url} alt="Illustration de la publication" loading="lazy" className={styles.media}/>}
-                        {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" className={styles.media}/>}
-                        {publication.music_url && <audio src={publication.music_url} controls preload="metadata" className={styles.audio}/>}
+                        {publication.media_url && publication.media_type === 'video' && <video src={publication.media_url} controls preload="metadata" className={styles.media} style={{position:"relative",zIndex:2}}/>}
+                        {publication.music_url && <audio src={publication.music_url} controls preload="metadata" className={styles.audio} style={{position:"relative",zIndex:2}}/>}
                         <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:14}}>
                           {publication.location && <span className="tag">{publication.location}</span>}
                           {publication.mood && <span className="tag">{publication.mood}</span>}
