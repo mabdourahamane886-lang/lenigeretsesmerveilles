@@ -57,6 +57,8 @@ export default async function Header() {
           </span>
         </Link>
 
+        <Link href="/a-propos" aria-label="À propos du projet Le Niger et ses Merveilles" title="Découvrir le projet" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:25,height:25,borderRadius:'50%',background:'#16834a',color:'#fff',flexShrink:0}}><ShieldCheck size={16} aria-hidden="true" /></Link>
+
         <nav className="siteNav" aria-label="Navigation principale">
           {primaryItems.map(({ label, href }) => <Link href={href} key={href}>{label}</Link>)}
         </nav>
