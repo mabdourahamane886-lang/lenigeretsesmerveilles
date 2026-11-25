@@ -20,14 +20,25 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact revision
+        run: |
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "${GITHUB_SHA}"
+          git checkout --detach FETCH_HEAD
 
-      - uses: pnpm/action-setup@v4
+      - name: Select Node.js 22 from the runner
+        shell: bash
+        run: |
+          node_dir="$(find "${RUNNER_TOOL_CACHE}/node" -mindepth 1 -maxdepth 1 -type d -name '22.*' | sort -V | tail -n 1)"
+          test -x "${node_dir}/x64/bin/node"
+          echo "${node_dir}/x64/bin" >> "$GITHUB_PATH"
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
+      - name: Install pinned pnpm
+        run: |
+          pnpm_version="$(node -p 'require("./package.json").packageManager')"
+          npm install --global --prefix "$RUNNER_TEMP/pnpm" "$pnpm_version"
+          echo "$RUNNER_TEMP/pnpm/bin" >> "$GITHUB_PATH"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
