@@ -214,7 +214,7 @@ export default async function Home() {
                     <div className="proArticleBody">
                       <div className={styles.publicationHeader}>
                         <span className="proMiniLabel">{publication.location || 'Niger'}</span>
-                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
+                        <PublicationActions id={publication.id} title={getPublicationTitle(publication.content)} content={publication.content} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
                       </div>
                       <h3>{getPublicationTitle(publication.content)}</h3>
                       <p>{getPublicationExcerpt(publication.content, 92) || publication.author_name || 'Le Niger et ses Merveilles'}</p>
