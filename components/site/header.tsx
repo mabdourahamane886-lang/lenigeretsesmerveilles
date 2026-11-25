@@ -17,6 +17,7 @@ import {
   Map,
 } from 'lucide-react'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
+import InlineSearch from './inline-search'
 
 const primaryItems = [
   { label: 'Régions', href: '/regions', icon: Compass },
@@ -61,9 +62,7 @@ export default async function Header() {
         </nav>
 
         <div className="siteHeaderActions">
-          <Link className="siteSearchButton" href="/recherche" aria-label="Rechercher sur le site">
-            <Search size={17} />
-          </Link>
+          <InlineSearch />
           <Link className="siteContributeButton" href="/contribution">
             <Send size={14} />
             Contribuer
