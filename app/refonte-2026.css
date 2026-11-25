@@ -177,3 +177,20 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
     transform: none;
   }
 }
+
+/* Audit novembre : confort mobile et accessibilité */
+.siteGlobalContent { min-width: 0; overflow-wrap: anywhere; }
+.siteMobilePanel { overscroll-behavior: contain; }
+.siteMobilePanel nav a { min-height: 44px; }
+.proExplorerCard, .proArticleCard { min-width: 0; }
+@media (max-width: 760px) {
+ .siteSearchButton, .siteMobileMenu > summary { min-width: 44px; min-height: 44px; }
+ .proHero { min-height: 0; }
+ .proHeroGrid { padding-block: clamp(48px, 12vw, 84px); }
+ .proExplorerCardContent { padding: 14px; }
+ .proExplorerCard h3 { font-size: clamp(18px, 5vw, 23px); }
+}
+@media (prefers-reduced-motion: reduce) {
+ html { scroll-behavior: auto !important; }
+ .proHeroCopy, main .sectionHeading { animation: none !important; }
+}
