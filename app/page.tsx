@@ -21,7 +21,7 @@ import wonders from '../data/wonders'
 import { getPublicationExcerpt, getPublicationTitle } from '../lib/publications/format'
 import { nigerMedia } from '../data/media'
 import RegionCards from '../components/regions/region-cards'
-import { createAdminClient } from '../lib/supabase/admin'
+import { createClient } from '../lib/supabase/server'
 
 type HomeWonder = {
   id: string
@@ -93,7 +93,7 @@ const explorerCards: ExplorerCard[] = [
 ]
 
 async function getHomeData() {
-  const supabase = createAdminClient()
+  const supabase = await createClient()
   if (!supabase) {
     return {
       wonders: staticWonders,
@@ -383,10 +383,10 @@ export default async function Home() {
                 {publications.map((publication) => (
                   <article className="proArticleCard proPublicationCard" key={publication.id}>
                     {publication.media_url && publication.media_type === 'photo' && (
-                      <img src={publication.media_url} alt={getPublicationTitle(publication.content)} className="proArticleImage" style={{objectFit:'cover'}} />
+                      <img src={publication.media_url} alt={getPublicationTitle(publication.content)} loading="lazy" decoding="async" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
                     {publication.media_url && publication.media_type === 'video' && (
-                      <video src={publication.media_url} controls preload="metadata" className="proArticleImage" style={{objectFit:'cover'}} />
+                      <video src={publication.media_url} controls preload="none" className="proArticleImage" style={{objectFit:'cover'}} />
                     )}
                     <div className="proArticleBody">
                       <div className={styles.publicationHeader}>

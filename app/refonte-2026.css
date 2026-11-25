@@ -39,14 +39,44 @@ body{background:#fff;overflow-x:hidden}
 .kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.13em;color:#ad742b}
 .kicker::before{content:"";width:19px;height:2px;background:#d99c43}
 .proExplorerGrid{gap:20px}
-.proExplorerCard{min-height:365px;border-radius:24px;box-shadow:0 15px 35px #04352614;outline-offset:5px}
-.proExplorerCardMedia{transition:transform .65s ease}
-.proExplorerCardContent{padding:clamp(18px,2.4vw,29px);background:linear-gradient(180deg,#082b2114 15%,#06241e2b 37%,#031e1bdc 100%)}
-.proExplorerTop{top:22px;left:22px;right:22px}
-.proExplorerIcon{height:44px;width:44px;background:#fff3}
-.proExplorerCard h3{font-size:clamp(25px,2.5vw,32px);letter-spacing:-.025em}
-.proExplorerCard p{font-size:13px;line-height:1.6}
-.proExplorerCard:hover,.proExplorerCard:focus-visible{transform:translateY(-5px);box-shadow:0 25px 55px #06372b2b}
+.proExplorerCard{
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  border:1px solid var(--brand-line);
+  border-radius:24px;
+  background:var(--brand-paper);
+  color:var(--brand-deep);
+  box-shadow:0 12px 28px #04352612;
+  outline-offset:5px;
+}
+.proExplorerCardMedia{
+  position:relative;
+  aspect-ratio:16/9;
+  transition:none;
+}
+.proExplorerCard:hover .proExplorerCardMedia{transform:none}
+.proExplorerCardContent{
+  position:relative;
+  flex:1;
+  justify-content:start;
+  padding:clamp(16px,2vw,24px);
+  background:var(--brand-paper);
+  color:var(--brand-deep);
+}
+.proExplorerTop{position:static;margin-bottom:12px;color:var(--brand-forest)}
+.proExplorerIcon{
+  height:36px;
+  width:36px;
+  border:1px solid var(--brand-line);
+  border-radius:10px;
+  background:var(--brand-sand);
+  backdrop-filter:none;
+}
+.proExplorerCard .proMiniLabel{color:#805921}
+.proExplorerCard h3{font-size:clamp(21px,2.5vw,29px);letter-spacing:-.025em}
+.proExplorerCard p{max-width:none;color:var(--brand-muted);font-size:14px;line-height:1.6}
+.proExplorerCard:hover,.proExplorerCard:focus-visible{box-shadow:0 18px 42px #06372b26}
 .proDarkSection{background:radial-gradient(circle at 95% 5%,#16583e 0%,transparent 40%),#062c22}
 .proWonderFeature{gap:22px}
 .proWonderMain,.proMiniStory{border-radius:22px;border-color:#ffffff2a}
@@ -89,10 +119,10 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
  .proHeroProof span{padding:8px 11px;font-size:10px}
  .proSectionIntro h2{font-size:clamp(31px,8vw,43px)}
  .proExplorerGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
- .proExplorerCard{min-height:285px;border-radius:16px}
+ .proExplorerCard{border-radius:16px}
  .proExplorerCardContent{padding:16px}
  .proExplorerCard h3{font-size:23px}
- .proExplorerCard p{font-size:11px}
+ .proExplorerCard p{font-size:13px}
  .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
  .proRegionCardVisual{min-height:185px!important;padding:15px!important}
  .proRegionCardVisual .proRegionName{font-size:20px}
@@ -101,7 +131,6 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
 }
 @media(max-width:390px){
  .proExplorerGrid{grid-template-columns:1fr}
- .proExplorerCard{min-height:290px}
  .proRegionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .proRegionCardVisual{min-height:165px!important}
  .proRegionCardVisual .proRegionName{font-size:17px}

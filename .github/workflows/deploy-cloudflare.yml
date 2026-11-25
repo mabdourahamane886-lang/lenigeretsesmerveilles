@@ -14,33 +14,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: 0x4AAAAAAFYO4L2FYabyQ91h
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
-      - name: Checkout exact revision
-        run: |
-          git init .
-          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
-          git fetch --no-tags --depth=1 origin "${GITHUB_SHA}"
-          git checkout --detach FETCH_HEAD
+      - uses: actions/checkout@v4
 
-      - name: Select Node.js 22 from the runner
-        shell: bash
-        run: |
-          node_dir="$(find "${RUNNER_TOOL_CACHE}/node" -mindepth 1 -maxdepth 1 -type d -name '22.*' | sort -V | tail -n 1)"
-          test -x "${node_dir}/x64/bin/node"
-          echo "${node_dir}/x64/bin" >> "$GITHUB_PATH"
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Build OpenNext output
-        run: npm run build:cloudflare
+        run: pnpm run build:cloudflare
 
       - name: Deploy to Cloudflare Workers
         if: ${{ env.CLOUDFLARE_ACCOUNT_ID != '' && env.CLOUDFLARE_API_TOKEN != '' }}
-        run: npx opennextjs-cloudflare deploy
+        run: pnpm exec opennextjs-cloudflare deploy
 
       - name: Report missing Cloudflare credentials
         if: ${{ env.CLOUDFLARE_ACCOUNT_ID == '' || env.CLOUDFLARE_API_TOKEN == '' }}

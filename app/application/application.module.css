@@ -72,7 +72,9 @@
 .toolGrid a>svg:last-child{margin-left:auto}
 .appNav{position:sticky;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#fffc;border-top:1px solid var(--border);backdrop-filter:blur(14px);padding:7px max(10px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom))}
 .appNav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:49px;color:#61788a;font-size:clamp(10px,2vw,12px);font-weight:750}
-.appNav a[aria-current=page]{color:#102a43}
+.appNav a[aria-current=page]{color:var(--navy)}
+.appNav a[aria-current=page] svg{background:#ed8b2c26;border-radius:9px;box-sizing:content-box;padding:4px 10px}
+.appNav a{min-width:0;text-align:center}
 .appNav a[aria-current=page] svg{stroke-width:2.65}
 .app a:focus-visible,.app button:focus-visible,.app input:focus-visible{outline:3px solid #ed8b2c;outline-offset:3px}
 @media(max-width:750px){.hero{min-height:385px}.universeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.publicationGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.canvas{padding-bottom:38px}}
@@ -160,4 +162,13 @@
 
 .launchScreen img {
   object-fit: contain;
+}
+
+@media(max-width:520px){
+  .app{padding-bottom:calc(66px + env(safe-area-inset-bottom, 0px))}
+  .barInner .roundAction{width:44px;height:44px}
+}
+@media(max-width:370px){
+  .barInner,.headerActions{gap:6px}
+  .brand img{width:35px}
 }

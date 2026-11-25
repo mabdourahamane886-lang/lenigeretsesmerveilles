@@ -4,7 +4,7 @@
   isolation: isolate;
   display: grid;
   align-items: end;
-  min-height: max(650px, 94svh);
+  min-height: clamp(560px, 76svh, 820px);
   padding: 104px 0 clamp(38px, 7vw, 100px);
   color: #fff;
   background: #173629;
@@ -102,8 +102,8 @@
   display: grid;
   grid-template-columns: minmax(150px, .45fr) minmax(0, 1fr);
   gap: clamp(16px, 5vw, 82px);
-  margin-bottom: clamp(28px, 6vw, 72px);
-  padding: clamp(22px, 4vw, 46px) 0;
+  margin-bottom: clamp(20px, 3vw, 40px);
+  padding: clamp(16px, 3vw, 34px) 0;
 }
 
 .editorialIntro h2 {
@@ -165,7 +165,7 @@
 
 @media (max-width: 760px) {
   .panorama {
-    min-height: max(76svh, min(125vw, 92svh));
+    min-height: clamp(320px, 125vw, 72svh);
     padding: 84px 0 clamp(28px, 6svh, 58px);
   }
 
