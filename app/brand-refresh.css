@@ -306,3 +306,16 @@ img{max-width:100%}
 .proHeroGrid{grid-template-columns:minmax(0,1fr)}
 .proHeroCopy{max-width:820px}
 .proHeroBackdrop{background-position:center 48%}
+
+/* Accueil mobile : remonter uniquement Contribuer et Menu dans la bannière.
+   Le logo et la recherche conservent leur position d'origine. */
+@media (max-width: 760px) {
+  body:has(.homePageWide) .siteHeaderActions > .siteContributeButton,
+  body:has(.homePageWide) .siteHeaderActions > .siteMobileMenu {
+    transform: translateY(-48px);
+  }
+  body:has(.homePageWide) .siteMobileMenu {
+    position: relative;
+    z-index: 1200;
+  }
+}
