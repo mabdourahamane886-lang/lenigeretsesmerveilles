@@ -17,11 +17,12 @@ function readFavorites(): Favorite[] {
   return stored
 }
 
-export default function PublicationActions({ id, title, pinned, canPin }: {
+export default function PublicationActions({ id, title, pinned, canPin, content }: {
   id: string
   title: string
   pinned: boolean
   canPin: boolean
+  content?: string | null
 }) {
   const router = useRouter()
   const [pinPending, startPinChange] = useTransition()
@@ -119,7 +120,7 @@ export default function PublicationActions({ id, title, pinned, canPin }: {
             <button type="button" className={styles.close} onClick={() => dialog.current?.close()} aria-label="Fermer"><X size={19} /></button>
           </div>
           <div className={styles.title}>{title}</div>
-          {canPin && <button className={styles.option} type="button" onClick={() => { setEditContent(title); setEditing(true) }}><Pencil size={18}/> Modifier la publication</button>}
+          {canPin && <button className={styles.option} type="button" onClick={() => { setEditContent(content ?? title); setEditing(true) }}><Pencil size={18}/> Modifier la publication</button>}
           {editing && <div><label htmlFor={dialogId+'-edit'}>Texte de la publication</label><textarea id={dialogId+'-edit'} value={editContent} onChange={event=>setEditContent(event.target.value)} rows={6} style={{width:'100%'}}/><button type="button" onClick={saveEdit} disabled={pinPending}>Enregistrer les modifications</button></div>}
           {canPin && (
             <button className={styles.option} type="button" onClick={togglePin} disabled={pinPending}>
