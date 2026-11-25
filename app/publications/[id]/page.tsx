@@ -170,7 +170,7 @@ export default async function PublicationDetailPage({
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
                 <div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, true)}</time>}</div>
               </div>
-              <PublicationActions id={publication.id} title={title} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
+              <PublicationActions id={publication.id} title={title} content={content} pinned={Boolean(publication.pinned_at)} canPin={canPin} />
             </div>
 
             <h1 className="publicationScreenReaderTitle">{title}</h1>
