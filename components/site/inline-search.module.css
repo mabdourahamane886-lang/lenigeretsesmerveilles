@@ -12,3 +12,8 @@
 .field:focus-within { outline: none; border-color: #16834a; box-shadow: 0 0 0 1px #16834a; }
 .field .input:focus, .field .input:focus-visible { outline: none !important; box-shadow: none !important; border: 0 !important; }
 .close:focus-visible { outline: 2px solid #16834a !important; outline-offset: 2px; }
+
+.panel .field { border: 1px solid #dce6df !important; border-radius: 999px !important; background: #fff; padding: 6px 14px; }
+.panel .field:focus-within { border-color: #16834a !important; outline: none !important; box-shadow: 0 0 0 1px #16834a !important; }
+.panel .field input, .panel .field input:focus, .panel .field input:focus-visible, .panel .field input:active { appearance: none; -webkit-appearance: none; border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; color: #17332b; }
+.panel .field input::placeholder { color: #687773; }
