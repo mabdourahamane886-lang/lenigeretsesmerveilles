@@ -116,6 +116,9 @@ export default async function PublicationDetailPage({
 
   if (!publication) notFound()
   const canPin = await isAdminAuthenticated()
+  const supabase = createAdminClient() ?? await createServerClient()
+  const { data: mediaProfile } = supabase ? await supabase.from('niger_media_profile').select('avatar_path').eq('id',1).maybeSingle() : { data: null }
+  const avatarUrl = mediaProfile?.avatar_path && supabase ? supabase.storage.from('niger-media').getPublicUrl(mediaProfile.avatar_path).data.publicUrl : '/images/niger-merveilles-mark.svg'
   const date = publicationDate(publication.published_at, publication.created_at)
 
   const title = getPublicationTitle(publication.content)
@@ -162,7 +165,7 @@ export default async function PublicationDetailPage({
 
           <article className="proseCard articleProse">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-              <div className="publicationAvatar" aria-hidden="true">NM</div>
+              <img className="publicationAvatar" src={avatarUrl} alt="" style={{width:44,height:44,objectFit:"cover",borderRadius:"50%"}} />
               <div>
                 <strong>{publication.author_name || 'Le Niger et ses Merveilles'}</strong>
                 <div className="muted">{date && <time dateTime={date.toISOString()}>{publicationTime(date, true)}</time>}</div>
