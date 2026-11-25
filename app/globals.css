@@ -3264,3 +3264,7 @@ body:not(.home-page) .proArticleHero {
 @media(max-width:560px){.foodPhotoSection{margin:38px 0}.foodPhotoGrid{grid-template-columns:1fr;gap:14px}.foodPhotoVisual{height:230px}.foodPhotoText{padding:14px}}
 
 .publicationScreenReaderTitle { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+/* Remove decorative heading rules and explorer card symbols */
+.kicker::before, .kicker::after, .proMiniLabel::before, .siteFooterKicker::before { content: none !important; display: none !important; }
+.proExplorerCard .proExplorerTop { display: none !important; }
