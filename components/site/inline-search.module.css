@@ -1,0 +1,9 @@
+.root { position: relative; display: flex; align-items: center; }
+.panel { position: absolute; top: calc(100% + 12px); right: 0; width: min(380px, calc(100vw - 24px)); max-height: min(70dvh, 540px); overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 14px; background: #fff; color: #17332b; border: 1px solid #dce6df; border-radius: 14px; box-shadow: 0 12px 35px #0002; z-index: 1000; }
+.field { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.input { flex: 1 1 auto; min-width: 0; width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #dce6df; border-radius: 8px; font-size: 16px; }
+.close { flex: 0 0 36px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; }
+.results { margin-top: 12px; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .panel { position: fixed; top: max(68px, env(safe-area-inset-top, 0px) + 60px); left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 96px); padding: 12px; border-radius: 12px; }
+}
