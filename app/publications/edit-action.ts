@@ -1,8 +1,8 @@
 'use server'
 import { revalidatePath } from 'next/cache'
-import { isAdminAuthenticated } from '../../../lib/admin-auth'
-import { createAdminClient } from '../../../lib/supabase/admin'
-import { normalizePublicationContent } from '../../../lib/publications/format'
+import { isAdminAuthenticated } from '../../lib/admin-auth'
+import { createAdminClient } from '../../lib/supabase/admin'
+import { normalizePublicationContent } from '../../lib/publications/format'
 
 export async function updatePublication(id: string, content: string) {
   if (!(await isAdminAuthenticated())) return { error: 'Accès administrateur requis.' }
