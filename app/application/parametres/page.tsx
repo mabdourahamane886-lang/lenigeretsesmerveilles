@@ -72,10 +72,10 @@ export default function SettingsPage() {
 
   return <main className={styles.shell} data-theme={resolvedTheme}>
     <div className={styles.container}>
-      <Link href="/application" className={styles.back}><ArrowLeft size={17}/> Retour à l’application</Link>
-      <span className={styles.eyebrow}>Application • Espace personnel</span>
-      <h1 className={styles.heading}>Paramètres</h1>
-      <p className={styles.lead}>Personnalisez votre expérience et retrouvez les options de votre compte dans un espace clair et sécurisé.</p>
+      <header style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,minHeight:48}}>
+        <Link href="/application" aria-label="Retour à l’application" style={{display:'grid',placeItems:'center',width:44,height:44,flexShrink:0,color:'var(--account-navy)',borderRadius:12}}><ArrowLeft size={22}/></Link>
+        <h1 style={{fontFamily:'inherit',fontSize:'1.5rem',fontWeight:750,lineHeight:1.25,margin:0,color:'var(--account-navy)'}}>Paramètres</h1>
+      </header>
 
       <div className={styles.accountCard}>
         <span className={styles.avatar}><UserRound size={29} /></span>
