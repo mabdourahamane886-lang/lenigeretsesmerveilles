@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import {
   ArrowLeft, ArrowRight, CheckCircle2, LogOut, Mail, MapPin, Phone,
@@ -13,6 +14,7 @@ import styles from '../account.module.css'
 const REGIONS = ['Niamey','Agadez','Diffa','Dosso','Maradi','Tahoua','Tillabéri','Zinder','Autre région']
 
 export default function ProfilePage() {
+  const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -70,7 +72,7 @@ export default function ProfilePage() {
       })
       if (error) throw error
       setUser(data.user)
-      setStatus('Votre profil a été enregistré dans votre compte sécurisé.')
+      router.replace('/application/parametres')
     } catch (error) {
       setFailed(true)
       setStatus(error instanceof Error ? error.message : 'Impossible de sauvegarder le profil.')
