@@ -6,6 +6,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { isAdminAuthenticated } from '../../lib/admin-auth'
 import { normalizePublicationContent } from '../../lib/publications/format'
+import { publicationBucket, publicationKey } from '../../lib/publications/r2'
 import { isUploadedPhoto } from '../../lib/publications/photo'
 
 const t=(f:FormData,n:string)=>String(f.get(n)||'').trim()||null
@@ -197,7 +198,14 @@ export async function createPublicPost(id: string, description: string, path: st
   const content = description.trim()
   if (!content && !path) return {error:'Ajoute une description ou une photo.'} as const
   let mediaUrl: string | null = null
-  if (path) {
+  if (path?.startsWith('r2:')) {
+    const key = path.slice(3)
+    if (!isUploadedPhoto(key)) return {error:'Photo invalide.'} as const
+    const bucket = await publicationBucket()
+    const folder = key.substring(0,key.lastIndexOf('/'))
+    if (!bucket || !(await bucket.head(publicationKey(key))) || !(await bucket.head(publicationKey(folder+'/partage.jpg')))) return {error:'Transfert R2 incomplet.'} as const
+    mediaUrl = '/api/publication-photo?path='+key
+  } else if (path) {
     if (!isUploadedPhoto(path)) return {error:'Photo invalide. Sélectionne-la à nouveau.'} as const
     const bucket = s.storage.from('niger-media')
     const folder = path.substring(0,path.lastIndexOf('/'))

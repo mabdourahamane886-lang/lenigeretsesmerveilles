@@ -21,11 +21,21 @@ async function socialPreview(file: File) {
 }
 
 export async function uploadPhoto(file: File) {
+  if (file.size < 1 || file.size > 50 * 1024 * 1024) throw new Error('Photo de 50 Mo maximum.')
+  const preview = await socialPreview(file)
+  const form = new FormData()
+  form.append('photo', file)
+  form.append('preview', preview, 'partage.jpg')
+  const response = await fetch('/api/publication-photo', { method: 'POST', body: form, credentials: 'same-origin' })
+  if (response.status !== 503) {
+    const result = await response.json()
+    if (!response.ok || typeof result.path !== 'string') throw new Error(result.error || 'Transfert impossible.')
+    return result.path as string
+  }
   const supabase = createClient()
   if (!supabase) throw new Error('La connexion au stockage est indisponible.')
   const upload = await preparePhoto(file.type, file.size)
   if ('error' in upload) throw new Error(upload.error)
-  const preview = await socialPreview(file)
   const bucket = supabase.storage.from('niger-media')
   const [original, small] = await Promise.all([
     bucket.uploadToSignedUrl(upload.photo.path, upload.photo.token, file, {contentType:file.type}),

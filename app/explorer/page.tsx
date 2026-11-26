@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { ArrowRight, MapPin, Search } from 'lucide-react'
+import { ArrowRight, MapPin } from 'lucide-react'
 import { createClient } from '../../lib/supabase/server'
 import { regions as fallbackRegions } from '../../data/regions'
 import Header from '../../components/site/header'
+import ExplorerSearch from './search'
 export const dynamic = 'force-dynamic'
 
 type Result = { id: string; title: string; text: string; href: string; category: string; image?: string; video?: string }
@@ -35,7 +36,7 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
       (['all','photos'].includes(type) || type === 'evenements') ? (() => { let query = supabase.from('niger_events').select('id,name,slug,city,description,image_url').eq('published',true); if(q) query=query.or('name.ilike.' + pattern + ',city.ilike.' + pattern + ',description.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('image_url','is',null).neq('image_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
       (['all','photos'].includes(type) || type === 'culture') ? (() => { let query = supabase.from('niger_cultures').select('id,title,slug,history,traditions,cover_url').eq('published',true); if(q) query=query.or('title.ilike.' + pattern + ',history.ilike.' + pattern + ',traditions.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('cover_url','is',null).neq('cover_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
       (['all','photos'].includes(type) || type === 'gastronomie') ? (() => { let query = supabase.from('niger_gastronomy').select('id,name,slug,description,image_url').eq('published',true); if(q) query=query.or('name.ilike.' + pattern + ',description.ilike.' + pattern + ',ingredients.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('image_url','is',null).neq('image_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
-      (['all','photos','videos','publications'].includes(type)) ? (() => { let query=supabase.from('niger_publications').select('id,content,media_url,media_type,location,published_at').eq('published',true).eq('visibility','public'); if(q) query=query.ilike('content',pattern); if(region) query=query.ilike('location',selectedRegion ? like(selectedRegion.name) : '__unknown_region__'); if(type==='photos'||type==='videos') query=query.eq('media_type',type==='photos'?'photo':'video').not('media_url','is',null).neq('media_url',''); return query.order('published_at',{ascending:false,nullsFirst:false}).order('id').range(offset,offset+24) })() : Promise.resolve({data:[]}),
+      (['all','photos','videos','publications'].includes(type)) ? (() => { let query=supabase.from('niger_publications').select('id,content,media_url,media_type,location,published_at').eq('published',true).eq('visibility','public'); if(q) query=query.or('content.ilike.'+pattern+',location.ilike.'+pattern); if(region) query=query.ilike('location',selectedRegion ? like(selectedRegion.name) : '__unknown_region__'); if(type==='photos'||type==='videos') query=query.eq('media_type',type==='photos'?'photo':'video').not('media_url','is',null).neq('media_url',''); return query.order('published_at',{ascending:false,nullsFirst:false}).order('id').range(offset,offset+24) })() : Promise.resolve({data:[]}),
     ])
 
     const batches=[w,a,e,c,g,p]
@@ -61,13 +62,7 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
             <Link href="/application" aria-label="Retour à l’application" style={{display:'grid',placeItems:'center',width:44,height:44}}><ArrowRight size={21} style={{transform:'rotate(180deg)'}}/></Link>
             <h1 style={{fontFamily:'inherit',fontSize:'1.65rem',margin:0,color:'#103b2d'}}>Explorer</h1>
           </div>
-          <form action="/explorer" style={{display:'flex',alignItems:'center',gap:10,border:'1px solid #d9ddd8',borderRadius:14,padding:'6px 10px',background:'#f6f8f7'}}>
-            <Search size={19}/>
-            <input name="q" defaultValue={q} placeholder="Rechercher au Niger…" aria-label="Rechercher" style={{flex:1,minWidth:0,width:0,border:0,background:"transparent",padding:"12px 0",fontSize:16}}/>
-            <input type="hidden" name="region" value={region}/>
-            <input type="hidden" name="type" value={type}/>
-            <button type="submit" aria-label="Lancer la recherche" style={{display:"grid",placeItems:"center",flexShrink:0,width:44,height:44,border:0,borderRadius:10,background:"#0b4935",color:"#fff"}}><ArrowRight size={20}/></button>
-          </form>
+          <ExplorerSearch key={q+'|'+region+'|'+type} q={q} region={region} type={type} />
 
           <div className="mt-4 flex gap-2 overflow-x-auto" style={{paddingBottom:8}}>
             {[

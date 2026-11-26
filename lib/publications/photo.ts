@@ -9,6 +9,13 @@ export function publicationPreview(media: string | null, type: string | null, or
   try {
     const url = new URL(media, origin)
     if (url.protocol !== 'https:') return origin + '/opengraph-image'
+    if (url.origin === new URL(origin).origin && url.pathname === '/api/publication-photo') {
+      const key = url.searchParams.get('path') || ''
+      if (isUploadedPhoto(key)) {
+        url.search = '?path=' + key.slice(0,key.lastIndexOf('/')) + '/partage.jpg'
+        return url.href
+      }
+    }
     const project = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     const prefix = '/storage/v1/object/public/niger-media/'
     if (project && url.origin === new URL(project).origin && url.pathname.startsWith(prefix) && isUploadedPhoto(url.pathname.slice(prefix.length))) {
