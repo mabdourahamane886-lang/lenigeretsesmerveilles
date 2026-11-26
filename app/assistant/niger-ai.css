@@ -27,3 +27,7 @@ body:has(.nigerAiShell) .siteGlobalContent{margin:0!important;padding:0!importan
 .nigerAiThinkingLabel{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.01em;animation:nigerAiStatusIn .28s ease both}
 @keyframes nigerAiStatusIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.nigerAiThinkingLabel{animation:none}.nigerAiDots i{animation:none;opacity:.7}}
+
+/* Interface conversationnelle autonome */
+body:has(.nigerAiShell) .siteHeader,body:has(.nigerAiShell) .siteFooter{display:none!important}
+.nigerAiShell,.nigerAiWorkspace{background:#fff}.nigerAiHeader{min-height:54px}.nigerAiComposer{border:1px solid #d1d5db;box-shadow:0 4px 18px #0000000a;grid-template-columns:36px minmax(0,1fr) 40px}.nigerAiComposer:focus-within{border-color:#87998f;outline:none}.nigerAiComposer textarea,.nigerAiComposer textarea:focus{border:0!important;outline:none!important;box-shadow:none!important}.nigerAiComposer>button{background:#0b5d3b}.nigerAiComposer>button.nigerAiAttach{background:#f1f4f2;color:#174b35;width:34px;height:34px}.nigerAiComposer button:focus-visible{outline:2px solid #0b5d3b;outline-offset:2px}.nigerAiEyebrow{color:#53685b}.nigerAiSuggestions button:hover{border-color:#9bb4a5;background:#f7faf8}.nigerAiDots i{background:#0b5d3b;box-shadow:none}.nigerAiWelcome h1{font-family:inherit;font-size:clamp(25px,4vw,38px)}
