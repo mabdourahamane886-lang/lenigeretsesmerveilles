@@ -100,6 +100,29 @@ export default function AuthPage() {
     setToken('')
   }
 
+  async function socialLogin(provider: 'google' | 'gitlab') {
+    if (!supabase || busy) return
+    setBusy(true)
+    setNotice('')
+    setIsError(false)
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fprofil',
+          skipBrowserRedirect: true,
+        },
+      })
+      if (error) throw error
+      if (!data.url) throw new Error('La connexion externe est indisponible.')
+      window.location.assign(data.url)
+    } catch {
+      setBusy(false)
+      setIsError(true)
+      setNotice('Connexion avec ' + (provider === 'google' ? 'Google' : 'GitLab') + ' indisponible. Réessayez ou utilisez votre e-mail.')
+    }
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!supabase || busy) return
@@ -260,6 +283,30 @@ export default function AuthPage() {
           {mode === 'signup' && <button type="button" className={styles.textLink} onClick={()=>switchMode('login')}>Déjà inscrit ? Se connecter</button>}
           {(mode === 'recover' || mode === 'verify' || mode === 'reset') && <button type="button" className={styles.textLink} onClick={()=>switchMode('login')}>Revenir à la connexion</button>}
         </form>
+        {mode === 'login' && <div style={{display:'grid',gap:12,marginTop:24}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,color:'var(--account-muted)',fontSize:13}}>
+            <span style={{flex:1,height:1,background:'var(--account-line)'}} />
+            <span>Ou continuer avec</span>
+            <span style={{flex:1,height:1,background:'var(--account-line)'}} />
+          </div>
+          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('google')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 48 48" style={{flexShrink:0}}>
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.2 5.48-4.65 7.18l7.73 6C44.53 38.04 46.98 31.9 46.98 24.55z"/>
+              <path fill="#FBBC05" d="M10.53 28.59a14.8 14.8 0 0 1 0-9.18l-7.97-6.19a24 24 0 0 0 0 21.56z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 16-5.8l-7.73-6C30.13 37.65 27.37 38.5 24 38.5c-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Continuer avec Google
+          </button>
+          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('gitlab')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style={{flexShrink:0}}>
+              <path fill="#E24329" d="M12 22 2.8 10.2h18.4L12 22ZM2.8 10.2 5.5 2.4c.2-.6 1-.6 1.2 0l2.6 7.8H2.8Zm11.9 0 2.6-7.8c.2-.6 1-.6 1.2 0l2.7 7.8h-6.5Z"/>
+              <path fill="#FC6D26" d="M12 22 9.3 10.2H2.8L12 22Zm0 0 2.7-11.8h6.5L12 22Z"/>
+              <path fill="#FCA326" d="m2.8 10.2-2 5.8c-.2.6 0 1.2.5 1.6L12 22 2.8 10.2Zm18.4 0 2 5.8c.2.6 0 1.2-.5 1.6L12 22l9.2-11.8Z"/>
+            </svg>
+            Continuer avec GitLab
+          </button>
+        </div>}
       </section>
     </div>
   </main>
