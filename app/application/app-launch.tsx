@@ -20,12 +20,12 @@ export default function AppLaunch({ children }: { children: ReactNode }) {
     async function openApp() {
       const client = createClient()
       const [result] = await Promise.all([
-        client?.auth.getSession().catch(() => null),
+        client?.auth.getUser().catch(() => null),
         reveal(),
       ])
       if (!active) return
 
-      if (result?.data.session) setReady(true)
+      if (result?.data.user && !result.error) setReady(true)
       else router.replace('/application/compte?entry=app')
     }
 
