@@ -3,7 +3,9 @@
   "name": "lenigeretsesmerveilles",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-10-22",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "upload_source_maps": true,
   "workers_dev": true,
   "keep_vars": true,
@@ -12,9 +14,16 @@
     "binding": "ASSETS"
   },
   "vars": {
-    "NEXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAFYO4L2FYabyQ91h"
+    "NEXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAFYO4L2FYabyQ91h",
+    "NIGER_MEDIA_PREFIX": "Niger-media/"
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "r2_buckets": [
+    {
+      "binding": "NIGER_MEDIA",
+      "bucket_name": "ngr"
+    }
+  ]
 }
