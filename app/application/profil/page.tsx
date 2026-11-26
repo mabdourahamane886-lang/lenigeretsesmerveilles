@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
+  const [editing, setEditing] = useState(false)
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
   const [region, setRegion] = useState('')
@@ -72,7 +73,9 @@ export default function ProfilePage() {
       })
       if (error) throw error
       setUser(data.user)
-      router.replace('/application/parametres')
+      setEditing(false)
+      setStatus('Votre profil a été enregistré.')
+      router.refresh()
     } catch (error) {
       setFailed(true)
       setStatus(error instanceof Error ? error.message : 'Impossible de sauvegarder le profil.')
@@ -84,7 +87,7 @@ export default function ProfilePage() {
     setBusy(true); setStatus(''); setFailed(false)
     const { error } = await supabase.auth.signOut()
     if (error) {setStatus(error.message);setFailed(true);setBusy(false);return}
-    setUser(null);setBusy(false);setName('');setBio('');setRegion('')
+    setUser(null);setEditing(false);setBusy(false);setName('');setBio('');setRegion('')
     setStatus('Vous êtes déconnecté.')
   }
 
@@ -116,12 +119,18 @@ export default function ProfilePage() {
           <div className={styles.card}>
             <div className={styles.groupBlock}>
               <h2 style={{margin:'0 0 16px',fontSize:'1.15rem'}}>Informations du profil</h2>
-              <form className={styles.form} onSubmit={save}>
+              {!editing ? <div className={styles.form}>
+                <p><strong>Nom affiché :</strong> {String(user.user_metadata?.full_name || 'Non renseigné')}</p>
+                <p><strong>Biographie :</strong> {String(user.user_metadata?.bio || 'Non renseignée')}</p>
+                <p><strong>Région :</strong> {String(user.user_metadata?.region || 'Non renseignée')}</p>
+                <button type="button" className={styles.secondary} onClick={()=>{setStatus('');setEditing(true)}}><Settings2 size={18}/> Modifier mon profil</button>
+              </div> : <form className={styles.form} onSubmit={save}>
                 <label className={styles.fieldGroup}><span className={styles.label}>Nom affiché</span><span className={styles.inputWrap}><UserRound size={19}/><input className={styles.input} value={name} onChange={e=>setName(e.target.value)} required maxLength={80} autoComplete="name" placeholder="Votre nom complet"/></span></label>
                 <label className={styles.fieldGroup}><span className={styles.label}>Biographie</span><textarea className={styles.textArea} value={bio} onChange={e=>setBio(e.target.value)} maxLength={500} rows={3} placeholder="Présentez-vous en quelques lignes…" /></label>
                 <label className={styles.fieldGroup}><span className={styles.label}><MapPin size={17} style={{display:'inline',marginRight:7}}/> Région</span><select className={styles.select} value={region} onChange={e=>setRegion(e.target.value)}><option value="">Non renseignée</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
                 <button type="submit" className={styles.primary} disabled={busy}><CheckCircle2 size={18}/>{busy ? 'Enregistrement…' : 'Enregistrer mon profil'}</button>
-              </form>
+                <button type="button" className={styles.secondary} disabled={busy} onClick={()=>{setName(String(user.user_metadata?.full_name || ''));setBio(String(user.user_metadata?.bio || ''));setRegion(String(user.user_metadata?.region || ''));setEditing(false);setStatus('')}}>Annuler</button>
+              </form>}
             </div>
           </div>
           <h2 className={styles.sectionTitle}>Identifiants du compte</h2>
@@ -134,7 +143,7 @@ export default function ProfilePage() {
           <button className={styles.secondary} disabled={busy} type="button" onClick={signOut}><LogOut size={18}/> Se déconnecter</button>
         </>}
       {status && <p role={failed ? 'alert' : 'status'} className={[styles.status, failed ? styles.err : styles.ok].join(' ')} style={{marginTop:18}}>{status}</p>}
-      {!supabase && <div role="alert" className={[styles.status,styles.err].join(' ')}>La connexion nécessite les clés publiques Supabase configurées dans Vercel.</div>}
+      {!supabase && <div role="alert" className={[styles.status,styles.err].join(' ')}>La connexion nécessite les clés publiques Supabase configurées sur la plateforme.</div>}
     </div>
   </main>
 }
