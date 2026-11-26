@@ -31,3 +31,13 @@ body:has(.nigerAiShell) .siteGlobalContent{margin:0!important;padding:0!importan
 /* Interface conversationnelle autonome */
 body:has(.nigerAiShell) .siteHeader,body:has(.nigerAiShell) .siteFooter{display:none!important}
 .nigerAiShell,.nigerAiWorkspace{background:#fff}.nigerAiHeader{min-height:54px}.nigerAiComposer{border:1px solid #d1d5db;box-shadow:0 4px 18px #0000000a;grid-template-columns:36px minmax(0,1fr) 40px}.nigerAiComposer:focus-within{border-color:#87998f;outline:none}.nigerAiComposer textarea,.nigerAiComposer textarea:focus{border:0!important;outline:none!important;box-shadow:none!important}.nigerAiComposer>button{background:#0b5d3b}.nigerAiComposer>button.nigerAiAttach{background:#f1f4f2;color:#174b35;width:34px;height:34px}.nigerAiComposer button:focus-visible{outline:2px solid #0b5d3b;outline-offset:2px}.nigerAiEyebrow{color:#53685b}.nigerAiSuggestions button:hover{border-color:#9bb4a5;background:#f7faf8}.nigerAiDots i{background:#0b5d3b;box-shadow:none}.nigerAiWelcome h1{font-family:inherit;font-size:clamp(25px,4vw,38px)}
+
+/* Mobile chat: accessible green controls and keyboard-aware layout. */
+.nigerAiShell,.nigerAiWorkspace{min-height:0;height:100dvh;max-height:100dvh;overflow:hidden}
+.nigerAiWorkspace{min-width:0}
+.nigerAiComposer{border-color:#d1d5db!important;outline:none!important;box-shadow:0 4px 18px #0000000a!important}
+.nigerAiComposer:focus-within{border-color:#8ca99a!important;outline:none!important;box-shadow:0 4px 18px #0000000a!important}
+.nigerAiComposer textarea:focus,.nigerAiComposer textarea:focus-visible{outline:0!important;border:0!important;box-shadow:none!important}
+.nigerAiComposer>button:not(.nigerAiAttach){background:#0b5d3b!important;color:#fff}
+.nigerAiMessages{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+@media(max-width:760px){.nigerAiWelcome{margin:12px auto 0}.nigerAiWelcomeMark{width:48px;height:48px;margin-bottom:12px}.nigerAiWelcome h1{font-size:clamp(24px,7vw,32px);line-height:1.16;margin:10px 0}.nigerAiWelcomeText{line-height:1.5}.nigerAiSuggestions{margin-top:16px;gap:7px}.nigerAiSuggestions button{min-height:46px;padding:10px}.nigerAiComposer{bottom:calc(6px + env(safe-area-inset-bottom));width:calc(100% - 16px);max-width:100%}.nigerAiMessages{padding:12px 12px 135px}}
