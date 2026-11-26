@@ -74,7 +74,7 @@ export default function ProfilePage() {
       if (error) throw error
       setUser(data.user)
       setEditing(false)
-      setStatus('Votre profil a été enregistré.')
+      setStatus('')
       router.refresh()
     } catch (error) {
       setFailed(true)
