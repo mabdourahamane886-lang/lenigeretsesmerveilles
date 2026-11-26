@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [name, setName] = useState('')
+  const [editing, setEditing] = useState(false)
   const [bio, setBio] = useState('')
   const [region, setRegion] = useState('')
   const [status, setStatus] = useState('')
@@ -72,7 +73,8 @@ export default function ProfilePage() {
       })
       if (error) throw error
       setUser(data.user)
-      router.replace('/application/parametres')
+      setEditing(false)
+      setStatus('Profil enregistré avec succès.')
     } catch (error) {
       setFailed(true)
       setStatus(error instanceof Error ? error.message : 'Impossible de sauvegarder le profil.')
@@ -116,11 +118,12 @@ export default function ProfilePage() {
           <div className={styles.card}>
             <div className={styles.groupBlock}>
               <h2 style={{margin:'0 0 16px',fontSize:'1.15rem'}}>Informations du profil</h2>
-              <form className={styles.form} onSubmit={save}>
+              {!editing ? <><p><strong>Nom :</strong> {name || 'Non renseigné'}</p><p><strong>Biographie :</strong> {bio || 'Non renseignée'}</p><p><strong>Région :</strong> {region || 'Non renseignée'}</p><button type="button" className={styles.secondary} onClick={()=>setEditing(true)}>Modifier mon profil</button></> : <form className={styles.form} onSubmit={save}>
                 <label className={styles.fieldGroup}><span className={styles.label}>Nom affiché</span><span className={styles.inputWrap}><UserRound size={19}/><input className={styles.input} value={name} onChange={e=>setName(e.target.value)} required maxLength={80} autoComplete="name" placeholder="Votre nom complet"/></span></label>
                 <label className={styles.fieldGroup}><span className={styles.label}>Biographie</span><textarea className={styles.textArea} value={bio} onChange={e=>setBio(e.target.value)} maxLength={500} rows={3} placeholder="Présentez-vous en quelques lignes…" /></label>
                 <label className={styles.fieldGroup}><span className={styles.label}><MapPin size={17} style={{display:'inline',marginRight:7}}/> Région</span><select className={styles.select} value={region} onChange={e=>setRegion(e.target.value)}><option value="">Non renseignée</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
                 <button type="submit" className={styles.primary} disabled={busy}><CheckCircle2 size={18}/>{busy ? 'Enregistrement…' : 'Enregistrer mon profil'}</button>
+                <button type="button" className={styles.secondary} disabled={busy} onClick={()=>{setName(String(user.user_metadata?.full_name || ''));setBio(String(user.user_metadata?.bio || ''));setRegion(String(user.user_metadata?.region || ''));setEditing(false)}}>Annuler</button>
               </form>
             </div>
           </div>
