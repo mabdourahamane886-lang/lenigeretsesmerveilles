@@ -3268,3 +3268,15 @@ body:not(.home-page) .proArticleHero {
 /* Remove decorative heading rules and explorer card symbols */
 .kicker::before, .kicker::after, .proMiniLabel::before, .siteFooterKicker::before { content: none !important; display: none !important; }
 .proExplorerCard .proExplorerTop { display: none !important; }
+
+/* Desktop header: consistent action sizes and spacing without changing mobile. */
+@media (min-width: 1051px) {
+  .siteHeader .siteHeaderInner { gap: clamp(10px, 1.2vw, 20px); align-items: center; }
+  .siteHeader .siteBrand { min-width: 0; flex: 0 0 auto; }
+  .siteHeader .siteNav { min-width: 0; flex: 1 1 auto; flex-wrap: wrap; justify-content: center; gap: 4px; margin-left: 0; }
+  .siteHeader .siteNav a { min-height: 44px; padding: 0 clamp(7px, .65vw, 12px); justify-content: center; white-space: nowrap; }
+  .siteHeader .siteHeaderActions { flex: 0 0 auto; align-items: center; gap: 10px; margin-left: auto; }
+  .siteHeader .siteSearchButton { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 12px; }
+  .siteHeader .siteContributeButton { min-height: 44px; padding: 0 16px; justify-content: center; white-space: nowrap; border-radius: 12px; }
+  .siteHeader :is(.siteNav a, .siteSearchButton, .siteContributeButton):focus-visible { outline: 2px solid #176747; outline-offset: 3px; }
+}
