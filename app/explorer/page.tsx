@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpenText, CalendarDays, ChefHat, MapPin, Search, Sparkles, UsersRound } from 'lucide-react'
+import { ArrowRight, MapPin, Search } from 'lucide-react'
 import { createClient } from '../../lib/supabase/server'
 import { regions as fallbackRegions } from '../../data/regions'
 import Header from '../../components/site/header'
@@ -10,7 +10,7 @@ type Result = { id: string; title: string; text: string; href: string; category:
 const clean = (value: string) => value.trim().slice(0, 80)
 const like = (value: string) => '%' + value.replace(/[%_]/g, '') + '%'
 
-export default async function ExplorerPage({ searchParams }: { searchParams: Promise<{ q?: string; region?: string; type?: string }> }) {
+export default async function ExplorerPage({ searchParams }: { searchParams: Promise<{ q?: string; region?: string; type?: string; page?: string }> }) {
   const params = await searchParams
   const q = clean(params.q || '')
   const region = clean(params.region || '')
@@ -18,29 +18,40 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
   const supabase = await createClient()
   const results: Result[] = []
 
+  const page = Math.max(1, Math.min(100000, Math.floor(Number(params.page) || 1)))
+  const offset = (page-1)*24
+  const selectedRegion = fallbackRegions.find(item=>item.slug===region)
+  let hasMore = false
+  let unavailable = !supabase
   if (supabase) {
+    const regionRecord = selectedRegion ? await supabase.from('niger_regions').select('id').eq('slug',selectedRegion.slug).maybeSingle() : null
+    const regionId = regionRecord?.data?.id
+    const regionFilter = region ? (regionId || '00000000-0000-0000-0000-000000000000') : null
+    if(regionRecord?.error) unavailable=true
     const pattern = like(q.replace(/[(),"\\]/g, ''))
     const [w, a, e, c, g, p] = await Promise.all([
-      (['all','photos','videos'].includes(type) || type === 'merveilles') ? supabase.from('niger_wonders').select('id,name,slug,short_description,description,cover_url').eq('published', true).or('name.ilike.' + pattern + ',short_description.ilike.' + pattern + ',description.ilike.' + pattern).limit(100) : Promise.resolve({ data: [] }),
-      (['all','photos','videos'].includes(type) || type === 'articles') ? supabase.from('niger_articles').select('id,title,slug,excerpt,cover_url').eq('published', true).or('title.ilike.' + pattern + ',excerpt.ilike.' + pattern + ',content.ilike.' + pattern).limit(100) : Promise.resolve({ data: [] }),
-      (['all','photos','videos'].includes(type) || type === 'evenements') ? supabase.from('niger_events').select('id,name,slug,city,description,image_url').eq('published', true).or('name.ilike.' + pattern + ',city.ilike.' + pattern + ',description.ilike.' + pattern).limit(100) : Promise.resolve({ data: [] }),
-      (['all','photos','videos'].includes(type) || type === 'culture') ? supabase.from('niger_cultures').select('id,title,slug,history,traditions,cover_url').eq('published', true).or('title.ilike.' + pattern + ',history.ilike.' + pattern + ',traditions.ilike.' + pattern).limit(100) : Promise.resolve({ data: [] }),
-      (['all','photos','videos'].includes(type) || type === 'gastronomie') ? supabase.from('niger_gastronomy').select('id,name,slug,description,image_url').eq('published', true).or('name.ilike.' + pattern + ',description.ilike.' + pattern + ',ingredients.ilike.' + pattern).limit(100) : Promise.resolve({ data: [] }),
-      (['all','photos','videos','publications'].includes(type)) ? supabase.from('niger_publications').select('id,content,media_url,media_type,location,published_at').eq('published',true).eq('visibility','public').ilike('content',pattern).order('published_at',{ascending:false}).limit(100) : Promise.resolve({data:[]}),
+      (['all','photos'].includes(type) || type === 'merveilles') ? (() => { let query = supabase.from('niger_wonders').select('id,name,slug,short_description,description,cover_url').eq('published',true); if(q) query=query.or('name.ilike.' + pattern + ',short_description.ilike.' + pattern + ',description.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('cover_url','is',null).neq('cover_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
+      (['all','photos'].includes(type) || type === 'articles') ? (() => { let query = supabase.from('niger_articles').select('id,title,slug,excerpt,cover_url').eq('published',true); if(q) query=query.or('title.ilike.' + pattern + ',excerpt.ilike.' + pattern + ',content.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('cover_url','is',null).neq('cover_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
+      (['all','photos'].includes(type) || type === 'evenements') ? (() => { let query = supabase.from('niger_events').select('id,name,slug,city,description,image_url').eq('published',true); if(q) query=query.or('name.ilike.' + pattern + ',city.ilike.' + pattern + ',description.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('image_url','is',null).neq('image_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
+      (['all','photos'].includes(type) || type === 'culture') ? (() => { let query = supabase.from('niger_cultures').select('id,title,slug,history,traditions,cover_url').eq('published',true); if(q) query=query.or('title.ilike.' + pattern + ',history.ilike.' + pattern + ',traditions.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('cover_url','is',null).neq('cover_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
+      (['all','photos'].includes(type) || type === 'gastronomie') ? (() => { let query = supabase.from('niger_gastronomy').select('id,name,slug,description,image_url').eq('published',true); if(q) query=query.or('name.ilike.' + pattern + ',description.ilike.' + pattern + ',ingredients.ilike.' + pattern); if(regionFilter) query=query.eq('region_id',regionFilter); if(type==='photos') query=query.not('image_url','is',null).neq('image_url',''); return query.order('id').range(offset,offset+24) })() : Promise.resolve({ data: [] }),
+      (['all','photos','videos','publications'].includes(type)) ? (() => { let query=supabase.from('niger_publications').select('id,content,media_url,media_type,location,published_at').eq('published',true).eq('visibility','public'); if(q) query=query.ilike('content',pattern); if(region) query=query.ilike('location',selectedRegion ? like(selectedRegion.name) : '__unknown_region__'); if(type==='photos'||type==='videos') query=query.eq('media_type',type==='photos'?'photo':'video').not('media_url','is',null).neq('media_url',''); return query.order('published_at',{ascending:false,nullsFirst:false}).order('id').range(offset,offset+24) })() : Promise.resolve({data:[]}),
     ])
 
-    for (const item of w.data || []) results.push({ id: String(item.id), title: item.name, text: item.short_description || item.description || 'Merveille du Niger.', href: item.slug ? '/merveilles/' + item.slug : '/merveilles', category: 'Merveilles', image:item.cover_url || undefined })
-    for (const item of a.data || []) results.push({ id: String(item.id), title: item.title, text: item.excerpt || 'Publication culturelle.', href: item.slug ? '/articles/' + item.slug : '/articles', category: 'Articles', image:item.cover_url || undefined })
-    for (const item of e.data || []) results.push({ id: String(item.id), title: item.name, text: [item.city, item.description].filter(Boolean).join(' · ') || 'Événement au Niger.', href: item.slug ? '/evenements/' + item.slug : '/evenements', category: 'Agenda', image:item.image_url || undefined })
-    for (const item of c.data || []) results.push({ id: String(item.id), title: item.title, text: item.history || item.traditions || 'Culture du Niger.', href: item.slug ? '/culture/' + item.slug : '/culture', category: 'Culture', image:item.cover_url || undefined })
-    for (const item of g.data || []) results.push({ id: String(item.id), title: item.name, text: item.description || 'Gastronomie nigérienne.', href: item.slug ? '/gastronomie/' + item.slug : '/gastronomie', category: 'Gastronomie', image:item.image_url || undefined })
-    for(const item of p.data || []) results.unshift({id:String(item.id),title:(item.content || 'Publication').slice(0,100),text:item.location || '',href:'/publications/'+encodeURIComponent(String(item.id)),category:'Publications',image:item.media_type==='photo'?item.media_url || undefined:undefined,video:item.media_type==='video'?item.media_url || undefined:undefined})
+    const batches=[w,a,e,c,g,p]
+    hasMore=batches.some(batch=>(batch.data?.length || 0)>24)
+    unavailable=unavailable || batches.some(batch=>'error' in batch && Boolean(batch.error))
+    for (const item of (w.data || []).slice(0,24)) results.push({ id: String(item.id), title: item.name, text: item.short_description || item.description || 'Merveille du Niger.', href: item.slug ? '/merveilles/' + item.slug : '/merveilles', category: 'Merveilles', image:item.cover_url || undefined })
+    for (const item of (a.data || []).slice(0,24)) results.push({ id: String(item.id), title: item.title, text: item.excerpt || 'Publication culturelle.', href: item.slug ? '/articles/' + item.slug : '/articles', category: 'Articles', image:item.cover_url || undefined })
+    for (const item of (e.data || []).slice(0,24)) results.push({ id: String(item.id), title: item.name, text: [item.city, item.description].filter(Boolean).join(' · ') || 'Événement au Niger.', href: item.slug ? '/evenements/' + item.slug : '/evenements', category: 'Agenda', image:item.image_url || undefined })
+    for (const item of (c.data || []).slice(0,24)) results.push({ id: String(item.id), title: item.title, text: item.history || item.traditions || 'Culture du Niger.', href: item.slug ? '/culture/' + item.slug : '/culture', category: 'Culture', image:item.cover_url || undefined })
+    for (const item of (g.data || []).slice(0,24)) results.push({ id: String(item.id), title: item.name, text: item.description || 'Gastronomie nigérienne.', href: item.slug ? '/gastronomie/' + item.slug : '/gastronomie', category: 'Gastronomie', image:item.image_url || undefined })
+    for(const item of (p.data || []).slice(0,24)) results.push({id:String(item.id),title:(item.content || 'Publication').slice(0,100),text:item.location || '',href:'/publications/'+encodeURIComponent(String(item.id)),category:'Publications',image:item.media_type==='photo'?item.media_url || undefined:undefined,video:item.media_type==='video'?item.media_url || undefined:undefined})
   }
 
   const filteredRegions = fallbackRegions
 
   const visible = results.filter(item => (type !== 'photos' || item.image) && (type !== 'videos' || item.video))
-  const page = Math.max(1, Math.min(20, Number((params as {page?:string}).page) || 1))
   return (
     <>
       <Header />
@@ -83,14 +94,16 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
 
           <section className="mt-6">
             <h2 style={{fontSize:16,fontWeight:700,marginBottom:12}}>{q ? 'Résultats de recherche' : 'Découvrir le Niger'}</h2>
-            {!visible.length && <p role="status">Aucun contenu disponible.</p>}
+            {unavailable && <p role="status">Certains contenus sont temporairement indisponibles.</p>}
+            {!visible.length && !unavailable && <p role="status">Aucun contenu disponible.</p>}
             <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:8}}>
-              {visible.slice(0,page*24).map(item=><Link key={item.category+item.id} href={item.href} style={{display:'block',overflow:'hidden',border:'1px solid #e4e8e5',borderRadius:10,color:'#10241d',textDecoration:'none'}}>
+              {visible.map(item=><Link key={item.category+item.id} href={item.href} style={{display:'block',overflow:'hidden',border:'1px solid #e4e8e5',borderRadius:10,color:'#10241d',textDecoration:'none'}}>
                 {item.image ? <img src={item.image} alt={item.title} loading="lazy" style={{width:'100%',aspectRatio:'1 / 1',objectFit:'cover',display:'block'}}/> : item.video ? <video src={item.video} muted playsInline preload="metadata" aria-label={item.title} style={{width:'100%',aspectRatio:'1 / 1',objectFit:'cover',display:'block'}}/> : null}
                 <div style={{padding:10}}><small style={{color:'#0b6a43'}}>{item.category}</small><h3 style={{fontSize:14,lineHeight:1.4,margin:'4px 0',overflowWrap:'anywhere'}}>{item.title}</h3></div>
               </Link>)}
             </div>
-            {visible.length>page*24 && <Link href={'/explorer?'+new URLSearchParams({q,region,type,page:String(page+1)}).toString()} style={{display:'block',textAlign:'center',padding:16,color:'#0b4935'}}>Voir plus</Link>}
+            {hasMore && <Link href={'/explorer?'+new URLSearchParams({q,region,type,page:String(page+1)}).toString()} style={{display:'block',textAlign:'center',padding:16,color:'#0b4935'}}>Page suivante</Link>}
+            {page>1 && <Link href={'/explorer?'+new URLSearchParams({q,region,type,page:String(page-1)}).toString()} style={{display:'block',textAlign:'center',padding:16,color:'#0b4935'}}>Page précédente</Link>}
           </section>
         </div>
       </main>
