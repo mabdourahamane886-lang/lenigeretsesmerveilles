@@ -87,11 +87,10 @@ export default function ProfilePage() {
   }
 
   return <main className={styles.shell} data-theme={dark ? 'dark' : 'light'} style={largeText ? {fontSize:'1.095rem'} : undefined}>
-    <div className={styles.container}>
+    <div className={`${styles.container} ${styles.profileCompact}`}>
       <Link className={styles.back} href="/application/parametres"><ArrowLeft size={17}/> Paramètres</Link>
-      <span className={styles.eyebrow}>Compte personnel</span>
       <h1 className={styles.heading}>Mon profil</h1>
-      <p className={styles.lead}>Retrouvez vos informations personnelles et gérez votre identité sur la plateforme.</p>
+      <p className={styles.lead}>Gérez vos informations personnelles.</p>
       {loading ? <div className={styles.notice} role="status">Chargement sécurisé de votre compte…</div>
       : !user ? <>
           <div className={styles.accountCard}>
@@ -117,7 +116,7 @@ export default function ProfilePage() {
               <h2 style={{margin:'0 0 16px',fontSize:'1.15rem'}}>Informations du profil</h2>
               <form className={styles.form} onSubmit={save}>
                 <label className={styles.fieldGroup}><span className={styles.label}>Nom affiché</span><span className={styles.inputWrap}><UserRound size={19}/><input className={styles.input} value={name} onChange={e=>setName(e.target.value)} required maxLength={80} autoComplete="name" placeholder="Votre nom complet"/></span></label>
-                <label className={styles.fieldGroup}><span className={styles.label}>Biographie</span><textarea className={styles.textArea} value={bio} onChange={e=>setBio(e.target.value)} maxLength={500} rows={4} placeholder="Présentez-vous en quelques lignes…" /></label>
+                <label className={styles.fieldGroup}><span className={styles.label}>Biographie</span><textarea className={styles.textArea} value={bio} onChange={e=>setBio(e.target.value)} maxLength={500} rows={3} placeholder="Présentez-vous en quelques lignes…" /></label>
                 <label className={styles.fieldGroup}><span className={styles.label}><MapPin size={17} style={{display:'inline',marginRight:7}}/> Région</span><select className={styles.select} value={region} onChange={e=>setRegion(e.target.value)}><option value="">Non renseignée</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
                 <button type="submit" className={styles.primary} disabled={busy}><CheckCircle2 size={18}/>{busy ? 'Enregistrement…' : 'Enregistrer mon profil'}</button>
               </form>
@@ -131,7 +130,6 @@ export default function ProfilePage() {
             <Link className={styles.row} href="/application/parametres"><span className={styles.rowIcon}><Settings2 size={21}/></span><div className={styles.rowText}><strong>Préférences</strong><small>Affichage, langue et actualités</small></div><ArrowRight size={18} className={styles.arrow}/></Link>
           </div>
           <button className={styles.secondary} disabled={busy} type="button" onClick={signOut}><LogOut size={18}/> Se déconnecter</button>
-          <p className={styles.hint} style={{marginTop:13}}>Le nom, la région et la biographie sont associés à ce compte dans Supabase Auth ; les favoris restent actuellement enregistrés sur cet appareil.</p>
         </>}
       {status && <p role={failed ? 'alert' : 'status'} className={[styles.status, failed ? styles.err : styles.ok].join(' ')} style={{marginTop:18}}>{status}</p>}
       {!supabase && <div role="alert" className={[styles.status,styles.err].join(' ')}>La connexion nécessite les clés publiques Supabase configurées dans Vercel.</div>}
