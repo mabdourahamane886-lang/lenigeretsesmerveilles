@@ -100,7 +100,7 @@ export default function AuthPage() {
     setToken('')
   }
 
-  async function socialLogin(provider: 'google' | 'gitlab') {
+  async function socialLogin(provider: 'google' | 'gitlab' | 'facebook') {
     if (!supabase || busy) return
     setBusy(true)
     setNotice('')
@@ -119,7 +119,7 @@ export default function AuthPage() {
     } catch {
       setBusy(false)
       setIsError(true)
-      setNotice('Connexion avec ' + (provider === 'google' ? 'Google' : 'GitLab') + ' indisponible. Réessayez ou utilisez votre e-mail.')
+      setNotice('Connexion avec ' + (provider === 'google' ? 'Google' : provider === 'facebook' ? 'Facebook' : 'GitLab') + ' indisponible. Réessayez ou utilisez votre e-mail.')
     }
   }
 
@@ -297,6 +297,13 @@ export default function AuthPage() {
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 16-5.8l-7.73-6C30.13 37.65 27.37 38.5 24 38.5c-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
             Continuer avec Google
+          </button>
+          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('facebook')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style={{flexShrink:0}}>
+              <path fill="#0866FF" d="M24 12a12 12 0 1 0-13.875 11.854v-8.385H7.078V12h3.047V9.356c0-3.007 1.792-4.67 4.533-4.67 1.313 0 2.686.235 2.686.235v2.953h-1.513c-1.49 0-1.956.925-1.956 1.874V12h3.328l-.532 3.469h-2.796v8.385A12 12 0 0 0 24 12Z"/>
+              <path fill="#fff" d="m16.671 15.469.532-3.469h-3.328V9.748c0-.949.466-1.874 1.956-1.874h1.513V4.921s-1.373-.235-2.686-.235c-2.741 0-4.533 1.663-4.533 4.67V12H7.078v3.469h3.047v8.385a12.1 12.1 0 0 0 3.75 0v-8.385z"/>
+            </svg>
+            Continuer avec Facebook
           </button>
           <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('gitlab')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style={{flexShrink:0}}>
