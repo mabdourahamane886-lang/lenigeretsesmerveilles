@@ -236,7 +236,28 @@ export async function GET(
       return fallbackImage(request)
     }
 
-    if (!publication || publication.media_type !== 'photo' || !publication.media_url) {
+    if (!publication) return fallbackImage(request)
+
+    // Create a distinct JPEG sharing card for each video without decoding the video.
+    if (publication.media_type === 'video') {
+      const title = getPublicationTitle(publication.content)
+      const background = Buffer.from('<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="630" fill="#0b5d3b"/><circle cx="600" cy="250" r="62" fill="#fff"/><path d="M582 210 L582 290 L645 250 Z" fill="#0b5d3b"/></svg>')
+      const image = await sharp(background)
+        .composite([{ input: createOverlay(title) }])
+        .jpeg({ quality: 86, progressive: true })
+        .toBuffer()
+      return new Response(new Uint8Array(image), {
+        status: 200,
+        headers: {
+          'Content-Type': 'image/jpeg',
+          'Content-Length': String(image.byteLength),
+          'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+          'X-Content-Type-Options': 'nosniff',
+        },
+      })
+    }
+
+    if (publication.media_type !== 'photo' || !publication.media_url) {
       return fallbackImage(request)
     }
 
