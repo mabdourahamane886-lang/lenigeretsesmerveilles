@@ -13,7 +13,7 @@ import styles from '../account.module.css'
 type Mode = 'login' | 'signup' | 'recover' | 'verify' | 'reset'
 type Channel = 'email' | 'phone'
 
-const profilePath = '/application/profil'
+const profilePath = '/application'
 
 function normalizedPhone(value: string) {
   const compact = value.trim().replace(/[\s().-]/g, '')
@@ -109,7 +109,7 @@ export default function AuthPage() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fprofil',
+          redirectTo: window.location.origin + '/auth/callback?next=%2Fapplication',
           skipBrowserRedirect: true,
         },
       })
@@ -158,7 +158,7 @@ export default function AuthPage() {
               email, password,
               options: {
                 data: { full_name: fullName.trim() },
-                emailRedirectTo: window.location.origin + '/auth/callback?next=%2Fapplication%2Fprofil',
+                emailRedirectTo: window.location.origin + '/auth/callback?next=%2Fapplication',
               },
             })
         if (error) throw error
