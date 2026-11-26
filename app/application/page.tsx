@@ -6,7 +6,6 @@ import {
   Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Flag, Pin, Settings2,
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
-import InstallButton from './install-button'
 import AppLaunch from './app-launch'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { getPublicationTitle, getPublicationExcerpt } from '../../lib/publications/format'
@@ -80,7 +79,6 @@ export default async function ApplicationPage() {
             <span>Le Niger <small>et ses Merveilles</small></span>
           </Link>
           <div className={styles.headerActions}>
-            <InstallButton />
             <details className={styles.appMenu}>
               <summary className={styles.roundAction} aria-label="Ouvrir le menu de l'application" title="Menu de l'application">
                 <Menu size={21} aria-hidden="true" />
