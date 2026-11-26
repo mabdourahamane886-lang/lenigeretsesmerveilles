@@ -124,7 +124,7 @@ export default function ProfilePage() {
                 <label className={styles.fieldGroup}><span className={styles.label}><MapPin size={17} style={{display:'inline',marginRight:7}}/> Région</span><select className={styles.select} value={region} onChange={e=>setRegion(e.target.value)}><option value="">Non renseignée</option>{REGIONS.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
                 <button type="submit" className={styles.primary} disabled={busy}><CheckCircle2 size={18}/>{busy ? 'Enregistrement…' : 'Enregistrer mon profil'}</button>
                 <button type="button" className={styles.secondary} disabled={busy} onClick={()=>{setName(String(user.user_metadata?.full_name || ''));setBio(String(user.user_metadata?.bio || ''));setRegion(String(user.user_metadata?.region || ''));setEditing(false)}}>Annuler</button>
-              </form>
+              </form>}
             </div>
           </div>
           <h2 className={styles.sectionTitle}>Identifiants du compte</h2>
