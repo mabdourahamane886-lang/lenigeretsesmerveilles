@@ -35,31 +35,26 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
     for (const item of g.data || []) results.push({ id: String(item.id), title: item.name, text: item.description || 'Gastronomie nigérienne.', href: item.slug ? '/gastronomie/' + item.slug : '/gastronomie', category: 'Gastronomie' })
   }
 
-  const filteredRegions = fallbackRegions.filter((item) => !region || item.slug === region)
+  const filteredRegions = fallbackRegions
 
   return (
     <>
       <Header />
-      <main className="page">
-        <div className="container">
-          <div className="contentHeader contentHeaderLarge">
-            <div>
-              <span className="kicker">Exploration avancée</span>
-              <h1>Un point de départ pour découvrir le Niger.</h1>
-              <p>Recherchez dans les contenus publiés et affinez votre exploration par région ou par univers.</p>
-            </div>
-            <div className="contentHeaderMark"><MapPin size={24}/><span>8 régions · plusieurs univers</span></div>
+      <main style={{background:'#fff',minHeight:'80svh',padding:'18px 0 72px'}}>
+        <div className="container" style={{maxWidth:960}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
+            <Link href="/application" aria-label="Retour à l’application" style={{display:'grid',placeItems:'center',width:44,height:44}}><ArrowRight size={21} style={{transform:'rotate(180deg)'}}/></Link>
+            <h1 style={{fontFamily:'inherit',fontSize:'1.65rem',margin:0,color:'#103b2d'}}>Explorer</h1>
           </div>
-
-          <form className="proSearchForm" action="/explorer">
+          <form action="/explorer" style={{display:'flex',alignItems:'center',gap:10,border:'1px solid #d9ddd8',borderRadius:14,padding:'6px 10px',background:'#f6f8f7'}}>
             <Search size={19}/>
-            <input name="q" defaultValue={q} placeholder="Agadez, Ténéré, tradition, festival…" aria-label="Rechercher"/>
+            <input name="q" defaultValue={q} placeholder="Rechercher au Niger…" aria-label="Rechercher" style={{flex:1,minWidth:0,width:0,border:0,background:"transparent",padding:"12px 0",fontSize:16}}/>
             <input type="hidden" name="region" value={region}/>
             <input type="hidden" name="type" value={type}/>
-            <button className="proButton proButtonDark">Explorer <ArrowRight size={15}/></button>
+            <button type="submit" aria-label="Lancer la recherche" style={{display:"grid",placeItems:"center",flexShrink:0,width:44,height:44,border:0,borderRadius:10,background:"#0b4935",color:"#fff"}}><ArrowRight size={20}/></button>
           </form>
 
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-4 flex gap-2 overflow-x-auto" style={{paddingBottom:8}}>
             {[
               ['all','Tout',''],
               ['merveilles','Merveilles','sparkles'],
@@ -68,29 +63,28 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
               ['culture','Culture','users'],
               ['gastronomie','Gastronomie','food'],
             ].map(([value,label]) => (
-              <Link key={value} href={'/explorer?q=' + encodeURIComponent(q) + '&region=' + encodeURIComponent(region) + '&type=' + value} className={'rounded-full border px-4 py-2 text-sm font-medium transition ' + (type === value ? 'border-[#0b6a43] bg-[#0b6a43] text-white' : 'border-[#d9ddd8] bg-white text-[#10241d]')}>
+              <Link key={value} href={'/explorer?q=' + encodeURIComponent(q) + '&region=' + encodeURIComponent(region) + '&type=' + value} className={'shrink-0 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition ' + (type === value ? 'border-[#0b6a43] bg-[#0b6a43] text-white' : 'border-[#d9ddd8] bg-white text-[#10241d]')}>
                 {label}
               </Link>
             ))}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="self-center text-sm font-semibold text-[#53615a]">Région :</span>
-            <Link href={'/explorer?q=' + encodeURIComponent(q) + '&type=' + type} className="rounded-full border border-[#d9ddd8] bg-white px-3 py-2 text-sm">Toutes</Link>
-            {filteredRegions.map((item) => (
-              <Link key={item.slug} href={'/explorer?q=' + encodeURIComponent(q) + '&region=' + item.slug + '&type=' + type} className="rounded-full border border-[#d9ddd8] bg-white px-3 py-2 text-sm">{item.name}</Link>
-            ))}
-          </div>
+          <form action="/explorer" style={{display:'flex',alignItems:'center',gap:10,marginTop:12}}>
+            <MapPin size={19}/><label htmlFor="explorer-region" style={{fontSize:14,fontWeight:600}}>Région</label>
+            <input type="hidden" name="q" value={q}/><input type="hidden" name="type" value={type}/>
+            <select id="explorer-region" name="region" defaultValue={region} style={{flex:1,minWidth:0,border:'1px solid #d9ddd8',borderRadius:10,padding:10,background:'#fff'}}><option value="">Toutes les régions</option>{filteredRegions.map(item=><option key={item.slug} value={item.slug}>{item.name}</option>)}</select>
+            <button type="submit" style={{padding:'10px 12px',borderRadius:10,border:'1px solid #d9ddd8',background:'#fff'}}>Appliquer</button>
+          </form>
 
           {q ? (
             results.length ? (
-              <section className="mt-10">
+              <section className="mt-6">
                 <div className="mb-4 flex items-end justify-between gap-4"><div><span className="kicker">Résultats</span><h2>{results.length} résultat{results.length > 1 ? 's' : ''}</h2></div><span className="text-sm text-[#53615a]">Recherche : « {q} »</span></div>
                 <div className="grid gap-4 md:grid-cols-2">
                   {results.map((item) => (
                     <Link href={item.href} key={item.category + item.id} className="group rounded-2xl border border-[#e2e5e0] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
-                      <div className="mb-3 flex items-center justify-between"><span className="rounded-full bg-[#eef6f1] px-3 py-1 text-xs font-semibold text-[#0b6a43]">{item.category}</span><ArrowRight size={16} className="text-[#e37b27] transition group-hover:translate-x-1"/></div>
-                      <h3 className="text-xl font-serif font-semibold text-[#10241d]">{item.title}</h3>
+                      <div className="mb-3 flex items-center justify-between"><span className="rounded-full bg-[#eef6f1] px-3 py-1 text-xs font-semibold text-[#0b6a43]">{item.category}</span><ArrowRight size={16} className="text-[#0b6a43] transition group-hover:translate-x-1"/></div>
+                      <h3 className="text-base font-semibold text-[#10241d]">{item.title}</h3>
                       <p className="mt-2 text-sm leading-6 text-[#53615a]">{item.text}</p>
                     </Link>
                   ))}
@@ -108,7 +102,7 @@ export default async function ExplorerPage({ searchParams }: { searchParams: Pro
                 [CalendarDays,'Agenda','/evenements','Festivals, rencontres et rendez-vous.'],
               ].map(([Icon,title,href,text]) => {
                 const IconComponent = Icon as typeof Sparkles
-                return <Link href={href as string} key={title as string} className="rounded-2xl border border-[#e2e5e0] bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"><IconComponent size={22} className="text-[#0b6a43]"/><h3 className="mt-4 text-xl font-serif font-semibold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-[#53615a]">{text as string}</p></Link>
+                return <Link href={href as string} key={title as string} className="rounded-2xl border border-[#e2e5e0] bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"><IconComponent size={22} className="text-[#0b6a43]"/><h3 className="mt-4 text-base font-semibold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-[#53615a]">{text as string}</p></Link>
               })}
             </section>
           )}
