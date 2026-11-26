@@ -60,7 +60,7 @@ export async function generateMetadata({
   const title = getPublicationTitle(publication.content)
   const description = normalizePublicationContent(publication.content).replace(/\s+/g, ' ').slice(0, 180) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
-  const previewImage = publicationPreview(publication.media_url, publication.media_type, baseUrl)
+  const previewImage = publication.media_type === 'video' ? `${baseUrl}/publications/${publication.id}/og` : publicationPreview(publication.media_url, publication.media_type, baseUrl)
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
   const publicationTags = [
     publication.location,
@@ -126,7 +126,7 @@ export default async function PublicationDetailPage({
   const description = normalizePublicationContent(publication.content).replace(/\s+/g, ' ').slice(0, 180) ||
     'Découvrez cette publication sur Le Niger et ses Merveilles.'
   const canonicalUrl = `${baseUrl}/publications/${publication.id}`
-  const socialImage = publicationPreview(publication.media_url, publication.media_type, baseUrl)
+  const socialImage = publication.media_type === 'video' ? `${baseUrl}/publications/${publication.id}/og` : publicationPreview(publication.media_url, publication.media_type, baseUrl)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
