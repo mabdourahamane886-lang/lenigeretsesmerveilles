@@ -1,5 +1,6 @@
 'use client'
 import './niger-ai.css'
+import NigerLiveVoice from './niger-live-voice'
 import Link from 'next/link'
 import { NIGER_DICTIONARY, NIGER_LANGUAGES } from '../../lib/niger-dictionaries'
 import { FormEvent, useEffect, useRef, useState } from 'react'
@@ -109,7 +110,7 @@ export default function AssistantPage() {
    mic.start();setVoiceStatus('listening')
   }catch{stopVoice();setError('Impossible de démarrer le microphone.')}
  }
- function startVoice(){if(loading||controller.current)return;if(!('speechSynthesis' in window)){setError('La lecture vocale est indisponible sur ce navigateur.');return}setError('');setSidebar(false);voiceEnabled.current=true;setVoiceMode(true);listenVoice()}
+ function startVoice(){if(loading)return;setError('');setSidebar(false);setVoiceMode(true)}
  function dictate(){
   type Recognition = {lang:string;onresult:((e:{results:ArrayLike<ArrayLike<{transcript:string}>>})=>void)|null;onerror:(()=>void)|null;start:()=>void}
   const w=window as unknown as {SpeechRecognition?:new()=>Recognition;webkitSpeechRecognition?:new()=>Recognition}
@@ -181,7 +182,7 @@ export default function AssistantPage() {
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
    </div>
    <form className="nigerAiComposer" onSubmit={submit}><input ref={attachment} type="file" accept=".txt,.md,.csv,.json" hidden onChange={e=>{void importText(e.currentTarget.files?.[0]);e.currentTarget.value=''}}/><button className="nigerAiAttach" type="button" aria-label="Importer un document texte" onClick={()=>attachment.current?.click()}><Plus size={19}/></button>{editIndex!==null&&<button type="button" className="nigerAiEditCancel" onClick={()=>{setEditIndex(null);setInput('')}}>Annuler la modification</button>}<textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="button" className="nigerAiAttach" aria-label="Dicter un message" onClick={dictate}><Mic size={19}/></button><button type="button" className="nigerAiAttach nigerAiVoiceButton" aria-label="Démarrer le mode vocal" onClick={startVoice} disabled={loading}><AudioLines size={19}/></button>{loading?<button type="button" aria-label="Arrêter la génération" onClick={()=>controller.current?.abort()}><Square size={16}/></button>:<button type="submit" aria-label="Envoyer le message" disabled={!input.trim()}><ArrowUp size={19}/></button>}<small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
-  {voiceMode&&<div className="nigerAiVoiceOverlay" role="dialog" aria-modal="true" aria-label="Mode vocal Niger IA"><div className={'nigerAiVoiceOrb voice-'+voiceStatus} aria-hidden="true"/><p role="status">{voiceStatus==='listening'?'Je vous écoute…':voiceStatus==='thinking'?'Préparation de la réponse…':voiceStatus==='speaking'?'Niger IA vous répond…':'Touchez le micro pour parler'}</p>{error&&<p role="alert">{error}</p>}<div className="nigerAiVoiceActions"><button type="button" disabled={voiceStatus!=='idle'} aria-label="Parler" onClick={listenVoice}><Mic size={22}/></button><button type="button" aria-label="Fermer le mode vocal" onClick={()=>{controller.current?.abort();stopVoice();setActiveId('');setInput('');setClosedNotice(true)}}><X size={22}/></button></div></div>}
+  {voiceMode&&<NigerLiveVoice onClose={()=>setVoiceMode(false)} onTranscript={(role,text)=>{setChats(v=>{const current=v.find(c=>c.id===activeId);const base=current||fresh();const last=base.messages.at(-1);const messages=last?.role===role?[...base.messages.slice(0,-1),{role,content:(last.content+' '+text).trim()}]:[...base.messages,{role,content:text}];const updated={...base,title:base.messages.length?base.title:titleOf(text),messages,updatedAt:Date.now()};if(!current)setActiveId(base.id);return [updated,...v.filter(c=>c.id!==base.id)]})}}/>}
   </section>
  </main>
 }
