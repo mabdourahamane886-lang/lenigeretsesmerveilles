@@ -86,7 +86,7 @@ const SYSTEM_INSTRUCTION = `Tu es Niger IA, l'assistant culturel intelligent du 
 Ton domaine principal est exclusivement le Niger : ses huit régions, son histoire, ses patrimoines, ses langues, ses communautés, ses traditions, sa gastronomie, son tourisme et ses enjeux culturels. Si une question est hors sujet, réponds brièvement puis propose un lien avec le Niger.
 Réponds en français par défaut et dans la langue de l'utilisateur si tu la reconnais. Le Niger est multilingue : prends en charge notamment le haoussa, le zarma-songhaï, le tamajaq/tamacheq, le fulfulde, le kanuri, l'arabe, le gourmanchéma et les langues toubou (tedaga/dazaga). Ces noms ne correspondent pas à une relation simple « une ethnie = une langue ». Si une forme n'est pas dans le dictionnaire, indique l'incertitude et demande la variante locale au lieu d'inventer une traduction. Dans le dictionnaire Supabase, seul le statut « verified » autorise à présenter une traduction comme confirmée ; les statuts « reviewed » et « unverified » doivent être explicitement signalés comme non définitivement validés, et « rejected » ne doit jamais être proposé comme traduction correcte. Préserve les caractères spéciaux et l'écriture arabe. Réponds en texte propre et directement lisible sur téléphone. N’utilise jamais la syntaxe Markdown visible : aucun signe # pour les titres, aucun ** ou __ pour le gras, aucune ligne --- et aucun astérisque pour les listes. Fais des titres simples, par exemple « 1. Les principaux sites », puis des paragraphes et des puces simples si nécessaire. Donne une réponse complète jusqu’à sa conclusion : développe les sections annoncées, ne t’arrête pas au milieu d’une phrase ou d’une liste. Pour une question demandant des détails, privilégie une réponse structurée mais suffisamment complète.
 Utilise les messages précédents de la conversation pour garder le contexte et adapter ta réponse. Ne prétends pas apprendre durablement ni modifier tes connaissances à partir d'une conversation. Ne présente jamais une information incertaine comme un fait établi. Si tu ne sais pas, dis-le clairement et recommande une source fiable. Ne fabrique ni horaires, ni prix, ni liens, ni événements.
-Lorsque le contexte documentaire ci-dessous fournit une source pertinente, appuie-toi dessus et indique le nom de la source ainsi que son lien. Ne dis pas que tu as consulté une source en direct si ce n’est pas le cas. Si les documents sont insuffisants, précise la limite et ne complète pas les détails manquants par invention.\nReste respectueux de toutes les communautés et traditions du Niger.`
+Lorsque le contexte documentaire fournit une source pertinente, appuie-toi dessus et indique son nom si utile à la vérification. Ne fournis aucun lien, URL, adresse web ou liste de liens spontanément. Donne les liens uniquement si le dernier message de l’utilisateur les demande explicitement (lien, URL, adresse du site, où consulter en ligne). Une demande de sources ou de références seule peut être satisfaite par leurs noms, titres et dates sans URL. Ne termine pas systématiquement tes réponses par des liens. Ne dis pas que tu as consulté une source en direct si ce n’est pas le cas. Si les documents sont insuffisants, précise la limite et ne complète pas les détails manquants par invention.\nReste respectueux de toutes les communautés et traditions du Niger.`
 
 const DEFAULT_MODEL = 'gemini-4-hydrogen'
 const FALLBACK_MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash-lite']
@@ -215,7 +215,9 @@ export async function POST(request: Request) {
       ).join('\n')
     : '\n\nAucune entrée correspondante n’a été trouvée dans le dictionnaire Supabase. Ne fabrique pas de traduction.'
   const languageContext = '\n\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
-  const systemInstruction = SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext
+  const wantsLinks = /\b(?:liens?|urls?|hyperliens?|links?|websites?)\b|adresse\s+(?:web|du site)|(?:donne|envoie|partage|montre|indique|trouve|cherche|quel(?:le)? est)\b[^.!?\n]{0,60}\bsite\s+(?:web|internet|officiel)|(?:où|ou)\s+(?:consulter|trouver|lire|accéder)[^.!?\n]{0,60}\ben ligne/i.test(lastQuestion) && !/\b(?:sans|aucun|pas de)\s+(?:liens?|urls?|links?)\b/i.test(lastQuestion)
+  const linkInstruction = wantsLinks ? '\n\nLIENS : la demande actuelle autorise les liens pertinents et vérifiables ; ne les invente pas.' : '\n\nLIENS : aucun lien ou URL dans la réponse actuelle, même si les documents en contiennent. Cite uniquement les noms des sources si nécessaire.'
+  const systemInstruction = SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext + linkInstruction
 
   // Paid advanced models are opt-in, never invoked simultaneously.
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
@@ -275,7 +277,10 @@ export async function POST(request: Request) {
         const answer = candidate?.content?.parts
           ?.filter((part: { thought?: boolean }) => !part.thought)
           .map((part: { text?: string }) => part.text || '').join('').trim()
-        if (answer) return NextResponse.json({ answer, model }, { headers: { 'Cache-Control': 'no-store' } })
+        if (answer) {
+          const visibleAnswer = wantsLinks ? answer : answer.replace(/\[([^\]\n]+)\]\(https?:\/\/[^)\s]+\)/gi, '$1').replace(/<?(?:https?:\/\/|www\.)[^\s<>]+>?/gi, '').replace(/[ \t]+\n/g, '\n').trim()
+          return NextResponse.json({ answer: visibleAnswer || 'Précisez votre demande pour que je puisse vous répondre.', model }, { headers: { 'Cache-Control': 'no-store' } })
+        }
         if (data?.promptFeedback?.blockReason || candidate?.finishReason === 'SAFETY') {
           return NextResponse.json({ error: 'Cette demande ne peut pas être traitée. Reformulez votre question.' }, { status: 400 })
         }
