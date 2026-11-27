@@ -172,3 +172,7 @@
   .barInner,.headerActions{gap:6px}
   .brand img{width:35px}
 }
+
+/* Preserve a clear gap between live search and cover. */
+.hero{margin-top:18px}
+@media(max-width:520px){.hero{margin-top:14px}}
