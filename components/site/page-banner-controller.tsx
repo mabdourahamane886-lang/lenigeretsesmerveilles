@@ -19,7 +19,7 @@ export default function PageBannerController() {
 
   return (
     <style>{`
-      body:not(.home-page) .siteHeader {
+      body:not(.home-page):not(:has(main.homePageWide)) .siteHeader {
         display: none !important;
       }
     `}</style>
