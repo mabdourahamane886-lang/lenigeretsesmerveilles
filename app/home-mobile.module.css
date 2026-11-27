@@ -204,3 +204,8 @@
 .panorama .headline{font-family:system-ui,sans-serif;font-size:clamp(26px,4vw,48px);font-weight:700;line-height:1.12;letter-spacing:-.025em;max-width:24ch;margin:0 0 10px}
 .panorama p{font-size:clamp(14px,1.5vw,17px);max-width:55ch;line-height:1.5}
 @media(max-width:760px){.panorama{min-height:280px;padding:24px 0}.panorama .headline{font-size:clamp(25px,7vw,32px)}.panorama p{font-size:14px}}
+
+.panorama{min-height:clamp(270px,34vw,420px);padding:24px 0;overflow:hidden}
+.panoramaPhoto{object-position:center 50%}
+.panorama .headline{font-size:clamp(27px,4vw,44px);max-width:25ch}
+@media(max-width:760px){.panorama{min-height:250px;padding:20px 0}.panorama .headline{font-size:28px}.panorama p{max-width:38ch}}
