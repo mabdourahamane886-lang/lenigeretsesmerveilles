@@ -11,7 +11,7 @@ import PageBannerController from '../components/site/page-banner-controller'
 export const metadata: Metadata = {
   metadataBase: new URL('https://lenigeretsesmerveilles-ngr.vercel.app'),
   title: {
-    default: 'Le Niger et ses Merveilles 🇳🇪',
+    default: 'Le Niger et ses Merveilles',
     template: '%s | Le Niger et ses Merveilles',
   },
   description:
@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'fr_FR',
     siteName: 'Le Niger et ses Merveilles',
-    title: 'Le Niger et ses Merveilles 🇳🇪',
+    title: 'Le Niger et ses Merveilles',
     description:
       'Une plateforme pour explorer les territoires, les patrimoines, les cultures et les histoires du Niger.',
     images: ['/opengraph-image'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Le Niger et ses Merveilles 🇳🇪',
+    title: 'Le Niger et ses Merveilles',
     description: 'Découvrez le Niger autrement.',
     images: ['/opengraph-image'],
   },
