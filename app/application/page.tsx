@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  ArrowRight, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
+  ArrowRight, AudioLines, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
   Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Pin, Settings2,
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
@@ -33,6 +33,7 @@ const universes: Universe[] = [
 ]
 const regions = ['Niamey', 'Agadez', 'Zinder', 'Maradi', 'Tahoua', 'Tillabéri', 'Dosso', 'Diffa']
 const tools = [
+  { href: '/assistant?mode=voice', label: 'Niger IA — mode vocal', icon: AudioLines },
   { href: '/carte', label: 'Carte interactive', icon: Map },
   { href: '/media', label: 'Photothèque', icon: Camera },
   { href: '/articles', label: 'Articles', icon: Newspaper },
@@ -165,7 +166,7 @@ export default async function ApplicationPage() {
 
         <section className={styles.aiSection} aria-labelledby="ai-title">
           <span className={styles.aiIcon}><Sparkles size={25}/></span>
-          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
+          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link><br/><Link href="/assistant?mode=voice"><AudioLines size={17}/> Mode vocal Niger IA <ArrowRight size={17}/></Link></div>
         </section>
 
       </div>
