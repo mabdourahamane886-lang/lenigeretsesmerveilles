@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { isAuthError } from '@supabase/supabase-js'
 import {
   ArrowRight, CheckCircle2, Eye, EyeOff, KeyRound, LockKeyhole,
-  Mail, Phone, UserRound, AlertCircle, LoaderCircle,
+  Mail, Phone, UserRound, AlertCircle, LoaderCircle, Github,
 } from 'lucide-react'
 import { createClient } from '../../../lib/supabase/client'
 import styles from '../account.module.css'
@@ -100,7 +100,7 @@ export default function AuthPage() {
     setToken('')
   }
 
-  async function socialLogin(provider: 'google') {
+  async function socialLogin(provider: 'google' | 'github') {
     if (!supabase || busy) return
     setBusy(true)
     setNotice('')
@@ -119,7 +119,7 @@ export default function AuthPage() {
     } catch {
       setBusy(false)
       setIsError(true)
-      setNotice('Connexion avec ' + 'Google' + ' indisponible. Réessayez ou utilisez votre e-mail.')
+      setNotice('Connexion avec ' + (provider === 'google' ? 'Google' : 'GitHub') + ' indisponible. Réessayez ou utilisez votre e-mail.')
     }
   }
 
@@ -297,6 +297,10 @@ export default function AuthPage() {
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 16-5.8l-7.73-6C30.13 37.65 27.37 38.5 24 38.5c-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
             Continuer avec Google
+          </button>
+          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('github')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
+            <Github size={20} aria-hidden="true" />
+            Continuer avec GitHub
           </button>
         </div>}
       </section>
