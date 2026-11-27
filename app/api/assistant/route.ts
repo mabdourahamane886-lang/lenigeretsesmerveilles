@@ -225,9 +225,24 @@ export async function POST(request: Request) {
     : advanced && /explique en détail|dossier complet/i.test(lastQuestion)
       ? normalizeModel(process.env.GEMINI_MODEL_ADVANCED || 'gemini-4-neon')
       : configuredModel
-  const models = [...new Set([preferred, configuredModel, DEFAULT_MODEL,
+  let models = [...new Set([preferred, configuredModel, DEFAULT_MODEL,
     normalizeModel(process.env.GEMINI_MODEL_FALLBACK || FALLBACK_MODELS[0]),
     normalizeModel(process.env.GEMINI_MODEL_LITE || FALLBACK_MODELS[1])].filter(Boolean))]
+  // Discover the models actually exposed to the configured Google key.
+  try {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=100', {
+      headers: { 'x-goog-api-key': apiKeys[0] }, signal: AbortSignal.timeout(4500), cache: 'no-store',
+    })
+    if (response.ok) {
+      const data = await response.json() as { models?: { name: string; supportedGenerationMethods?: string[] }[] }
+      const available = (data.models || []).filter(m => m.supportedGenerationMethods?.includes('generateContent')).map(m => normalizeModel(m.name))
+      const candidates = models.filter(m => available.includes(m))
+      const safeFallbacks = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'].filter(m => available.includes(m))
+      if (candidates.length || safeFallbacks.length) models = [...new Set([...candidates, ...safeFallbacks])]
+    } else {
+      console.warn('Gemini model discovery HTTP status', response.status)
+    }
+  } catch { console.warn('Gemini model discovery unavailable') }
   let lastStatus = 502
   const deadline = Date.now() + 44000
   let attempts = 0
@@ -243,7 +258,7 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: systemInstruction }] },
             contents: validMessages,
-            generationConfig: { maxOutputTokens: 4096 },
+            generationConfig: { maxOutputTokens: 8192 },
           }),
           signal: AbortSignal.timeout(Math.max(1, Math.min(18000, deadline - Date.now()))),
           cache: 'no-store',
@@ -276,6 +291,8 @@ export async function POST(request: Request) {
     ? 'Le quota Gemini est temporairement atteint. Réessayez plus tard.'
     : lastStatus === 401 || lastStatus === 403
       ? 'Les clés ou autorisations Gemini doivent être vérifiées dans Google AI Studio.'
+      : lastStatus === 400 || lastStatus === 404
+      ? 'Les modèles Gemini configurés ne sont pas accessibles avec cette clé. Vérifiez les modèles dans Google AI Studio.'
       : 'Niger IA est temporairement indisponible. Réessayez dans quelques instants.'
   }, { status: 503, headers: { 'Cache-Control': 'no-store' } })
 }
