@@ -2976,15 +2976,15 @@ img{max-width:100%}
 
 
 /* Page-level banners are hidden on every route except the home page. */
-body:not(.home-page) .hero,
-body:not(.home-page) .eventHero,
-body:not(.home-page) .articleHero,
-body:not(.home-page) .proHero,
-body:not(.home-page) .detailHero,
-body:not(.home-page) .cultureHero,
-body:not(.home-page) .foodHero,
-body:not(.home-page) .proDetailHero,
-body:not(.home-page) .proArticleHero {
+body:not(.home-page):not(:has(main.homePageWide)) .hero,
+body:not(.home-page):not(:has(main.homePageWide)) .eventHero,
+body:not(.home-page):not(:has(main.homePageWide)) .articleHero,
+body:not(.home-page):not(:has(main.homePageWide)) .proHero,
+body:not(.home-page):not(:has(main.homePageWide)) .detailHero,
+body:not(.home-page):not(:has(main.homePageWide)) .cultureHero,
+body:not(.home-page):not(:has(main.homePageWide)) .foodHero,
+body:not(.home-page):not(:has(main.homePageWide)) .proDetailHero,
+body:not(.home-page):not(:has(main.homePageWide)) .proArticleHero {
   display: none !important;
 }
 
