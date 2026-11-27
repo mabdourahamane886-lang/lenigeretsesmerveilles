@@ -8,11 +8,11 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
  const [status,setStatus]=useState('Connexion à Gemini Live…')
  const [muted,setMuted]=useState(false)
  const socket=useRef<WebSocket|null>(null),audio=useRef<AudioContext|null>(null),stream=useRef<MediaStream|null>(null),processor=useRef<ScriptProcessorNode|null>(null),source=useRef<MediaStreamAudioSourceNode|null>(null)
- const nextPlay=useRef(0),ready=useRef(false),muteRef=useRef(false),onTranscriptRef=useRef(onTranscript)
+ const playing=useRef<Set<AudioBufferSourceNode>>(new Set()),nextPlay=useRef(0),ready=useRef(false),muteRef=useRef(false),onTranscriptRef=useRef(onTranscript)
  useEffect(()=>{onTranscriptRef.current=onTranscript},[onTranscript])
  useEffect(()=>{
   let disposed=false
-  const close=()=>{ready.current=false;socket.current?.close();processor.current?.disconnect();source.current?.disconnect();stream.current?.getTracks().forEach(t=>t.stop());void audio.current?.close()}
+  const close=()=>{for(const node of playing.current){try{node.stop()}catch{}}playing.current.clear();ready.current=false;socket.current?.close();processor.current?.disconnect();source.current?.disconnect();stream.current?.getTracks().forEach(t=>t.stop());void audio.current?.close()}
   async function connect(){
    try{
     const res=await fetch('/api/assistant/live-token',{method:'POST'})
@@ -24,7 +24,7 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
     if(disposed){mic.getTracks().forEach(t=>t.stop());return}stream.current=mic
     const ws=new WebSocket('wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token='+encodeURIComponent(info.token))
     socket.current=ws
-    ws.onopen=()=>{ws.send(JSON.stringify({setup:{model:'models/'+info.model,generationConfig:{responseModalities:['AUDIO']},inputAudioTranscription:{},outputAudioTranscription:{},systemInstruction:{parts:[{text:'Tu es Niger IA, assistant culturel du Niger. Réponds naturellement et brièvement en français ou dans la langue de l’utilisateur.'}]}}}))}
+    ws.onopen=()=>{ws.send(JSON.stringify({setup:{model:'models/'+info.model,generationConfig:{responseModalities:['AUDIO']},inputAudioTranscription:{},outputAudioTranscription:{},systemInstruction:{parts:[{text:'Tu es Niger IA, un assistant conversationnel généraliste avec une expertise particulière sur le Niger. Réponds librement à toutes les questions, sans ramener systématiquement la discussion aux régions du Niger. Parle naturellement, avec des réponses adaptées à la question, en français ou dans la langue de l’utilisateur. Écoute les interruptions et garde le contexte de la conversation.'}]}}}))}
     ws.onmessage=async ev=>{
      try{
       const raw=typeof ev.data==='string'?ev.data:await (ev.data as Blob).text()
@@ -38,7 +38,7 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
       }
       const content=msg.serverContent
       if(content){
-       if(content.interrupted){nextPlay.current=ctx.currentTime;setStatus('Je vous écoute…')}
+       if(content.interrupted){for(const node of playing.current){try{node.stop()}catch{}}playing.current.clear();nextPlay.current=ctx.currentTime;setStatus('Je vous écoute…')}
        const userText=content.inputTranscription?.text
        const aiText=content.outputTranscription?.text
        if(userText)onTranscriptRef.current('user',userText)
@@ -50,7 +50,7 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
         const buffer=ctx.createBuffer(1,pcm.length,24000);const channel=buffer.getChannelData(0)
         for(let i=0;i<pcm.length;i++)channel[i]=pcm[i]/32768
         const node=ctx.createBufferSource();node.buffer=buffer;node.connect(ctx.destination)
-        const start=Math.max(ctx.currentTime,nextPlay.current);node.start(start);nextPlay.current=start+buffer.duration;setStatus('Niger IA vous répond…')
+        const start=Math.max(ctx.currentTime,nextPlay.current);node.onended=()=>playing.current.delete(node);playing.current.add(node);node.start(start);nextPlay.current=start+buffer.duration;setStatus('Niger IA vous répond…')
        }
        if(content.turnComplete)setStatus('Je vous écoute…')
       }
