@@ -215,7 +215,8 @@ export async function POST(request: Request) {
       ).join('\n')
     : '\n\nAucune entrée correspondante n’a été trouvée dans le dictionnaire Supabase. Ne fabrique pas de traduction.'
   const languageContext = '\n\nLANGUES RÉFÉRENCÉES : ' + NIGER_LANGUAGES.map((item) => item.name + ' (' + item.community + '; statut : ' + item.status + '; référence : ' + item.sourceUrl + ')').join(' ; ')
-  const wantsLinks = /\b(?:liens?|urls?|hyperliens?|links?|websites?)\b|adresse\s+(?:web|du site)|(?:donne|envoie|partage|montre|indique|trouve|cherche|quel(?:le)? est)\b[^.!?\n]{0,60}\bsite\s+(?:web|internet|officiel)|(?:où|ou)\s+(?:consulter|trouver|lire|accéder)[^.!?\n]{0,60}\ben ligne/i.test(lastQuestion) && !/\b(?:sans|aucun|pas de)\s+(?:liens?|urls?|links?)\b/i.test(lastQuestion)
+  const linkQuestion = lastQuestion.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const wantsLinks = /^(?:\s*(?:le|les|un|des|l['’])?\s*(?:liens?|urls?|hyperliens?|links?)\s*[?!.]*\s*)$|\b(?:donne|envoie|partage|fournis|montre|indique|trouve|cherche|veux|voudrais|souhaite|peux|pourrais|pouvez|quel(?:le)?s? (?:est|sont))\b[^.!?\n]{0,90}\b(?:liens?|urls?|hyperliens?|links?|adresse (?:web|du site)|site (?:web|internet|officiel))\b|\b(?:ou) (?:consulter|trouver|lire|acceder)[^.!?\n]{0,60}\ben ligne\b/i.test(linkQuestion) && !/\b(?:sans|aucun|pas de|evite|ne (?:donne|partage|envoie|fournis|montre|veux))\b[^.!?\n]{0,90}\b(?:liens?|urls?|hyperliens?|links?)\b/i.test(linkQuestion)
   const linkInstruction = wantsLinks ? '\n\nLIENS : la demande actuelle autorise les liens pertinents et vérifiables ; ne les invente pas.' : '\n\nLIENS : aucun lien ou URL dans la réponse actuelle, même si les documents en contiennent. Cite uniquement les noms des sources si nécessaire.'
   const systemInstruction = SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext + linkInstruction
 
@@ -278,7 +279,7 @@ export async function POST(request: Request) {
           ?.filter((part: { thought?: boolean }) => !part.thought)
           .map((part: { text?: string }) => part.text || '').join('').trim()
         if (answer) {
-          const visibleAnswer = wantsLinks ? answer : answer.replace(/\[([^\]\n]+)\]\(https?:\/\/[^)\s]+\)/gi, '$1').replace(/<?(?:https?:\/\/|www\.)[^\s<>]+>?/gi, '').replace(/[ \t]+\n/g, '\n').trim()
+          const visibleAnswer = wantsLinks ? answer : answer.replace(/\[([^\]\n]+)\]\((?:https?:\/\/|www\.)[^)\s]+\)/gi, '$1').replace(/<?(?:https?:\/\/|www\.)[^\s<>]+>?/gi, '').replace(/\b(?:[a-z0-9-]+\.)+(?:com|org|net|edu|gov|info|ne|fr|io|app|dev|africa)(?:\/[^\s<>]*)?(?![\w.-])/gi, '').replace(/[ \t]+\n/g, '\n').trim()
           return NextResponse.json({ answer: visibleAnswer || 'Précisez votre demande pour que je puisse vous répondre.', model }, { headers: { 'Cache-Control': 'no-store' } })
         }
         if (data?.promptFeedback?.blockReason || candidate?.finishReason === 'SAFETY') {
