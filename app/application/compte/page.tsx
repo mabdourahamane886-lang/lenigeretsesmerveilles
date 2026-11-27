@@ -35,6 +35,12 @@ function translatedError(error: unknown, channel: Channel) {
       return channel === 'phone'
         ? 'Utilisez le numéro déjà associé à votre compte ou connectez-vous par e-mail.'
         : 'Vérifiez votre adresse e-mail et votre mot de passe.'
+    case 'weak_password':
+      return 'Ce mot de passe ne respecte pas les exigences de sécurité. Choisissez un mot de passe plus robuste.'
+    case 'user_already_exists':
+    case 'email_exists':
+    case 'phone_exists':
+      return 'Un compte existe déjà. Connectez-vous ou réinitialisez votre mot de passe.'
     case 'email_not_confirmed':
       return 'Confirmez votre adresse e-mail avant de vous connecter.'
     case 'phone_not_confirmed':
@@ -210,7 +216,8 @@ export default function AuthPage() {
       }
 
       if (mode === 'reset') {
-        if (password.length < 10 || password !== passwordConfirm) throw new Error('Saisissez deux fois le même mot de passe d’au moins 10 caractères.')
+        if (password.length < 10) throw new Error('Utilisez un mot de passe d’au moins 10 caractères.')
+        if (password !== passwordConfirm) throw new Error('Les mots de passe ne correspondent pas.')
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) throw new Error('Session de récupération expirée. Redemandez un lien ou un code de vérification.')
         const { error } = await supabase.auth.updateUser({ password })
@@ -244,7 +251,7 @@ export default function AuthPage() {
       </header>
       <section className={[styles.card, styles.authCard].join(' ')}>
         {!supabase && <p className={[styles.status, styles.err].join(' ')} role="alert">La connexion est temporairement indisponible. Réessayez plus tard.</p>}
-        <form onSubmit={submit} className={styles.form}>
+        <form onSubmit={submit} className={styles.form} noValidate={mode === 'signup' || mode === 'reset'}>
           {(mode === 'login' || mode === 'signup' || mode === 'recover') && <>
             <div className={styles.fieldGroup}>
               <span className={styles.label}>Méthode d’identification</span>
@@ -270,7 +277,7 @@ export default function AuthPage() {
                 <button type="button" className={styles.eye} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'} onClick={() => setShowPassword(s=>!s)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
               </span>
             </label>
-            {(mode === 'signup' || mode === 'reset') && <label className={styles.fieldGroup}><span className={styles.label}>Confirmer le mot de passe</span><span className={styles.inputWrap}><KeyRound size={19}/><input className={styles.input} type={showPassword ? 'text' : 'password'} value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} minLength={10} autoComplete="new-password" required placeholder="Répétez votre mot de passe" /></span></label>}
+            {(mode === 'signup' || mode === 'reset') && <label className={styles.fieldGroup}><span className={styles.label}>Confirmer le mot de passe</span><span className={styles.inputWrap}><KeyRound size={19}/><input className={styles.input} type={showPassword ? 'text' : 'password'} value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} minLength={10} autoComplete="new-password" required placeholder="Répétez votre mot de passe" aria-invalid={passwordConfirm.length > 0 && password !== passwordConfirm} aria-describedby="password-confirm-status" /></span><span id="password-confirm-status" className={styles.hint} aria-live="polite">{passwordConfirm ? password !== passwordConfirm ? 'Les mots de passe ne correspondent pas.' : password.length < 10 ? 'Les mots de passe correspondent, mais 10 caractères sont nécessaires.' : 'Les mots de passe correspondent.' : 'Saisissez exactement le même mot de passe.'}</span></label>}
           </>}
 
           {mode === 'verify' && <label className={styles.fieldGroup}><span className={styles.label}>Code envoyé à {pendingPhone}</span><span className={styles.inputWrap}><Phone size={19}/><input className={styles.input} value={token} onChange={e=>setToken(e.target.value.replace(/\D/g, ''))} type="text" inputMode="numeric" pattern="[0-9]{6,8}" maxLength={8} autoComplete="one-time-code" required placeholder="Code de vérification" /></span></label>}
