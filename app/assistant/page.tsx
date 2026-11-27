@@ -85,6 +85,7 @@ export default function AssistantPage() {
  const [editIndex,setEditIndex] = useState<number|null>(null)
  const controller = useRef<AbortController|null>(null)
  const [voiceMode,setVoiceMode] = useState(false)
+ useEffect(()=>{if(new URLSearchParams(window.location.search).get('mode')==='voice'){voiceEnabled.current=true;setVoiceMode(true);setSidebar(false);setVoiceStatus('idle')}},[])
  const [voiceStatus,setVoiceStatus] = useState<'idle'|'listening'|'thinking'|'speaking'>('idle')
  const voiceEnabled = useRef(false)
  const recognition = useRef<VoiceRecognition|null>(null)
