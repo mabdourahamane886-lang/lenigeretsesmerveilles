@@ -204,3 +204,6 @@
 }
 
 .publicationHeader { display: flex; align-items: center; gap: 8px; }
+
+.panorama{margin-top:16px}
+@media(max-width:600px){.panorama{margin-top:12px}}
