@@ -91,3 +91,23 @@ body:has(.nigerAiShell) .siteHeader,body:has(.nigerAiShell) .siteFooter{display:
 .nigerAiTheme-auto .nigerAiThinkingDetail{color:#bcbcbc}
 }
 @media(prefers-reduced-motion:reduce){.nigerAiSpinner,.nigerAiShell .nigerAiThinkingLabel,.nigerAiThinkingDetail{animation:none}}
+
+/* Voice mode: a single monochrome orb on the existing workspace surface. */
+.nigerAiWorkspace{position:relative}
+.nigerAiComposer{grid-template-columns:36px minmax(0,1fr) 36px 36px 40px}
+.nigerAiVoiceOverlay{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:#fff;color:#222;text-align:center;padding:24px}
+.nigerAiVoiceOrb{width:clamp(108px,25vw,164px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 26%,#b7b7b7,#484848 54%,#181818);transform:scale(1);transition:transform .25s ease}
+.nigerAiVoiceOrb.voice-listening{animation:nigerAiVoicePulse 2s ease-in-out infinite}
+.nigerAiVoiceOrb.voice-speaking{animation:nigerAiVoicePulse .9s ease-in-out infinite}
+.nigerAiVoiceOrb.voice-thinking{animation:nigerAiVoicePulse 3s ease-in-out infinite;opacity:.65}
+@keyframes nigerAiVoicePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.nigerAiVoiceOverlay p{margin:0;color:inherit;font-size:15px}
+.nigerAiVoiceActions{display:flex;gap:18px;align-items:center}
+.nigerAiVoiceActions button{display:grid;place-items:center;width:52px;height:52px;border:1px solid #ccc;border-radius:50%;background:transparent;color:inherit}
+.nigerAiVoiceActions button:last-child{background:#222;color:#fff;border-color:#222}
+.nigerAiEndChat{align-self:flex-start;margin:12px 0}
+.nigerAiTheme-dark .nigerAiVoiceOverlay{background:#191c1b;color:#eee}
+.nigerAiTheme-dark .nigerAiVoiceActions button:last-child{background:#eee;color:#222}
+@media(prefers-color-scheme:dark){.nigerAiTheme-auto .nigerAiVoiceOverlay{background:#191c1b;color:#eee}.nigerAiTheme-auto .nigerAiVoiceActions button:last-child{background:#eee;color:#222}}
+@media(max-width:760px){.nigerAiComposer{grid-template-columns:30px minmax(0,1fr) 30px 30px 34px;gap:4px}.nigerAiComposer>button.nigerAiAttach{width:30px;height:34px}}
+@media(prefers-reduced-motion:reduce){.nigerAiVoiceOrb{animation:none!important;transition:none}}
