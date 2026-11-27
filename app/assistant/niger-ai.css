@@ -73,3 +73,21 @@ body:has(.nigerAiShell) .siteHeader,body:has(.nigerAiShell) .siteFooter{display:
 .nigerAiTheme-auto :is(.nigerAiWelcomeText,.nigerAiEyebrow,.nigerAiSideFoot,.nigerAiHeader span,.nigerAiThinking,.nigerAiSidePanel p,.nigerAiSidePanel span){color:#b8c4bb}
 }
 @media(max-width:760px){.nigerAiComposer{grid-template-columns:34px minmax(0,1fr) 34px 36px;gap:5px;margin-bottom:calc(8px + env(safe-area-inset-bottom))}.nigerAiMessages{padding-bottom:16px}.nigerAiMessageText{font-size:14px}.nigerAiComposer textarea{font-size:16px}}
+
+/* Inline monochrome response activity: no additional surface. */
+.nigerAiShell .nigerAiThinking{display:flex;align-items:flex-start;gap:10px;padding:8px 0;margin:0;background:transparent;border:0;box-shadow:none;color:#222;min-height:0}
+.nigerAiSpinner{display:block;flex:0 0 16px;width:16px;height:16px;margin-top:3px;border:2px solid #c4c4c4;border-top-color:#252525;border-radius:50%;animation:nigerAiSpin .85s linear infinite}
+.nigerAiThinkingText{display:flex;flex-direction:column;gap:3px;min-width:0}
+.nigerAiShell .nigerAiThinkingLabel{font-size:14px;line-height:1.45;font-weight:550;letter-spacing:0;animation:nigerAiTextIn .35s ease both}
+.nigerAiThinkingDetail{font-size:12px;line-height:1.45;color:#676767;animation:nigerAiTextIn .45s ease both}
+@keyframes nigerAiSpin{to{transform:rotate(360deg)}}
+@keyframes nigerAiTextIn{from{opacity:0}to{opacity:1}}
+.nigerAiShell.nigerAiTheme-dark .nigerAiThinking{color:#ededed}
+.nigerAiTheme-dark .nigerAiSpinner{border-color:#565656;border-top-color:#ededed}
+.nigerAiTheme-dark .nigerAiThinkingDetail{color:#bcbcbc}
+@media(prefers-color-scheme:dark){
+.nigerAiShell.nigerAiTheme-auto .nigerAiThinking{color:#ededed}
+.nigerAiTheme-auto .nigerAiSpinner{border-color:#565656;border-top-color:#ededed}
+.nigerAiTheme-auto .nigerAiThinkingDetail{color:#bcbcbc}
+}
+@media(prefers-reduced-motion:reduce){.nigerAiSpinner,.nigerAiShell .nigerAiThinkingLabel,.nigerAiThinkingDetail{animation:none}}
