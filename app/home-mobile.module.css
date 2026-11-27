@@ -148,20 +148,9 @@
   background: #edf4eb;
 }
 
-:global(body):has(.panorama) > :global(.siteHeader) {
-  position: absolute;
-  inset: 0 0 auto;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-}
 
-:global(body):has(.panorama) > :global(.siteHeader) :global(.siteBrandCopy) strong,
-:global(body):has(.panorama) > :global(.siteHeader) :global(.siteBrandCopy) small,
-:global(body):has(.panorama) > :global(.siteHeader) :global(.siteNav) a {
-  color: #fff;
-}
+
+
 
 @media (max-width: 760px) {
   .panorama {
@@ -207,3 +196,11 @@
 
 .panorama{margin-top:16px}
 @media(max-width:600px){.panorama{margin-top:12px}}
+
+/* Compact, unobstructed homepage cover. */
+.panorama{min-height:clamp(300px,38vw,490px);padding:32px 0;margin:0;align-items:end}
+.panoramaContent{grid-template-columns:minmax(0,1fr);gap:0}
+.panorama::after{background:linear-gradient(0deg,rgba(12,32,25,.74),rgba(12,32,25,.04) 85%)}
+.panorama .headline{font-family:system-ui,sans-serif;font-size:clamp(26px,4vw,48px);font-weight:700;line-height:1.12;letter-spacing:-.025em;max-width:24ch;margin:0 0 10px}
+.panorama p{font-size:clamp(14px,1.5vw,17px);max-width:55ch;line-height:1.5}
+@media(max-width:760px){.panorama{min-height:280px;padding:24px 0}.panorama .headline{font-size:clamp(25px,7vw,32px)}.panorama p{font-size:14px}}
