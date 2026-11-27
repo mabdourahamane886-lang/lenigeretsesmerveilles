@@ -13,3 +13,9 @@
 .result small{color:#536760}
 .result:hover{color:#16834a}
 .result:focus-visible,.close:focus-visible{outline:2px solid #16834a;outline-offset:2px}
+
+.panel{background:transparent;border-radius:16px}
+.field{min-height:46px;padding:4px 14px;border-radius:14px;background:#f7f9f8;border-color:#dce6df}
+.field .input{font-size:16px}
+.input::placeholder{color:#65756c}
+.results{box-shadow:none}
