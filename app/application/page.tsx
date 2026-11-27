@@ -7,6 +7,7 @@ import {
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
 import AppLaunch from './app-launch'
+import InlineSearch from '../../components/site/inline-search'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { getPublicationTitle, getPublicationExcerpt } from '../../lib/publications/format'
 import styles from './application.module.css'
@@ -99,11 +100,7 @@ export default async function ApplicationPage() {
       </header>
 
       <div className={styles.canvas}>
-        <form role="search" action="/recherche" className={styles.search}>
-          <Search size={20} aria-hidden="true" />
-          <input name="q" type="search" maxLength={80} aria-label="Rechercher une merveille" placeholder="Rechercher une merveille, une région..." />
-          <button type="submit" aria-label="Rechercher"><ArrowRight size={18} /></button>
-        </form>
+        <InlineSearch home />
 
         <section className={styles.hero} aria-labelledby="app-hero-title">
           <Image className={styles.heroImage} src="/images/accueil/fleuve-niger-niamey.webp" alt="Le fleuve Niger à Niamey" fill priority sizes="(max-width: 700px) 100vw, 1152px" />
