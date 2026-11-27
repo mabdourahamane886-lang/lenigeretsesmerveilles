@@ -181,14 +181,9 @@ export default async function Home() {
           />
           <div className={`container ${styles.panoramaContent}`}>
             <div className="proHeroCopy">
-              <h1 id="home-title" className={styles.headline}>Le Niger, terre de merveilles.</h1>
-              <p>Des portes du Sahara aux rives du fleuve, découvrez huit régions et les cultures qui les font vivre.</p>
+              <h1 id="home-title" className={styles.headline}>Découvrez le Niger</h1>
+              <p>Explorez nos régions, notre culture et notre patrimoine.</p>
             </div>
-            <aside className={styles.mission} aria-labelledby="home-mission">
-              <h2 id="home-mission">Notre mission</h2>
-              <p>Documenter et transmettre les paysages, les savoir-faire et les histoires du Niger.</p>
-              <Link className={styles.sideLink} href="/a-propos">Découvrir le projet <ArrowRight size={15} aria-hidden="true" /></Link>
-            </aside>
           </div>
         </section>
 
@@ -198,7 +193,7 @@ export default async function Home() {
               <div className="proSectionIntro">
                 <div>
                   <div className="kicker">Publications</div>
-                  <h2>Les publications récentes à suivre.</h2>
+                  <h2>Publications récentes</h2>
                 </div>
                 <Link className="proInlineLink" href="/publications">Voir toutes les publications <ArrowRight size={16} /></Link>
               </div>
