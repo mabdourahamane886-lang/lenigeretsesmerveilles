@@ -63,7 +63,6 @@ export default async function Header() {
         </nav>
 
         <div className="siteHeaderActions">
-          <InlineSearch />
           <Link className="siteContributeButton" href="/contribution">
             <Send size={14} />
             Contribuer
@@ -91,6 +90,7 @@ export default async function Header() {
           </details>
         </div>
       </div>
+      <div className="container siteHeaderSearchRow"><InlineSearch /></div>
     </header>
   )
 }
