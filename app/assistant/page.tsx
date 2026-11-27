@@ -1,11 +1,12 @@
 'use client'
 import './niger-ai.css'
 import Link from 'next/link'
-import { useAppEnvironment } from '../../components/site/app-environment'
 import { NIGER_DICTIONARY, NIGER_LANGUAGES } from '../../lib/niger-dictionaries'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp, Mic, Square, X } from 'lucide-react'
+import { ArrowUp, Plus, Search, Library, FolderKanban, MessageSquare, Trash2, Compass, Landmark, Utensils, Languages, PanelLeftOpen, Copy, Check, BookOpen, GraduationCap, MapPinned, CircleHelp, Mic, Square, X, AudioLines } from 'lucide-react'
 type Message = { role: 'user' | 'model'; content: string }
+type VoiceRecognition = {lang:string;onresult:((e:{results:ArrayLike<ArrayLike<{transcript:string}>>})=>void)|null;onerror:((e:{error:string})=>void)|null;onend:(()=>void)|null;start:()=>void;abort:()=>void}
+const isFarewell = (q:string) => /^(?:au revoir|à bientôt|a bientot|bonne nuit|merci(?: beaucoup)?[,]? au revoir|fin de discussion|terminer la conversation)[.!\s]*$/i.test(q.trim())
 type Chat = { id: string; title: string; messages: Message[]; updatedAt: number; pinned?: boolean }
 const KEY = 'niger-ia-chats-v1'
 const suggestions = [
@@ -65,7 +66,6 @@ function renderMessageContent(text: string) {
 
 
 export default function AssistantPage() {
- const { appHome } = useAppEnvironment()
  const [chats,setChats] = useState<Chat[]>([])
  const [activeId,setActiveId] = useState('')
  const [input,setInput] = useState('')
@@ -84,8 +84,31 @@ export default function AssistantPage() {
  const [theme,setTheme] = useState<'light'|'dark'|'auto'>('light')
  const [editIndex,setEditIndex] = useState<number|null>(null)
  const controller = useRef<AbortController|null>(null)
+ const [voiceMode,setVoiceMode] = useState(false)
+ const [voiceStatus,setVoiceStatus] = useState<'idle'|'listening'|'thinking'|'speaking'>('idle')
+ const voiceEnabled = useRef(false)
+ const recognition = useRef<VoiceRecognition|null>(null)
+ const voiceTurn = useRef(0)
+ const latestSend = useRef<(q:string)=>Promise<void>>(async()=>{})
+ useEffect(()=>{return ()=>{voiceEnabled.current=false;voiceTurn.current++;recognition.current?.abort();controller.current?.abort();if('speechSynthesis' in window)window.speechSynthesis.cancel()}},[])
  useEffect(()=>{const saved=localStorage.getItem('niger-ai-theme');if(saved==='dark'||saved==='auto'||saved==='light')setTheme(saved);setSidebar(window.innerWidth>=760)},[])
  function changeTheme(value:'light'|'dark'|'auto'){setTheme(value);localStorage.setItem('niger-ai-theme',value)}
+ function stopVoice(){voiceEnabled.current=false;voiceTurn.current++;recognition.current?.abort();recognition.current=null;if('speechSynthesis' in window)window.speechSynthesis.cancel();setVoiceMode(false);setVoiceStatus('idle')}
+ function listenVoice(){
+  if(!voiceEnabled.current)return
+  const w=window as unknown as {SpeechRecognition?:new()=>VoiceRecognition;webkitSpeechRecognition?:new()=>VoiceRecognition}
+  const R=w.SpeechRecognition||w.webkitSpeechRecognition
+  if(!R){stopVoice();setError('La reconnaissance vocale est indisponible sur ce navigateur.');return}
+  const token=++voiceTurn.current
+  try{
+   const mic=new R();recognition.current=mic;mic.lang='fr-FR';let heard=false
+   mic.onresult=e=>{if(token!==voiceTurn.current||!voiceEnabled.current)return;const q=e.results[0][0].transcript.trim();if(!q)return;heard=true;setVoiceStatus('thinking');void latestSend.current(q)}
+   mic.onerror=e=>{if(token!==voiceTurn.current)return;recognition.current=null;if(e.error==='no-speech'){setVoiceStatus('idle');return}stopVoice();setError('Microphone indisponible. Vérifiez les autorisations.')}
+   mic.onend=()=>{if(token!==voiceTurn.current)return;recognition.current=null;if(!heard)setVoiceStatus('idle')}
+   mic.start();setVoiceStatus('listening')
+  }catch{stopVoice();setError('Impossible de démarrer le microphone.')}
+ }
+ function startVoice(){if(loading||controller.current)return;if(!('speechSynthesis' in window)){setError('La lecture vocale est indisponible sur ce navigateur.');return}setError('');setSidebar(false);voiceEnabled.current=true;setVoiceMode(true);listenVoice()}
  function dictate(){
   type Recognition = {lang:string;onresult:((e:{results:ArrayLike<ArrayLike<{transcript:string}>>})=>void)|null;onerror:(()=>void)|null;start:()=>void}
   const w=window as unknown as {SpeechRecognition?:new()=>Recognition;webkitSpeechRecognition?:new()=>Recognition}
@@ -101,9 +124,17 @@ export default function AssistantPage() {
   if (file.size > 24000) { setError('Document trop volumineux. Limite : 24 Ko.'); return }
   try { const content = await file.text(); setInput(v => (v + '\nDocument : ' + file.name + '\n' + content).slice(0,12000)); area.current?.focus() } catch { setError('Impossible de lire ce document.') }
  }
- function speak(text:string) {
-  if (!('speechSynthesis' in window)) {setError('Lecture audio indisponible.');return}
-  window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang='fr-FR'; window.speechSynthesis.speak(utterance)
+ function speak(text:string,onDone?:()=>void) {
+  if (!('speechSynthesis' in window)) {setError('Lecture audio indisponible.');onDone?.();return}
+  window.speechSynthesis.cancel()
+  const utterance = new SpeechSynthesisUtterance(text.replace(/https?:\/\/[^\s]+/g,''))
+  utterance.lang='fr-FR';utterance.rate=0.98;utterance.pitch=1
+  const voices=window.speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().startsWith('fr'))
+  const preferred=voices.find(v=>/natural|premium|enhanced|neural/i.test(v.name))||voices.find(v=>v.lang==='fr-FR')||voices[0]
+  if(preferred)utterance.voice=preferred
+  utterance.onend=()=>onDone?.()
+  utterance.onerror=()=>{onDone?.()}
+  window.speechSynthesis.speak(utterance)
  }
  async function share(text:string) {
   try { if (navigator.share) await navigator.share({text}); else await copyText(text,'share') } catch(e) {if (!(e instanceof DOMException && e.name==='AbortError')) setError('Partage indisponible.')}
@@ -118,16 +149,17 @@ export default function AssistantPage() {
  useEffect(()=>{if(messages.length)end.current?.scrollIntoView({behavior:'smooth',block:'end'})},[messages.length,loading])
 
  function newChat(){if(loading)return;setClosedNotice(false);setEditIndex(null);setActiveId('');setInput('');setError('');setPanel('history');if(innerWidth<760)setSidebar(false);area.current?.focus()}
- function closeChat(){if(loading)return;newChat();setClosedNotice(true);if('speechSynthesis' in window)window.speechSynthesis.cancel()}
+ function closeChat(){if(loading)return;stopVoice();newChat();setClosedNotice(true)}
  async function send(value:string,replaceIndex:number|null=editIndex){
-  const q=value.trim(); if(!q||loading)return;setClosedNotice(false)
+  const q=value.trim(); if(!q||loading||controller.current)return;setClosedNotice(false)
   const old=active||fresh(); const next=[...(replaceIndex===null?old.messages:old.messages.slice(0,replaceIndex)),{role:'user' as const,content:q}];setEditIndex(null)
   const updated={...old,title:old.messages.length?old.title:titleOf(q),messages:next,updatedAt:Date.now()}
   setChats(v=>[updated,...v.filter(c=>c.id!==old.id)]);setActiveId(old.id);setInput('');setError('');setLoading(true);if(area.current)area.current.style.height='auto'
   const abort=new AbortController();controller.current=abort;
-  try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},signal:abort.signal,body:JSON.stringify({messages:next.slice(-12)})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:cleanAnswer(d.answer || '')}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)]);if(/^(?:au revoir|à bientôt|a bientot|bonne nuit|merci,? au revoir)[.!\s]*$/i.test(q)){setActiveId('');setClosedNotice(true)}}
-  catch(e){if(!abort.signal.aborted)setError(e instanceof Error?e.message:'Impossible de contacter Niger IA.')}finally{controller.current=null;setLoading(false);setTimeout(()=>end.current?.scrollIntoView({behavior:'smooth',block:'end'}),80)}
+  try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},signal:abort.signal,body:JSON.stringify({messages:next.slice(-12)})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Une erreur est survenue.');const done={...updated,messages:[...next,{role:'model' as const,content:cleanAnswer(d.answer || '')}],updatedAt:Date.now()};setChats(v=>[done,...v.filter(c=>c.id!==old.id)]);const farewell=isFarewell(q);if(voiceEnabled.current){const token=++voiceTurn.current;recognition.current?.abort();recognition.current=null;setVoiceStatus('speaking');speak(done.messages[done.messages.length-1].content,()=>{if(token!==voiceTurn.current||!voiceEnabled.current)return;if(farewell){stopVoice();setActiveId('');setClosedNotice(true)}else listenVoice()})}else if(farewell){setActiveId('');setClosedNotice(true)}}
+  catch(e){if(!abort.signal.aborted)setError(e instanceof Error?e.message:'Impossible de contacter Niger IA.');if(voiceEnabled.current)setVoiceStatus('idle')}finally{controller.current=null;setLoading(false);setTimeout(()=>end.current?.scrollIntoView({behavior:'smooth',block:'end'}),80)}
  }
+ useEffect(()=>{latestSend.current=(q:string)=>send(q,null)})
  async function copyText(text:string,id:string){try{await navigator.clipboard.writeText(text);setCopiedId(id);window.setTimeout(()=>setCopiedId(v=>v===id?'':v),1800)}catch{setError('La copie automatique est indisponible sur ce navigateur.')}}
  function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();void send(input)}
  function removeChat(id:string){if(loading)return;const rest=chats.filter(c=>c.id!==id);setChats(rest);localStorage.setItem(KEY,JSON.stringify(rest));if(id===activeId)newChat()}
@@ -142,12 +174,13 @@ export default function AssistantPage() {
    <div className="nigerAiSideFoot"><label>Apparence <select value={theme} onChange={e=>changeTheme(e.target.value as 'light'|'dark'|'auto')}><option value="light">Clair</option><option value="dark">Sombre</option><option value="auto">Automatique</option></select></label><p>Historique conservé sur cet appareil</p></div>
   </aside>
   <section className="nigerAiWorkspace">
-   <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div>{messages.length>0&&<button type="button" className="nigerAiCopy" onClick={closeChat} disabled={loading}><X size={14}/> Terminer</button>}<Link href={appHome} className="nigerAiBack">{appHome === '/application' ? 'Retour à l’application' : 'Retour au site'}</Link></header>
+   <header className="nigerAiHeader">{!sidebar&&<button className="nigerAiMenuToggle" onClick={()=>setSidebar(true)} aria-label="Ouvrir le menu"><PanelLeftOpen size={19}/></button>}<div><strong>Niger IA</strong><span>Assistant culturel et touristique du Niger</span></div></header>
    <div className="nigerAiMessages" key={activeId}>
-    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>{greeting}</h1><p className="nigerAiWelcomeText">Ravi de vous accueillir sur Niger IA. Que souhaitez-vous découvrir aujourd’hui ? Explorez les régions, l’histoire, les langues et le patrimoine du Niger.</p>{closedNotice&&<p className="nigerAiWelcomeText" role="status">Merci pour votre visite ! Votre discussion est enregistrée dans l’historique. Au plaisir de vous retrouver.</p>}<div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='user'&&<button className="nigerAiCopy" disabled={loading} onClick={()=>{setEditIndex(i);setInput(m.content);area.current?.focus()}}>Modifier</button>}{m.role==='model'&&i===messages.length-1&&messages[i-1]?.role==='user'&&<button className="nigerAiCopy" disabled={loading} onClick={()=>void send(messages[i-1].content,i-1)}>Régénérer</button>}{m.role==='model'&&<><button className="nigerAiCopy" onClick={()=>speak(m.content)}>Écouter</button><button className="nigerAiCopy" onClick={()=>void share(m.content)}>Partager</button></>}{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking" role="status" aria-live="polite"><span className="nigerAiSpinner" aria-hidden="true"/><span className="nigerAiThinkingText"><span className="nigerAiThinkingLabel">Réflexion en cours…</span><span className="nigerAiThinkingDetail">Niger IA prépare votre réponse.</span></span></div>}<div ref={end}/></div>}
+    {!messages.length?<div className="nigerAiWelcome"><span className="nigerAiWelcomeMark">N</span><p className="nigerAiEyebrow">VOTRE ASSISTANT DU NIGER</p><h1>{greeting}</h1><p className="nigerAiWelcomeText">Ravi de vous accueillir sur Niger IA. Que souhaitez-vous découvrir aujourd’hui ? Explorez les régions, l’histoire, les langues et le patrimoine du Niger.</p>{closedNotice&&<p className="nigerAiWelcomeText" role="status">Merci pour votre visite ! Votre discussion est enregistrée dans l’historique. Au plaisir de vous retrouver.</p>}<div className="nigerAiSuggestions">{suggestions.map(({icon:Icon,title,prompt})=><button key={title} onClick={()=>void send(prompt)}><Icon size={18}/><span>{title}</span><ArrowUp size={15}/></button>)}</div></div>:<div className="nigerAiConversation" aria-live="polite">{messages.map((m,i)=><article key={i} className={'nigerAiMessage '+(m.role==='user'?'fromUser':'fromAI')}><div className="nigerAiMessageRole">{m.role==='model'?'Niger IA':''}</div><div className="nigerAiMessageText">{renderMessageContent(m.content)}</div><div className="nigerAiMessageActions"><button className="nigerAiCopy" onClick={()=>void copyText(m.content,`${activeId}-${i}`)}>{copiedId===`${activeId}-${i}`?<Check size={14}/>:<Copy size={14}/>}{copiedId===`${activeId}-${i}`?'Copié':'Copier'}</button>{m.role==='user'&&<button className="nigerAiCopy" disabled={loading} onClick={()=>{setEditIndex(i);setInput(m.content);area.current?.focus()}}>Modifier</button>}{m.role==='model'&&i===messages.length-1&&messages[i-1]?.role==='user'&&<button className="nigerAiCopy" disabled={loading} onClick={()=>void send(messages[i-1].content,i-1)}>Régénérer</button>}{m.role==='model'&&<><button className="nigerAiCopy" onClick={()=>speak(m.content)}>Écouter</button><button className="nigerAiCopy" onClick={()=>void share(m.content)}>Partager</button></>}{m.role==='model'&&<button className="nigerAiSave" onClick={()=>setLibrary(v=>v.includes(m.content)?v:[...v,m.content])}><Library size={14}/> Enregistrer dans la bibliothèque</button>}</div></article>)}{loading&&<div className="nigerAiThinking" role="status" aria-live="polite"><span className="nigerAiSpinner" aria-hidden="true"/><span className="nigerAiThinkingText"><span className="nigerAiThinkingLabel">Réflexion en cours…</span><span className="nigerAiThinkingDetail">Niger IA prépare votre réponse.</span></span></div>}{!loading&&<button type="button" className="nigerAiCopy nigerAiEndChat" onClick={closeChat}>Terminer la discussion</button>}<div ref={end}/></div>}
     {error&&<div className="nigerAiError" role="alert">{error}</div>}
    </div>
-   <form className="nigerAiComposer" onSubmit={submit}><input ref={attachment} type="file" accept=".txt,.md,.csv,.json" hidden onChange={e=>{void importText(e.currentTarget.files?.[0]);e.currentTarget.value=''}}/><button className="nigerAiAttach" type="button" aria-label="Importer un document texte" onClick={()=>attachment.current?.click()}><Plus size={19}/></button>{editIndex!==null&&<button type="button" className="nigerAiEditCancel" onClick={()=>{setEditIndex(null);setInput('')}}>Annuler la modification</button>}<textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="button" className="nigerAiAttach" aria-label="Dicter un message" onClick={dictate}><Mic size={19}/></button>{loading?<button type="button" aria-label="Arrêter la génération" onClick={()=>controller.current?.abort()}><Square size={16}/></button>:<button type="submit" aria-label="Envoyer le message" disabled={!input.trim()}><ArrowUp size={19}/></button>}<small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
+   <form className="nigerAiComposer" onSubmit={submit}><input ref={attachment} type="file" accept=".txt,.md,.csv,.json" hidden onChange={e=>{void importText(e.currentTarget.files?.[0]);e.currentTarget.value=''}}/><button className="nigerAiAttach" type="button" aria-label="Importer un document texte" onClick={()=>attachment.current?.click()}><Plus size={19}/></button>{editIndex!==null&&<button type="button" className="nigerAiEditCancel" onClick={()=>{setEditIndex(null);setInput('')}}>Annuler la modification</button>}<textarea ref={area} value={input} onChange={e=>{setInput(e.target.value);e.currentTarget.style.height='auto';e.currentTarget.style.height=Math.min(e.currentTarget.scrollHeight,220)+'px'}} placeholder="Écrivez votre message à Niger IA…" rows={1} maxLength={12000} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void send(input)}}} aria-label="Message à Niger IA"/><button type="button" className="nigerAiAttach" aria-label="Dicter un message" onClick={dictate}><Mic size={19}/></button><button type="button" className="nigerAiAttach nigerAiVoiceButton" aria-label="Démarrer le mode vocal" onClick={startVoice} disabled={loading}><AudioLines size={19}/></button>{loading?<button type="button" aria-label="Arrêter la génération" onClick={()=>controller.current?.abort()}><Square size={16}/></button>:<button type="submit" aria-label="Envoyer le message" disabled={!input.trim()}><ArrowUp size={19}/></button>}<small>Les réponses sont générées par IA. Vérifiez les informations importantes.</small></form>
+  {voiceMode&&<div className="nigerAiVoiceOverlay" role="dialog" aria-modal="true" aria-label="Mode vocal Niger IA"><div className={'nigerAiVoiceOrb voice-'+voiceStatus} aria-hidden="true"/><p role="status">{voiceStatus==='listening'?'Je vous écoute…':voiceStatus==='thinking'?'Préparation de la réponse…':voiceStatus==='speaking'?'Niger IA vous répond…':'Touchez le micro pour parler'}</p>{error&&<p role="alert">{error}</p>}<div className="nigerAiVoiceActions"><button type="button" disabled={voiceStatus!=='idle'} aria-label="Parler" onClick={listenVoice}><Mic size={22}/></button><button type="button" aria-label="Fermer le mode vocal" onClick={()=>{controller.current?.abort();stopVoice();setActiveId('');setInput('');setClosedNotice(true)}}><X size={22}/></button></div></div>}
   </section>
  </main>
 }
