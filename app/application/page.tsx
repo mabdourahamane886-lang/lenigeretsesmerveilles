@@ -102,6 +102,11 @@ export default async function ApplicationPage() {
 
       <div className={styles.canvas}>
         <InlineSearch home />
+        <Link href="/assistant?mode=voice" aria-label="Ouvrir le mode vocal Niger IA" style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',margin:'12px 0',border:'1px solid #d4d4d4',borderRadius:14,color:'inherit',textDecoration:'none'}}>
+          <AudioLines size={25} aria-hidden="true" />
+          <span style={{flex:1}}><strong>Mode vocal Niger IA</strong><small style={{display:'block',marginTop:3}}>Parler avec Niger IA</small></span>
+          <ChevronRight size={19} aria-hidden="true" />
+        </Link>
 
         <section className={styles.hero} aria-labelledby="app-hero-title">
           <Image className={styles.heroImage} src="/images/accueil/fleuve-niger-niamey.webp" alt="Le fleuve Niger à Niamey" fill priority sizes="(max-width: 700px) 100vw, 1152px" />
