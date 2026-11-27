@@ -194,3 +194,23 @@ button,a,summary{-webkit-tap-highlight-color:transparent}
  html { scroll-behavior: auto !important; }
  .proHeroCopy, main .sectionHeading { animation: none !important; }
 }
+
+/* Separate brand, search and cover; avoid header overflow on small screens. */
+.siteHeader{position:relative!important;inset:auto!important;background:#fff!important;box-shadow:none!important;backdrop-filter:none!important}
+.siteHeader .siteBrandCopy strong,.siteHeader .siteNav a{color:#17332b!important}
+.siteHeader .siteHeaderInner{display:flex!important;align-items:center;gap:10px;min-width:0;min-height:68px}
+.siteHeader .siteBrand{flex:1 1 auto!important;min-width:0;transform:none!important}
+.siteHeader .siteBrandLogo{flex-shrink:0}
+.siteHeader .siteHeaderActions{flex:0 0 auto!important;margin-left:auto;gap:8px}
+.siteHeaderSearchRow{padding:0 0 12px;min-width:0}
+body:has(.homePageWide) .siteHeader .siteHeaderInner{width:calc(100% - 24px)}
+body:has(.homePageWide) .homePageWide{background:#fff}
+body:has(.homePageWide) .homePageWide .proSectionIntro h2{font-family:system-ui,sans-serif;font-size:clamp(23px,3vw,34px);font-weight:700;line-height:1.2;letter-spacing:-.025em}
+@media(max-width:760px){
+ .siteHeader .siteNav{display:none!important}
+ .siteHeader .siteBrandCopy strong{font-family:system-ui,sans-serif;font-size:clamp(12px,3.3vw,15px)!important;line-height:1.2}
+ .siteHeader .siteHeaderInner{gap:6px;min-height:62px}
+ .siteHeader .siteBrandLogo{width:40px;height:40px}
+ .siteHeader .siteHeaderActions{gap:6px}
+ .siteHeaderSearchRow{width:calc(100% - 24px);padding-bottom:12px}
+}
