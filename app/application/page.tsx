@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  ArrowRight, AudioLines, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
+  ArrowRight, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
   Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Pin, Settings2,
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
@@ -33,7 +33,6 @@ const universes: Universe[] = [
 ]
 const regions = ['Niamey', 'Agadez', 'Zinder', 'Maradi', 'Tahoua', 'Tillabéri', 'Dosso', 'Diffa']
 const tools = [
-  { href: '/assistant?mode=voice', label: 'Niger IA — mode vocal', icon: AudioLines },
   { href: '/carte', label: 'Carte interactive', icon: Map },
   { href: '/media', label: 'Photothèque', icon: Camera },
   { href: '/articles', label: 'Articles', icon: Newspaper },
@@ -102,11 +101,6 @@ export default async function ApplicationPage() {
 
       <div className={styles.canvas}>
         <InlineSearch home />
-        <Link href="/assistant?mode=voice" aria-label="Ouvrir le mode vocal Niger IA" style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',margin:'12px 0',border:'1px solid #d4d4d4',borderRadius:14,color:'inherit',textDecoration:'none'}}>
-          <AudioLines size={25} aria-hidden="true" />
-          <span style={{flex:1}}><strong>Mode vocal Niger IA</strong><small style={{display:'block',marginTop:3}}>Parler avec Niger IA</small></span>
-          <ChevronRight size={19} aria-hidden="true" />
-        </Link>
 
         <section className={styles.hero} aria-labelledby="app-hero-title">
           <Image className={styles.heroImage} src="/images/accueil/fleuve-niger-niamey.webp" alt="Le fleuve Niger à Niamey" fill priority sizes="(max-width: 700px) 100vw, 1152px" />
@@ -171,7 +165,7 @@ export default async function ApplicationPage() {
 
         <section className={styles.aiSection} aria-labelledby="ai-title">
           <span className={styles.aiIcon}><Sparkles size={25}/></span>
-          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link><br/><Link href="/assistant?mode=voice"><AudioLines size={17}/> Mode vocal Niger IA <ArrowRight size={17}/></Link></div>
+          <div><span className={styles.aiEyebrow}>Votre guide intelligent</span><h2 id="ai-title">Découvrez Niger IA</h2><p>Posez vos questions sur l’histoire, les langues, les traditions et les merveilles du Niger.</p><Link href="/assistant">Discuter avec Niger IA <ArrowRight size={17}/></Link></div>
         </section>
 
       </div>
