@@ -100,7 +100,7 @@ export default function AuthPage() {
     setToken('')
   }
 
-  async function socialLogin(provider: 'google' | 'gitlab' | 'facebook' | 'github') {
+  async function socialLogin(provider: 'google') {
     if (!supabase || busy) return
     setBusy(true)
     setNotice('')
@@ -119,7 +119,7 @@ export default function AuthPage() {
     } catch {
       setBusy(false)
       setIsError(true)
-      setNotice('Connexion avec ' + (provider === 'google' ? 'Google' : provider === 'facebook' ? 'Facebook' : provider === 'github' ? 'GitHub' : 'GitLab') + ' indisponible. Réessayez ou utilisez votre e-mail.')
+      setNotice('Connexion avec ' + 'Google' + ' indisponible. Réessayez ou utilisez votre e-mail.')
     }
   }
 
@@ -297,27 +297,6 @@ export default function AuthPage() {
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 16-5.8l-7.73-6C30.13 37.65 27.37 38.5 24 38.5c-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
             Continuer avec Google
-          </button>
-          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('facebook')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
-            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style={{flexShrink:0}}>
-              <path fill="#0866FF" d="M24 12a12 12 0 1 0-13.875 11.854v-8.385H7.078V12h3.047V9.356c0-3.007 1.792-4.67 4.533-4.67 1.313 0 2.686.235 2.686.235v2.953h-1.513c-1.49 0-1.956.925-1.956 1.874V12h3.328l-.532 3.469h-2.796v8.385A12 12 0 0 0 24 12Z"/>
-              <path fill="#fff" d="m16.671 15.469.532-3.469h-3.328V9.748c0-.949.466-1.874 1.956-1.874h1.513V4.921s-1.373-.235-2.686-.235c-2.741 0-4.533 1.663-4.533 4.67V12H7.078v3.469h3.047v8.385a12.1 12.1 0 0 0 3.75 0v-8.385z"/>
-            </svg>
-            Continuer avec Facebook
-          </button>
-          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('gitlab')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
-            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" style={{flexShrink:0}}>
-              <path fill="#E24329" d="M12 22 2.8 10.2h18.4L12 22ZM2.8 10.2 5.5 2.4c.2-.6 1-.6 1.2 0l2.6 7.8H2.8Zm11.9 0 2.6-7.8c.2-.6 1-.6 1.2 0l2.7 7.8h-6.5Z"/>
-              <path fill="#FC6D26" d="M12 22 9.3 10.2H2.8L12 22Zm0 0 2.7-11.8h6.5L12 22Z"/>
-              <path fill="#FCA326" d="m2.8 10.2-2 5.8c-.2.6 0 1.2.5 1.6L12 22 2.8 10.2Zm18.4 0 2 5.8c.2.6 0 1.2-.5 1.6L12 22l9.2-11.8Z"/>
-            </svg>
-            Continuer avec GitLab
-          </button>
-          <button className={styles.secondary} type="button" disabled={busy || !supabase} onClick={()=>void socialLogin('github')} style={{minHeight:50,background:'var(--account-paper)',width:'100%',position:'relative'}}>
-            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{flexShrink:0}}>
-              <path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.12-1.25-5.12-5.56 0-1.23.44-2.24 1.16-3.02-.12-.28-.5-1.43.11-2.98 0 0 .94-.3 3.09 1.15a10.76 10.76 0 0 1 5.62 0c2.15-1.45 3.09-1.15 3.09-1.15.61 1.55.23 2.7.11 2.98.72.78 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.77 1.04.77 2.09v3.1c0 .3.2.65.77.54A11.25 11.25 0 0 0 12 .75z"/>
-            </svg>
-            Continuer avec GitHub
           </button>
         </div>}
       </section>
