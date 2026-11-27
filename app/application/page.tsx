@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight, BookOpenText, CalendarDays, Camera, ChevronRight, Compass, Globe2,
-  Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Flag, Pin, Settings2,
+  Home, Languages, Landmark, Map, Menu, Newspaper, Search, Sparkles, Pin, Settings2,
   Utensils, UserRound, type LucideIcon,
 } from 'lucide-react'
 import AppLaunch from './app-launch'
@@ -105,7 +105,7 @@ export default async function ApplicationPage() {
         <section className={styles.hero} aria-labelledby="app-hero-title">
           <Image className={styles.heroImage} src="/images/accueil/fleuve-niger-niamey.webp" alt="Le fleuve Niger à Niamey" fill priority sizes="(max-width: 700px) 100vw, 1152px" />
           <div className={styles.heroContent}>
-            <span className={styles.heroEyebrow} style={{display:'inline-flex',alignItems:'center',gap:8}}><Flag size={17} aria-hidden="true"/> Patrimoine · Culture · Découvertes</span>
+            <span className={styles.heroEyebrow} style={{display:'inline-flex',alignItems:'center',gap:8}}>Patrimoine · Culture · Découvertes</span>
             <h1 id="app-hero-title">Découvrez le Niger</h1>
             <p>Une terre d’histoire, de culture et de merveilles uniques, des portes du Sahara aux rives du fleuve.</p>
             <span className={styles.heroDots} aria-hidden="true"><i /><i /><i /></span>
