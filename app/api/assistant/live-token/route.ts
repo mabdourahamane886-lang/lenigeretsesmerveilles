@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { NIGER_KNOWLEDGE } from '../../../../lib/niger-knowledge'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export async function POST(request: Request) {
@@ -8,11 +9,13 @@ export async function POST(request: Request) {
   if (!key) return NextResponse.json({error:'GEMINI_LIVE_API_KEY absente de cet environnement de déploiement'}, {status:503})
   const configured = (process.env.GEMINI_LIVE_MODEL || '').trim().replace(/^models\//, '')
   const model = !configured || configured === 'gemini-live-2.5-flash-native-audio' ? 'gemini-2.5-flash-native-audio-preview-12-2025' : configured
+  const knowledge = NIGER_KNOWLEDGE.map(e=>e.title+' : '+e.content+' (Source : '+e.sourceLabel+')').join('\n').slice(0,16000)
+  const setup = {model:'models/'+model,generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Charon'}}}},inputAudioTranscription:{},outputAudioTranscription:{},systemInstruction:{parts:[{text:'Tu es Niger IA, assistant généraliste spécialisé dans tout le Niger : huit régions, histoire, géographie, peuples, langues, économie, culture et patrimoine. Réponds aussi aux questions générales. Vérifie les faits avec le contexte ci-dessous, distingue traditions et faits établis, ne devine pas les chiffres ou les traductions, demande une précision en cas de transcription ambiguë. Ne donne de liens que sur demande explicite. Réponds naturellement, dans la langue de la personne. Contexte documentaire local (non exhaustif) :\n'+knowledge}]}}
   const result = await fetch('https://generativelanguage.googleapis.com/v1beta/auth_tokens', {
     method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
     body:JSON.stringify({uses:1,expireTime:new Date(Date.now()+15*60_000).toISOString(),
       newSessionExpireTime:new Date(Date.now()+60_000).toISOString(),
-      bidiGenerateContentSetup:{model:'models/'+model,generationConfig:{responseModalities:['AUDIO']},inputAudioTranscription:{},outputAudioTranscription:{},systemInstruction:{parts:[{text:'Tu es Niger IA. Réponds naturellement en français ou dans la langue de l’utilisateur, avec une expertise sur le Niger. Ne donne aucun lien sauf demande explicite. Ne fabrique pas de sources.'}]}}}),
+      bidiGenerateContentSetup:setup}),
     cache:'no-store',signal:AbortSignal.timeout(12000)
   }).catch(()=>null)
   if (!result) return NextResponse.json({error:'Service Gemini Live inaccessible'}, {status:502})
@@ -22,5 +25,5 @@ export async function POST(request: Request) {
   }
   const data = await result.json() as {name?:string}
   if (!data.name) return NextResponse.json({error:'Jeton de session non reçu'},{status:502})
-  return NextResponse.json({token:data.name,model},{headers:{'Cache-Control':'no-store'}})
+  return NextResponse.json({token:data.name,model,setup},{headers:{'Cache-Control':'no-store'}})
 }
