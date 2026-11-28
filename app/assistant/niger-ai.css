@@ -122,3 +122,6 @@ body:has(.nigerAiShell) .siteHeader,body:has(.nigerAiShell) .siteFooter{display:
 @media(prefers-color-scheme:dark){.nigerAiTheme-auto .nigerAiLiveDock .nigerAiVoiceActions button:last-child{background:#eee;color:#222}}
 @media(max-width:760px){.nigerAiLiveDock{gap:8px;padding:8px 8px 2px}.nigerAiLiveDock .nigerAiVoiceOrb{width:60px}.nigerAiLiveDock .nigerAiVoiceActions button{width:36px;height:36px}}
 @media(max-height:450px){.nigerAiLiveDock{flex-direction:row;gap:12px}.nigerAiLiveDock .nigerAiVoiceOrb{width:42px}}
+
+/* Compact welcome prompts and Live volume control. */
+.nigerAiWelcome{max-width:580px;margin:clamp(16px,9vh,90px) auto 0}.nigerAiSuggestions{max-width:480px;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:22px auto 0}.nigerAiSuggestions button{min-height:42px;padding:9px 12px;font-size:12px;border-radius:12px;gap:8px}.nigerAiVolume{display:flex;align-items:center;gap:8px;font-size:11px}.nigerAiVolume input{width:96px;accent-color:#777}.nigerAiLiveDock{gap:7px}.nigerAiLiveDock .nigerAiVoiceOrb{width:58px}@media(max-width:400px){.nigerAiSuggestions button{font-size:11px;padding:8px;gap:6px}.nigerAiWelcome{margin:20px auto 0}}@media(max-height:450px){.nigerAiLiveDock .nigerAiVoiceOrb{width:40px}}
