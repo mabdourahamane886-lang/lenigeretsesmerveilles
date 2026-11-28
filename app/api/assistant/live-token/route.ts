@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
     body:JSON.stringify({uses:1,expireTime:new Date(Date.now()+15*60_000).toISOString(),
       newSessionExpireTime:new Date(Date.now()+60_000).toISOString(),
-      liveConnectConstraints:{model:'models/'+model,config:{responseModalities:['AUDIO'],inputAudioTranscription:{},outputAudioTranscription:{}}}}),
+      bidiGenerateContentSetup:{model:'models/'+model,generationConfig:{responseModalities:['AUDIO']},inputAudioTranscription:{},outputAudioTranscription:{},systemInstruction:{parts:[{text:'Tu es Niger IA. Réponds naturellement en français ou dans la langue de l’utilisateur, avec une expertise sur le Niger. Ne donne aucun lien sauf demande explicite. Ne fabrique pas de sources.'}]}}}),
     cache:'no-store',signal:AbortSignal.timeout(12000)
   }).catch(()=>null)
   if (!result) return NextResponse.json({error:'Service Gemini Live inaccessible'}, {status:502})
