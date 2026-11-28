@@ -115,6 +115,22 @@ function isModelUnavailable(status: number, message: string) {
 
 
 export async function POST(request: Request) {
+  if (!request.headers.get('accept')?.includes('application/x-ndjson')) return answerRequest(request,()=>{})
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      const emit = (event: object) => { if (!request.signal.aborted) { try { controller.enqueue(encoder.encode(JSON.stringify(event)+'\n')) } catch {} } }
+      try {
+        const response = await answerRequest(request,emit)
+        const data = await response.json()
+        emit(response.ok ? {type:'done',...data} : {type:'error',error:data.error})
+      } catch { emit({type:'error',error:'Niger IA est temporairement indisponible.'}) }
+      finally { try { controller.close() } catch {} }
+    }
+  })
+  return new Response(stream,{headers:{'Content-Type':'application/x-ndjson; charset=utf-8','Cache-Control':'no-store, no-transform','X-Content-Type-Options':'nosniff'}})
+}
+async function answerRequest(request:Request,emit:(event:object)=>void) {
   const apiKeys = getGeminiApiKeys()
   if (!apiKeys.length) {
     return NextResponse.json(
@@ -143,6 +159,9 @@ export async function POST(request: Request) {
   }
 
   const lastQuestion = validMessages[validMessages.length - 1]?.parts?.[0]?.text || ''
+  emit({type:'stage',label:'Question et contexte reçus'})
+  const deep = body?.deep === true || /analyse|compare|recherche|actualité|récent|vérifi|statistique|dossier|sources/i.test(lastQuestion) || lastQuestion.length>300
+  const search = deep && process.env.GEMINI_ENABLE_SEARCH === 'true'
 
   // Détection explicite des demandes de traduction vers les langues du Niger.
   const translationTargets = [
@@ -181,6 +200,7 @@ export async function POST(request: Request) {
   const retrievalQuestion = isFollowUp
     ? [...recentUserQuestions.slice(0, -1), lastQuestion].join('\n')
     : lastQuestion
+  emit({type:'stage',label:'Consultation de la documentation et du dictionnaire'})
   const [localKnowledgeEntries, supabaseKnowledgeEntries, supabaseDictionaryEntries] = await Promise.all([
     Promise.resolve(findNigerKnowledge(retrievalQuestion, 5)),
     findSupabaseKnowledge(retrievalQuestion, 5),
@@ -218,7 +238,8 @@ export async function POST(request: Request) {
   const linkQuestion = lastQuestion.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   const wantsLinks = /^(?:\s*(?:le|les|un|des|l['’])?\s*(?:liens?|urls?|hyperliens?|links?)\s*[?!.]*\s*)$|\b(?:donne|envoie|partage|fournis|montre|indique|trouve|cherche|veux|voudrais|souhaite|peux|pourrais|pouvez|quel(?:le)?s? (?:est|sont))\b[^.!?\n]{0,90}\b(?:liens?|urls?|hyperliens?|links?|adresse (?:web|du site)|site (?:web|internet|officiel))\b|\b(?:ou) (?:consulter|trouver|lire|acceder)[^.!?\n]{0,60}\ben ligne\b/i.test(linkQuestion) && !/\b(?:sans|aucun|pas de|evite|ne (?:donne|partage|envoie|fournis|montre|veux))\b[^.!?\n]{0,90}\b(?:liens?|urls?|hyperliens?|links?)\b/i.test(linkQuestion)
   const linkInstruction = wantsLinks ? '\n\nLIENS : la demande actuelle autorise les liens pertinents et vérifiables ; ne les invente pas.' : '\n\nLIENS : aucun lien ou URL dans la réponse actuelle, même si les documents en contiennent. Cite uniquement les noms des sources si nécessaire.'
-  const systemInstruction = SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext + linkInstruction
+  emit({type:'stage',label:'Documentation préparée',count:localKnowledgeEntries.length+supabaseKnowledgeEntries.length+dictionaryEntries.length+supabaseDictionaryEntries.length})
+  const systemInstruction = (deep ? '\nAnalyse approfondie : compare les sources disponibles, distingue faits et hypothèses, vérifie la cohérence des dates et chiffres, signale les contradictions et les limites. Ne prétends jamais avoir vérifié une source non consultée.\n' : '') + SYSTEM_INSTRUCTION + translationInstruction + knowledgeContext + dictionaryContext + supabaseDictionaryContext + languageContext + linkInstruction
 
   // Paid advanced models are opt-in, never invoked simultaneously.
   const configuredModel = normalizeModel(process.env.GEMINI_MODEL || DEFAULT_MODEL) || DEFAULT_MODEL
@@ -246,6 +267,7 @@ export async function POST(request: Request) {
       console.warn('Gemini model discovery HTTP status', response.status)
     }
   } catch { console.warn('Gemini model discovery unavailable') }
+  emit({type:'stage',label:search?'Demande envoyée avec recherche Google activée':'Génération de la réponse'})
   let lastStatus = 502
   const deadline = Date.now() + 44000
   let attempts = 0
@@ -261,6 +283,7 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: systemInstruction }] },
             contents: validMessages,
+            ...(search ? {tools:[{googleSearch:{}}]} : {}),
             generationConfig: { maxOutputTokens: 8192 },
           }),
           signal: AbortSignal.timeout(Math.max(1, Math.min(18000, deadline - Date.now()))),
@@ -279,6 +302,8 @@ export async function POST(request: Request) {
           ?.filter((part: { thought?: boolean }) => !part.thought)
           .map((part: { text?: string }) => part.text || '').join('').trim()
         if (answer) {
+          if(candidate?.groundingMetadata?.groundingChunks?.length)emit({type:'stage',label:'Résultats de recherche reçus',count:candidate.groundingMetadata.groundingChunks.length})
+          emit({type:'stage',label:'Préparation du texte final'})
           const visibleAnswer = wantsLinks ? answer : answer.replace(/\[([^\]\n]+)\]\((?:https?:\/\/|www\.)[^)\s]+\)/gi, '$1').replace(/<?(?:https?:\/\/|www\.)[^\s<>]+>?/gi, '').replace(/\b(?:[a-z0-9-]+\.)+(?:com|org|net|edu|gov|info|ne|fr|io|app|dev|africa)(?:\/[^\s<>]*)?(?![\w.-])/gi, '').replace(/[ \t]+\n/g, '\n').trim()
           return NextResponse.json({ answer: visibleAnswer || 'Précisez votre demande pour que je puisse vous répondre.', model }, { headers: { 'Cache-Control': 'no-store' } })
         }
