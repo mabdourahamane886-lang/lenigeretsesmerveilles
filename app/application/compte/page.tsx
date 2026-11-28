@@ -104,6 +104,8 @@ export default function AuthPage() {
     setIsError(false)
     setBusy(false)
     setToken('')
+    setPassword('')
+    setPasswordConfirm('')
   }
 
   async function socialLogin(provider: 'google' | 'github') {
@@ -277,13 +279,13 @@ export default function AuthPage() {
                 <button type="button" className={styles.eye} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'} onClick={() => setShowPassword(s=>!s)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
               </span>
             </label>
-            {(mode === 'signup' || mode === 'reset') && <label className={styles.fieldGroup}><span className={styles.label}>Confirmer le mot de passe</span><span className={styles.inputWrap}><KeyRound size={19}/><input className={styles.input} type={showPassword ? 'text' : 'password'} value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} minLength={10} autoComplete="new-password" required placeholder="Répétez votre mot de passe" aria-invalid={passwordConfirm.length > 0 && password !== passwordConfirm} aria-describedby="password-confirm-status" /></span><span id="password-confirm-status" className={styles.hint} aria-live="polite">{passwordConfirm ? password !== passwordConfirm ? 'Les mots de passe ne correspondent pas.' : password.length < 10 ? 'Les mots de passe correspondent, mais 10 caractères sont nécessaires.' : 'Les mots de passe correspondent.' : 'Saisissez exactement le même mot de passe.'}</span></label>}
+            {(mode === 'signup' || mode === 'reset') && <label className={styles.fieldGroup}><span className={styles.label}>Confirmer le mot de passe</span><span className={styles.inputWrap}><KeyRound size={19}/><input className={styles.input} type={showPassword ? 'text' : 'password'} value={passwordConfirm} onChange={e=>setPasswordConfirm(e.target.value)} minLength={10} autoComplete="new-password" required placeholder="Répétez votre mot de passe" aria-invalid={passwordConfirm.length > 0 && password !== passwordConfirm} aria-describedby="password-confirm-status" /></span><span id="password-confirm-status" className={styles.hint} style={passwordConfirm && password === passwordConfirm && password.length >= 10 ? {color:'#15803d',fontWeight:600} : passwordConfirm ? {color:'#b91c1c'} : undefined} aria-live="polite">{passwordConfirm ? password !== passwordConfirm ? 'Les mots de passe ne correspondent pas.' : password.length < 10 ? 'Les mots de passe correspondent, mais 10 caractères sont nécessaires.' : 'Les mots de passe correspondent.' : 'Saisissez exactement le même mot de passe.'}</span></label>}
           </>}
 
           {mode === 'verify' && <label className={styles.fieldGroup}><span className={styles.label}>Code envoyé à {pendingPhone}</span><span className={styles.inputWrap}><Phone size={19}/><input className={styles.input} value={token} onChange={e=>setToken(e.target.value.replace(/\D/g, ''))} type="text" inputMode="numeric" pattern="[0-9]{6,8}" maxLength={8} autoComplete="one-time-code" required placeholder="Code de vérification" /></span></label>}
           {mode === 'signup' && <label className={styles.checkLine}><input type="checkbox" checked={accept} onChange={e=>setAccept(e.target.checked)}/><span>J’accepte les conditions d’utilisation et la politique de confidentialité de la plateforme.</span></label>}
           {notice && <div role={isError ? 'alert' : 'status'} className={[styles.status, isError ? styles.err : styles.ok].join(' ')}>{isError ? <AlertCircle size={15} style={{display:'inline',marginRight:7}}/> : <CheckCircle2 size={15} style={{display:'inline',marginRight:7}}/>}{notice}</div>}
-          <button className={styles.primary} type="submit" disabled={busy || !supabase}>{busy ? <LoaderCircle size={18} className="animate-spin" /> : mode === 'login' ? <LockKeyhole size={18} /> : <ArrowRight size={18} />}
+          <button className={styles.primary} type="submit" disabled={busy || !supabase || ((mode === 'signup' || mode === 'reset') && (password.length < 10 || password !== passwordConfirm))}>{busy ? <LoaderCircle size={18} className="animate-spin" /> : mode === 'login' ? <LockKeyhole size={18} /> : <ArrowRight size={18} />}
             {busy ? 'Traitement en cours…' : mode === 'login' ? 'Se connecter' : mode === 'signup' ? 'Créer mon compte' : mode === 'recover' ? 'Envoyer la récupération' : mode === 'verify' ? 'Vérifier le code' : 'Enregistrer le mot de passe'}
           </button>
           {mode === 'login' && <div className={styles.inlineActions}><button type="button" className={styles.textLink} onClick={()=>switchMode('recover')}>Mot de passe oublié ?</button><button type="button" className={styles.textLink} onClick={()=>switchMode('signup')}>Créer un compte</button></div>}
