@@ -7,9 +7,6 @@ function pcm16(data:Float32Array,rate:number){const ratio=rate/16000;const out=n
 export default function NigerLiveVoice({onClose,onTranscript,sendRef,onReady}:Props){
  const [status,setStatus]=useState('Connexion à Gemini Live…')
  const [muted,setMuted]=useState(false)
- const [volume,setVolume]=useState(1.4)
- const gain=useRef<GainNode|null>(null)
- useEffect(()=>{if(gain.current&&audio.current)gain.current.gain.setTargetAtTime(volume,audio.current.currentTime,.03)},[volume])
  const socket=useRef<WebSocket|null>(null),audio=useRef<AudioContext|null>(null),stream=useRef<MediaStream|null>(null),processor=useRef<ScriptProcessorNode|null>(null),source=useRef<MediaStreamAudioSourceNode|null>(null)
  const playing=useRef<Set<AudioBufferSourceNode>>(new Set()),nextPlay=useRef(0),ready=useRef(false),muteRef=useRef(false),onTranscriptRef=useRef(onTranscript)
  useEffect(()=>{onTranscriptRef.current=onTranscript},[onTranscript])
@@ -22,7 +19,7 @@ export default function NigerLiveVoice({onClose,onTranscript,sendRef,onReady}:Pr
     const info=await res.json()
     if(!res.ok)throw new Error(info.error||'Impossible de créer la session')
     if(disposed)return
-    const ctx=new AudioContext();audio.current=ctx;const amp=ctx.createGain();amp.gain.value=1.4;const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-3;limiter.ratio.value=12;amp.connect(limiter);limiter.connect(ctx.destination);gain.current=amp;await ctx.resume()
+    const ctx=new AudioContext();audio.current=ctx;const amp=ctx.createGain();amp.gain.value=1.4;const limiter=ctx.createDynamicsCompressor();limiter.threshold.value=-3;limiter.ratio.value=12;amp.connect(limiter);limiter.connect(ctx.destination);await ctx.resume()
     const mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false})
     if(disposed){mic.getTracks().forEach(t=>t.stop());return}stream.current=mic
     const ws=new WebSocket('wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token='+encodeURIComponent(info.token))
@@ -69,7 +66,6 @@ export default function NigerLiveVoice({onClose,onTranscript,sendRef,onReady}:Pr
  return <div className="nigerAiLiveDock" role="region" aria-label="Conversation Gemini Live">
   <div className={'nigerAiVoiceOrb '+(muted?'voice-idle':status==='Niger IA vous répond…'?'voice-speaking':status==='Je vous écoute…'?'voice-listening':status.startsWith('Connexion à')?'voice-thinking':'voice-idle')} aria-hidden="true"/>
   <p role="status">{status}</p>
-  <label className="nigerAiVolume">Volume <input aria-label="Volume de la voix" type="range" min="0" max="2" step=".1" value={volume} onChange={e=>setVolume(Number(e.target.value))}/></label>
   <div className="nigerAiVoiceActions">
    <button type="button" aria-label={muted?'Activer le micro':'Couper le micro'} onClick={()=>{muteRef.current=!muteRef.current;setMuted(muteRef.current)}}>{muted?<MicOff size={22}/>:<Mic size={22}/>}</button>
    <button type="button" aria-label="Fermer le mode Live" onClick={onClose}><X size={22}/></button>
