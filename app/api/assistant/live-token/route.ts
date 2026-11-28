@@ -6,10 +6,12 @@ export async function POST(request: Request) {
   if (origin && new URL(origin).host !== request.headers.get('host')) return NextResponse.json({error:'Origine refusée'}, {status:403})
   const key = process.env.GEMINI_LIVE_API_KEY
   if (!key) return NextResponse.json({error:'GEMINI_LIVE_API_KEY absente de cet environnement de déploiement'}, {status:503})
-  const model = process.env.GEMINI_LIVE_MODEL || 'gemini-2.5-flash-native-audio-preview-12-2025'
+  const configured = (process.env.GEMINI_LIVE_MODEL || '').trim().replace(/^models\//, '')
+  const model = !configured || configured === 'gemini-live-2.5-flash-native-audio' ? 'gemini-2.5-flash-native-audio-preview-12-2025' : configured
   const result = await fetch('https://generativelanguage.googleapis.com/v1beta/auth_tokens', {
     method:'POST', headers:{'Content-Type':'application/json','x-goog-api-key':key},
     body:JSON.stringify({uses:1,expireTime:new Date(Date.now()+15*60_000).toISOString(),
+      newSessionExpireTime:new Date(Date.now()+60_000).toISOString(),
       liveConnectConstraints:{model:'models/'+model,config:{responseModalities:['AUDIO'],inputAudioTranscription:{},outputAudioTranscription:{}}}}),
     cache:'no-store',signal:AbortSignal.timeout(12000)
   }).catch(()=>null)
