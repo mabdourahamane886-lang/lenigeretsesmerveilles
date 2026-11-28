@@ -50,9 +50,9 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
         const buffer=ctx.createBuffer(1,pcm.length,24000);const channel=buffer.getChannelData(0)
         for(let i=0;i<pcm.length;i++)channel[i]=pcm[i]/32768
         const node=ctx.createBufferSource();node.buffer=buffer;node.connect(ctx.destination)
-        const start=Math.max(ctx.currentTime,nextPlay.current);node.onended=()=>playing.current.delete(node);playing.current.add(node);node.start(start);nextPlay.current=start+buffer.duration;setStatus('Niger IA vous répond…')
+        const start=Math.max(ctx.currentTime,nextPlay.current);node.onended=()=>{playing.current.delete(node);if(!playing.current.size&&ready.current)setStatus('Je vous écoute…')};playing.current.add(node);node.start(start);nextPlay.current=start+buffer.duration;setStatus('Niger IA vous répond…')
        }
-       if(content.turnComplete)setStatus('Je vous écoute…')
+       if(content.turnComplete&&!playing.current.size)setStatus('Je vous écoute…')
       }
      }catch(err){console.error('Gemini Live message',err)}
     }
@@ -63,10 +63,9 @@ export default function NigerLiveVoice({onClose,onTranscript}:Props){
   void connect()
   return()=>{disposed=true;close()}
  },[])
- return <div className="nigerAiVoiceOverlay" role="dialog" aria-modal="true" aria-label="Conversation Gemini Live">
-  <div className="nigerAiVoiceOrb voice-listening" aria-hidden="true"/>
+ return <div className="nigerAiLiveDock" role="region" aria-label="Conversation Gemini Live">
+  <div className={'nigerAiVoiceOrb '+(muted?'voice-idle':status==='Niger IA vous répond…'?'voice-speaking':status==='Je vous écoute…'?'voice-listening':status.startsWith('Connexion à')?'voice-thinking':'voice-idle')} aria-hidden="true"/>
   <p role="status">{status}</p>
-  <p style={{fontSize:12,opacity:.7}}>Vos paroles et les réponses sont transcrites dans la conversation.</p>
   <div className="nigerAiVoiceActions">
    <button type="button" aria-label={muted?'Activer le micro':'Couper le micro'} onClick={()=>{muteRef.current=!muteRef.current;setMuted(muteRef.current)}}>{muted?<MicOff size={22}/>:<Mic size={22}/>}</button>
    <button type="button" aria-label="Fermer le mode Live" onClick={onClose}><X size={22}/></button>
